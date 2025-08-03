@@ -2,6 +2,7 @@ const js = require('@eslint/js');
 const tsPlugin = require('@typescript-eslint/eslint-plugin');
 const tsParser = require('@typescript-eslint/parser');
 const prettierPlugin = require('eslint-plugin-prettier');
+const globals = require('globals');
 
 module.exports = [
   {
@@ -14,6 +15,9 @@ module.exports = [
       parserOptions: {
         project: './tsconfig.json',
         tsconfigRootDir: __dirname,
+      },
+      globals: {
+        ...globals.node,
       },
     },
     plugins: {
