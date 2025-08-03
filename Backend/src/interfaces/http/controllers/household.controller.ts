@@ -1,0 +1,53 @@
+import { Request, Response } from 'express';
+import { CreateHouseholdUseCase } from '../../../application/use-cases/create-household.usecase';
+import { InviteToHouseholdUseCase } from '../../../application/use-cases/invite-to-household.usecase';
+import { RevokeMembershipUseCase } from '../../../application/use-cases/revoke-membership.usecase';
+import {
+  CreateHouseholdRequestDto,
+  InviteRequestDto,
+} from '../dto/household.dto';
+
+interface AuthRequest extends Request {
+  userId: string;
+}
+
+export class HouseholdController {
+  constructor(
+    private createHousehold: CreateHouseholdUseCase,
+    private inviteToHousehold: InviteToHouseholdUseCase,
+    private revokeMembership: RevokeMembershipUseCase,
+  ) {}
+
+  create = async (req: Request, res: Response) => {
+    const { name, baseCurrency } = req.body as CreateHouseholdRequestDto;
+    const userId = (req as AuthRequest).userId;
+    const household = await this.createHousehold.execute(
+      userId,
+      name,
+      baseCurrency,
+    );
+    res.status(201).json({ household });
+  };
+
+  invite = async (req: Request, res: Response) => {
+    const { email } = req.body as InviteRequestDto;
+    const { householdId } = req.params as { householdId: string };
+    const userId = (req as AuthRequest).userId;
+    const invitation = await this.inviteToHousehold.execute(
+      userId,
+      householdId,
+      email,
+    );
+    res.status(201).json({ invitation });
+  };
+
+  revokeMember = async (req: Request, res: Response) => {
+    const { householdId, memberId } = req.params as {
+      householdId: string;
+      memberId: string;
+    };
+    const userId = (req as AuthRequest).userId;
+    await this.revokeMembership.execute(userId, householdId, memberId);
+    res.status(204).send();
+  };
+}

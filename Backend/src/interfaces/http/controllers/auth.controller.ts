@@ -44,7 +44,10 @@ export class AuthController {
 
   linkGoogleAccount = async (req: Request, res: Response) => {
     const { idToken } = req.body as GoogleRequestDto;
-    const user = await this.linkGoogle.execute((req as AuthRequest).userId, idToken);
+    const user = await this.linkGoogle.execute(
+      (req as AuthRequest).userId,
+      idToken,
+    );
     res.json({ user });
   };
 }
