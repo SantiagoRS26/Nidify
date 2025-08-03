@@ -1,0 +1,24 @@
+import { Router } from 'express';
+import { InvitationController } from '../controllers/invitation.controller';
+import { InvitationRepository } from '../../../infrastructure/persistence/repositories/invitation.repository';
+import { HouseholdMembershipRepository } from '../../../infrastructure/persistence/repositories/household-membership.repository';
+import { JwtService } from '../../../infrastructure/auth/jwt.service';
+import { authMiddleware } from '../../middleware/auth.middleware';
+import { AcceptInvitationUseCase } from '../../../application/use-cases/accept-invitation.usecase';
+
+const router = Router();
+
+const invitationRepo = new InvitationRepository();
+const membershipRepo = new HouseholdMembershipRepository();
+const jwtService = new JwtService();
+
+const acceptInvitation = new AcceptInvitationUseCase(
+  invitationRepo,
+  membershipRepo,
+);
+
+const controller = new InvitationController(acceptInvitation);
+
+router.post('/accept', authMiddleware(jwtService), controller.accept);
+
+export default router;
