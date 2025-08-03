@@ -13,7 +13,7 @@ export class RegisterUserUseCase {
   ): Promise<User> {
     const existing = await this.userRepository.findByEmail(email);
     if (existing) {
-      throw new Error('Email already in use');
+      throw new Error('Correo electrónico ya en uso');
     }
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await this.userRepository.create({

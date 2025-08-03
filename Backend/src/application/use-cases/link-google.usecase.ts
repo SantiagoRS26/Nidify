@@ -12,12 +12,12 @@ export class LinkGoogleUseCase {
     const ticket = await this.googleClient.verifyIdToken({ idToken });
     const payload = ticket.getPayload();
     if (!payload?.sub) {
-      throw new Error('Invalid Google token');
+      throw new Error('Token de Google inválido');
     }
     const externalId = payload.sub;
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new Error('Usuario no encontrado');
     }
     if (user.oauthProviders.some((p) => p.provider === 'google')) {
       return user;

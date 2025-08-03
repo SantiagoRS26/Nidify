@@ -15,7 +15,7 @@ export class GoogleAuthUseCase {
     const ticket = await this.googleClient.verifyIdToken({ idToken });
     const payload = ticket.getPayload();
     if (!payload?.sub || !payload.email || !payload.name) {
-      throw new Error('Invalid Google token');
+      throw new Error('Token de Google inválido');
     }
     const externalId = payload.sub;
     const email = payload.email;
