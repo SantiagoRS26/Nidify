@@ -11,11 +11,11 @@ export class LoginUserUseCase {
   async execute(email: string, password: string) {
     const user = await this.userRepository.findByEmail(email);
     if (!user || !user.passwordHash) {
-      throw new Error('Invalid credentials');
+      throw new Error('Credenciales inválidas');
     }
     const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) {
-      throw new Error('Invalid credentials');
+      throw new Error('Credenciales inválidas');
     }
     const token = this.jwtService.sign(user);
     return { user, token };

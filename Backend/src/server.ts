@@ -7,15 +7,15 @@ const app = express();
 app.use(express.json());
 
 connectMongo()
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((err) => console.error('MongoDB connection error', err));
+  .then(() => console.log('Conectado a MongoDB'))
+  .catch((err) => console.error('Error de conexión con MongoDB', err));
 
 app.use('/api/v1/auth', authRoutes);
 
 app.get('/', (_req, res) => {
-  res.send('Nidify API');
+  res.send('API de Nidify');
 });
 
 app.listen(config.port, () => {
-  console.log(`Server running on port ${config.port}`);
+  console.log(`Servidor ejecutándose en el puerto ${config.port}`);
 });
