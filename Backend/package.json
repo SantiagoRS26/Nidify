@@ -4,7 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "lint": "echo \"ESLint not configured yet\" && exit 0",
+    "lint:fix": "echo \"ESLint not configured yet\" && exit 0",
+    "test": "echo \"Jest not configured yet\" && exit 0",
+    "test:watch": "echo \"Jest not configured yet\" && exit 0",
+    "clean": "rm -rf dist"
   },
   "keywords": [],
   "author": "",
