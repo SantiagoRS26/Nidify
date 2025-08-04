@@ -1,7 +1,13 @@
 import { Request, Response } from 'express';
-import { CreateItemUseCase } from '../../../application/use-cases/create-item.usecase';
+import {
+  CreateItemUseCase,
+  CreateItemPayload,
+} from '../../../application/use-cases/create-item.usecase';
 import { ListItemsUseCase } from '../../../application/use-cases/list-items.usecase';
-import { UpdateItemUseCase } from '../../../application/use-cases/update-item.usecase';
+import {
+  UpdateItemUseCase,
+  UpdateItemPayload,
+} from '../../../application/use-cases/update-item.usecase';
 import { DeleteItemUseCase } from '../../../application/use-cases/delete-item.usecase';
 import { CreateItemRequestDto, UpdateItemRequestDto } from '../dto/item.dto';
 import { notifyHousehold } from '../../../infrastructure/websocket/socket.service';
@@ -28,7 +34,11 @@ export class ItemController {
     const { householdId } = req.params as { householdId: string };
     const userId = (req as AuthRequest).userId;
     const payload = req.body as CreateItemRequestDto;
-    const item = await this.createItem.execute(userId, householdId, payload);
+    const item = await this.createItem.execute(
+      userId,
+      householdId,
+      payload as CreateItemPayload,
+    );
     notifyHousehold(householdId, 'item:created', item);
     res.status(201).json({ item });
   };
@@ -37,7 +47,11 @@ export class ItemController {
     const { itemId } = req.params as { itemId: string };
     const userId = (req as AuthRequest).userId;
     const payload = req.body as UpdateItemRequestDto;
-    const item = await this.updateItem.execute(userId, itemId, payload);
+    const item = await this.updateItem.execute(
+      userId,
+      itemId,
+      payload as UpdateItemPayload,
+    );
     if (!item) {
       return res.status(404).json({ error: 'Item not found' });
     }

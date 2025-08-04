@@ -5,6 +5,8 @@ import { HouseholdMembershipRepository } from '../../../infrastructure/persisten
 import { JwtService } from '../../../infrastructure/auth/jwt.service';
 import { authMiddleware } from '../../middleware/auth.middleware';
 import { AcceptInvitationUseCase } from '../../../application/use-cases/accept-invitation.usecase';
+import { validate } from '../../middleware/validation.middleware';
+import { acceptInvitationSchema } from '../dto/household.dto';
 
 const router = Router();
 
@@ -19,6 +21,11 @@ const acceptInvitation = new AcceptInvitationUseCase(
 
 const controller = new InvitationController(acceptInvitation);
 
-router.post('/accept', authMiddleware(jwtService), controller.accept);
+router.post(
+  '/accept',
+  authMiddleware(jwtService),
+  validate({ body: acceptInvitationSchema }),
+  controller.accept,
+);
 
 export default router;

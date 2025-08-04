@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import { GetNotificationPreferencesUseCase } from '../../../application/use-cases/get-notification-preferences.usecase';
-import { UpdateNotificationPreferencesUseCase } from '../../../application/use-cases/update-notification-preferences.usecase';
+import {
+  UpdateNotificationPreferencesUseCase,
+  UpdateNotificationPreferencesPayload,
+} from '../../../application/use-cases/update-notification-preferences.usecase';
 import { NotificationPreferencesDto } from '../dto/notification-preferences.dto';
 
 interface AuthRequest extends Request {
@@ -24,7 +27,11 @@ export class NotificationPreferencesController {
     const { householdId } = req.params as { householdId: string };
     const userId = (req as AuthRequest).userId;
     const payload = req.body as NotificationPreferencesDto;
-    await this.updatePrefs.execute(userId, householdId, payload);
+    await this.updatePrefs.execute(
+      userId,
+      householdId,
+      payload as UpdateNotificationPreferencesPayload,
+    );
     res.status(204).send();
   };
 }

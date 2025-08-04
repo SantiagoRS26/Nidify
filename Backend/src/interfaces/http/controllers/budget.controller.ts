@@ -36,7 +36,7 @@ export class BudgetController {
     const payload = req.body as UpdateBudgetRequestDto;
     const updatePayload: UpdateBudgetGoalPayload = { amount: payload.amount };
     if (payload.targetDate) {
-      updatePayload.targetDate = new Date(payload.targetDate);
+      updatePayload.targetDate = payload.targetDate;
     }
     if (payload.reason) {
       updatePayload.reason = payload.reason;

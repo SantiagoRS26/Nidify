@@ -7,7 +7,9 @@ import { GetBudgetSummaryUseCase } from '../../../application/use-cases/get-budg
 import { UpdateBudgetGoalUseCase } from '../../../application/use-cases/update-budget-goal.usecase';
 import { JwtService } from '../../../infrastructure/auth/jwt.service';
 import { authMiddleware } from '../../middleware/auth.middleware';
+import { validate } from '../../middleware/validation.middleware';
 import { domainEventBus } from '../../../infrastructure/events/domain-event-bus';
+import { updateBudgetSchema } from '../dto/budget.dto';
 
 const router = Router({ mergeParams: true });
 
@@ -25,6 +27,11 @@ const controller = new BudgetController(getSummary, updateGoal);
 const jwtService = new JwtService();
 
 router.get('/', authMiddleware(jwtService), controller.summary);
-router.put('/:type', authMiddleware(jwtService), controller.update);
+router.put(
+  '/:type',
+  authMiddleware(jwtService),
+  validate({ body: updateBudgetSchema }),
+  controller.update,
+);
 
 export default router;

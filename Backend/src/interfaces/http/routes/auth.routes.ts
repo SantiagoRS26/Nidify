@@ -9,6 +9,8 @@ import { LinkGoogleUseCase } from '../../../application/use-cases/link-google.us
 import { OAuth2Client } from 'google-auth-library';
 import { config } from '../../../config/env';
 import { authMiddleware } from '../../middleware/auth.middleware';
+import { validate } from '../../middleware/validation.middleware';
+import { registerSchema, loginSchema, googleSchema } from '../dto/auth.dto';
 
 const router = Router();
 
@@ -33,12 +35,17 @@ const controller = new AuthController(
   jwtService,
 );
 
-router.post('/register', controller.register);
-router.post('/login', controller.login);
-router.post('/google', controller.google);
+router.post(
+  '/register',
+  validate({ body: registerSchema }),
+  controller.register,
+);
+router.post('/login', validate({ body: loginSchema }), controller.login);
+router.post('/google', validate({ body: googleSchema }), controller.google);
 router.post(
   '/google/link',
   authMiddleware(jwtService),
+  validate({ body: googleSchema }),
   controller.linkGoogleAccount,
 );
 

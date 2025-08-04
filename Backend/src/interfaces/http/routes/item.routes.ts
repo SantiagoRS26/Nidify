@@ -2,12 +2,14 @@ import { Router } from 'express';
 import { ItemRepository } from '../../../infrastructure/persistence/repositories/item.repository';
 import { JwtService } from '../../../infrastructure/auth/jwt.service';
 import { authMiddleware } from '../../middleware/auth.middleware';
+import { validate } from '../../middleware/validation.middleware';
 import { CreateItemUseCase } from '../../../application/use-cases/create-item.usecase';
 import { ListItemsUseCase } from '../../../application/use-cases/list-items.usecase';
 import { UpdateItemUseCase } from '../../../application/use-cases/update-item.usecase';
 import { DeleteItemUseCase } from '../../../application/use-cases/delete-item.usecase';
 import { domainEventBus } from '../../../infrastructure/events/domain-event-bus';
 import { ItemController } from '../controllers/item.controller';
+import { createItemSchema, updateItemSchema } from '../dto/item.dto';
 
 const router = Router({ mergeParams: true });
 
@@ -27,8 +29,18 @@ const controller = new ItemController(
 );
 
 router.get('/', authMiddleware(jwtService), controller.list);
-router.post('/', authMiddleware(jwtService), controller.create);
-router.put('/:itemId', authMiddleware(jwtService), controller.update);
+router.post(
+  '/',
+  authMiddleware(jwtService),
+  validate({ body: createItemSchema }),
+  controller.create,
+);
+router.put(
+  '/:itemId',
+  authMiddleware(jwtService),
+  validate({ body: updateItemSchema }),
+  controller.update,
+);
 router.delete('/:itemId', authMiddleware(jwtService), controller.delete);
 
 export default router;

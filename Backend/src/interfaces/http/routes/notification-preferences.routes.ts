@@ -5,6 +5,8 @@ import { GetNotificationPreferencesUseCase } from '../../../application/use-case
 import { UpdateNotificationPreferencesUseCase } from '../../../application/use-cases/update-notification-preferences.usecase';
 import { JwtService } from '../../../infrastructure/auth/jwt.service';
 import { authMiddleware } from '../../middleware/auth.middleware';
+import { validate } from '../../middleware/validation.middleware';
+import { notificationPreferencesSchema } from '../dto/notification-preferences.dto';
 
 const router = Router({ mergeParams: true });
 
@@ -16,6 +18,11 @@ const controller = new NotificationPreferencesController(getPrefs, updatePrefs);
 const jwtService = new JwtService();
 
 router.get('/', authMiddleware(jwtService), controller.get);
-router.put('/', authMiddleware(jwtService), controller.update);
+router.put(
+  '/',
+  authMiddleware(jwtService),
+  validate({ body: notificationPreferencesSchema }),
+  controller.update,
+);
 
 export default router;
