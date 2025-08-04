@@ -11,7 +11,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-import { AuthService } from '../auth.service';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -38,7 +38,7 @@ export class LoginComponent {
     }
     const { email, password } = this.form.getRawValue();
     this.authService.login(email, password).subscribe(() => {
-      this.router.navigate(['/']);
+      this.router.navigate(['/home']);
     });
   }
 }
