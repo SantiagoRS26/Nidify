@@ -4,6 +4,8 @@ import { ItemPriority } from '../../domain/models/enums/item-priority.enum';
 import { ItemStatus } from '../../domain/models/enums/item-status.enum';
 import { ItemType } from '../../domain/models/enums/item-type.enum';
 import { PaymentSplit } from '../../domain/models/payment-split.model';
+import { DomainEventBus } from '../../domain/events/domain-event-bus.interface';
+import { ItemCreatedEvent } from '../../domain/events/item.events';
 
 export interface CreateItemPayload {
   name: string;
@@ -25,7 +27,10 @@ export interface CreateItemPayload {
 }
 
 export class CreateItemUseCase {
-  constructor(private itemRepo: ItemRepository) {}
+  constructor(
+    private itemRepo: ItemRepository,
+    private eventBus: DomainEventBus,
+  ) {}
 
   async execute(
     userId: string,
@@ -40,6 +45,18 @@ export class CreateItemUseCase {
       updatedAt: now,
       lastModifiedBy: userId,
     };
-    return this.itemRepo.create(item);
+    const created = await this.itemRepo.create(item);
+    const event: ItemCreatedEvent = {
+      type: 'ItemCreated',
+      occurredOn: now,
+      householdId,
+      item: created,
+      userId,
+      ...(payload.lastModifiedByName
+        ? { userName: payload.lastModifiedByName }
+        : {}),
+    };
+    await this.eventBus.publish(event);
+    return created;
   }
 }

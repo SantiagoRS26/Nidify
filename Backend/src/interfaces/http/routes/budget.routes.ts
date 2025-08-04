@@ -7,6 +7,7 @@ import { GetBudgetSummaryUseCase } from '../../../application/use-cases/get-budg
 import { UpdateBudgetGoalUseCase } from '../../../application/use-cases/update-budget-goal.usecase';
 import { JwtService } from '../../../infrastructure/auth/jwt.service';
 import { authMiddleware } from '../../middleware/auth.middleware';
+import { domainEventBus } from '../../../infrastructure/events/domain-event-bus';
 
 const router = Router({ mergeParams: true });
 
@@ -14,7 +15,11 @@ const householdRepo = new HouseholdRepository();
 const itemRepo = new ItemRepository();
 const changeRepo = new BudgetChangeRepository();
 const getSummary = new GetBudgetSummaryUseCase(householdRepo, itemRepo);
-const updateGoal = new UpdateBudgetGoalUseCase(householdRepo, changeRepo);
+const updateGoal = new UpdateBudgetGoalUseCase(
+  householdRepo,
+  changeRepo,
+  domainEventBus,
+);
 const controller = new BudgetController(getSummary, updateGoal);
 
 const jwtService = new JwtService();

@@ -6,6 +6,7 @@ import { CreateItemUseCase } from '../../../application/use-cases/create-item.us
 import { ListItemsUseCase } from '../../../application/use-cases/list-items.usecase';
 import { UpdateItemUseCase } from '../../../application/use-cases/update-item.usecase';
 import { DeleteItemUseCase } from '../../../application/use-cases/delete-item.usecase';
+import { domainEventBus } from '../../../infrastructure/events/domain-event-bus';
 import { ItemController } from '../controllers/item.controller';
 
 const router = Router({ mergeParams: true });
@@ -13,10 +14,10 @@ const router = Router({ mergeParams: true });
 const itemRepo = new ItemRepository();
 const jwtService = new JwtService();
 
-const createItem = new CreateItemUseCase(itemRepo);
+const createItem = new CreateItemUseCase(itemRepo, domainEventBus);
 const listItems = new ListItemsUseCase(itemRepo);
-const updateItem = new UpdateItemUseCase(itemRepo);
-const deleteItem = new DeleteItemUseCase(itemRepo);
+const updateItem = new UpdateItemUseCase(itemRepo, domainEventBus);
+const deleteItem = new DeleteItemUseCase(itemRepo, domainEventBus);
 
 const controller = new ItemController(
   createItem,

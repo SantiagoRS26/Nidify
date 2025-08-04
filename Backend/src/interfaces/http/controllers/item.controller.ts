@@ -47,7 +47,8 @@ export class ItemController {
 
   delete = async (req: Request, res: Response) => {
     const { itemId } = req.params as { itemId: string };
-    const item = await this.deleteItem.execute(itemId);
+    const userId = (req as AuthRequest).userId;
+    const item = await this.deleteItem.execute(userId, itemId);
     if (!item) {
       return res.status(404).json({ error: 'Item not found' });
     }
