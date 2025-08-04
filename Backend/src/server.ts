@@ -1,4 +1,5 @@
 import express from 'express';
+import http from 'http';
 import { config } from './config/env';
 import { connectMongo } from './infrastructure/persistence/mongoose-connection';
 import authRoutes from './interfaces/http/routes/auth.routes';
@@ -7,9 +8,13 @@ import invitationRoutes from './interfaces/http/routes/invitation.routes';
 import itemRoutes from './interfaces/http/routes/item.routes';
 import budgetRoutes from './interfaces/http/routes/budget.routes';
 import currencyRoutes from './interfaces/http/routes/currency.routes';
+import { initSocket } from './infrastructure/websocket/socket.service';
 
 const app = express();
 app.use(express.json());
+
+const server = http.createServer(app);
+initSocket(server);
 
 connectMongo()
   .then(() => console.log('Conectado a MongoDB'))
@@ -26,6 +31,6 @@ app.get('/', (_req, res) => {
   res.send('API de Nidify');
 });
 
-app.listen(config.port, () => {
+server.listen(config.port, () => {
   console.log(`Servidor ejecutándose en el puerto ${config.port}`);
 });

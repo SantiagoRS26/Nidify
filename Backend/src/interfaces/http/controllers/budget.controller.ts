@@ -6,6 +6,7 @@ import {
 } from '../../../application/use-cases/update-budget-goal.usecase';
 import { BudgetGoalType } from '../../../domain/models/enums/budget-goal-type.enum';
 import { UpdateBudgetRequestDto } from '../dto/budget.dto';
+import { notifyHousehold } from '../../../infrastructure/websocket/socket.service';
 
 interface AuthRequest extends Request {
   userId: string;
@@ -49,6 +50,11 @@ export class BudgetController {
     if (!result) {
       return res.status(404).json({ error: 'Household not found' });
     }
+    notifyHousehold(householdId, 'budget:goal_updated', {
+      type,
+      amount: payload.amount,
+      targetDate: payload.targetDate ?? null,
+    });
     res.status(204).send();
   };
 }

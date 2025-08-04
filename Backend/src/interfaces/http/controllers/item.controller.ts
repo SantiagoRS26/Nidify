@@ -4,6 +4,7 @@ import { ListItemsUseCase } from '../../../application/use-cases/list-items.usec
 import { UpdateItemUseCase } from '../../../application/use-cases/update-item.usecase';
 import { DeleteItemUseCase } from '../../../application/use-cases/delete-item.usecase';
 import { CreateItemRequestDto, UpdateItemRequestDto } from '../dto/item.dto';
+import { notifyHousehold } from '../../../infrastructure/websocket/socket.service';
 
 interface AuthRequest extends Request {
   userId: string;
@@ -28,6 +29,7 @@ export class ItemController {
     const userId = (req as AuthRequest).userId;
     const payload = req.body as CreateItemRequestDto;
     const item = await this.createItem.execute(userId, householdId, payload);
+    notifyHousehold(householdId, 'item:created', item);
     res.status(201).json({ item });
   };
 
@@ -36,12 +38,20 @@ export class ItemController {
     const userId = (req as AuthRequest).userId;
     const payload = req.body as UpdateItemRequestDto;
     const item = await this.updateItem.execute(userId, itemId, payload);
+    if (!item) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+    notifyHousehold(item.householdId, 'item:updated', item);
     res.json({ item });
   };
 
   delete = async (req: Request, res: Response) => {
     const { itemId } = req.params as { itemId: string };
-    await this.deleteItem.execute(itemId);
+    const item = await this.deleteItem.execute(itemId);
+    if (!item) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+    notifyHousehold(item.householdId, 'item:deleted', { id: itemId });
     res.status(204).send();
   };
 }
