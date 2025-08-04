@@ -4,6 +4,7 @@ import { ItemPriority } from '../../domain/models/enums/item-priority.enum';
 import { ItemStatus } from '../../domain/models/enums/item-status.enum';
 import { ItemType } from '../../domain/models/enums/item-type.enum';
 import { PaymentSplit } from '../../domain/models/payment-split.model';
+import { calculatePaymentSplit } from '../../domain/services/payment-split.service';
 import { DomainEventBus } from '../../domain/events/domain-event-bus.interface';
 import { ItemUpdatedEvent } from '../../domain/events/item.events';
 
@@ -39,8 +40,11 @@ export class UpdateItemUseCase {
   ): Promise<Item | null> {
     const before = await this.itemRepo.findById(itemId);
     if (!before) return null;
+    const price = payload.price ?? before.price;
+    const split = payload.paymentSplit ?? before.paymentSplit;
     const update: Partial<Item> = {
       ...payload,
+      ...(split ? { paymentSplit: calculatePaymentSplit(price, split) } : {}),
       lastModifiedBy: userId,
       updatedAt: new Date(),
     };

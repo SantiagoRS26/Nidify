@@ -6,7 +6,7 @@ export interface PaymentAssignment {
   /** Explicit amount share */
   amount?: number;
   /** Denormalized calculated amount for quick reads */
-  calculatedAmount: number;
+  calculatedAmount?: number;
   /** Optional label for the contribution */
   label?: string;
 }
