@@ -17,7 +17,7 @@ export class LoginUserUseCase {
     if (!valid) {
       throw new Error('Credenciales inválidas');
     }
-    const token = this.jwtService.sign(user);
-    return { user, token };
+    const { accessToken, refreshToken } = this.jwtService.generateTokens(user);
+    return { user, accessToken, refreshToken };
   }
 }

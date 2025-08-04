@@ -8,6 +8,7 @@ import {
   RegisterRequestDto,
   LoginRequestDto,
   GoogleRequestDto,
+  RefreshRequestDto,
 } from '../dto/auth.dto';
 
 interface AuthRequest extends Request {
@@ -26,20 +27,32 @@ export class AuthController {
   register = async (req: Request, res: Response) => {
     const { fullName, email, password } = req.body as RegisterRequestDto;
     const user = await this.registerUser.execute(fullName, email, password);
-    const token = this.jwtService.sign(user);
-    res.json({ user, token });
+    const tokens = this.jwtService.generateTokens(user);
+    res.json({ user, ...tokens });
   };
 
   login = async (req: Request, res: Response) => {
     const { email, password } = req.body as LoginRequestDto;
-    const { user, token } = await this.loginUser.execute(email, password);
-    res.json({ user, token });
+    const { user, accessToken, refreshToken } = await this.loginUser.execute(
+      email,
+      password,
+    );
+    res.json({ user, accessToken, refreshToken });
   };
 
   google = async (req: Request, res: Response) => {
     const { idToken } = req.body as GoogleRequestDto;
-    const { user, token } = await this.googleAuth.execute(idToken);
-    res.json({ user, token });
+    const { user, accessToken, refreshToken } =
+      await this.googleAuth.execute(idToken);
+    res.json({ user, accessToken, refreshToken });
+  };
+
+  refresh = async (req: Request, res: Response) => {
+    const { refreshToken } = req.body as RefreshRequestDto;
+    const { userId } = this.jwtService.verifyRefresh(refreshToken);
+    const accessToken = this.jwtService.signAccess(userId);
+    const newRefreshToken = this.jwtService.signRefresh(userId);
+    res.json({ accessToken, refreshToken: newRefreshToken });
   };
 
   linkGoogleAccount = async (req: Request, res: Response) => {

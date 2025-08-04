@@ -11,7 +11,9 @@ export class GoogleAuthUseCase {
     private googleClient: OAuth2Client,
   ) {}
 
-  async execute(idToken: string): Promise<{ user: User; token: string }> {
+  async execute(
+    idToken: string,
+  ): Promise<{ user: User; accessToken: string; refreshToken: string }> {
     const ticket = await this.googleClient.verifyIdToken({ idToken });
     const payload = ticket.getPayload();
     if (!payload?.sub || !payload.email || !payload.name) {
@@ -41,7 +43,7 @@ export class GoogleAuthUseCase {
       });
       user = (await this.userRepository.findById(user.id))!;
     }
-    const token = this.jwtService.sign(user);
-    return { user, token };
+    const { accessToken, refreshToken } = this.jwtService.generateTokens(user);
+    return { user, accessToken, refreshToken };
   }
 }
