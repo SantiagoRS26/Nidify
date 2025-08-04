@@ -17,6 +17,14 @@ export class AcceptInvitationUseCase {
       throw new Error('Invitación inválida');
     }
 
+    if (invitation.expiresAt && invitation.expiresAt < new Date()) {
+      await this.invitationRepo.update(invitation.id, {
+        status: InvitationStatus.EXPIRED,
+        usageAttempts: invitation.usageAttempts + 1,
+      });
+      throw new Error('Invitación expirada');
+    }
+
     await this.invitationRepo.update(invitation.id, {
       status: InvitationStatus.ACCEPTED,
       usageAttempts: invitation.usageAttempts + 1,

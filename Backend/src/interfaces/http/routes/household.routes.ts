@@ -9,6 +9,8 @@ import { authMiddleware } from '../../middleware/auth.middleware';
 import { CreateHouseholdUseCase } from '../../../application/use-cases/create-household.usecase';
 import { InviteToHouseholdUseCase } from '../../../application/use-cases/invite-to-household.usecase';
 import { RevokeMembershipUseCase } from '../../../application/use-cases/revoke-membership.usecase';
+import { CancelInvitationUseCase } from '../../../application/use-cases/cancel-invitation.usecase';
+import { EmailService } from '../../../infrastructure/notifications/email.service';
 
 const router = Router();
 
@@ -17,6 +19,7 @@ const membershipRepo = new HouseholdMembershipRepository();
 const invitationRepo = new InvitationRepository();
 const userRepo = new UserRepository();
 const jwtService = new JwtService();
+const emailService = new EmailService();
 
 const createHousehold = new CreateHouseholdUseCase(
   householdRepo,
@@ -26,13 +29,20 @@ const inviteToHousehold = new InviteToHouseholdUseCase(
   membershipRepo,
   invitationRepo,
   userRepo,
+  emailService,
 );
 const revokeMembership = new RevokeMembershipUseCase(membershipRepo);
+const cancelInvitation = new CancelInvitationUseCase(
+  membershipRepo,
+  invitationRepo,
+  userRepo,
+);
 
 const controller = new HouseholdController(
   createHousehold,
   inviteToHousehold,
   revokeMembership,
+  cancelInvitation,
 );
 
 router.post('/', authMiddleware(jwtService), controller.create);
@@ -45,6 +55,11 @@ router.delete(
   '/:householdId/members/:memberId',
   authMiddleware(jwtService),
   controller.revokeMember,
+);
+router.delete(
+  '/:householdId/invitations/:invitationId',
+  authMiddleware(jwtService),
+  controller.cancelInvitation,
 );
 
 export default router;
