@@ -9,8 +9,11 @@ import itemRoutes from './interfaces/http/routes/item.routes';
 import budgetRoutes from './interfaces/http/routes/budget.routes';
 import currencyRoutes from './interfaces/http/routes/currency.routes';
 import changelogRoutes from './interfaces/http/routes/changelog.routes';
+import preferencesRoutes from './interfaces/http/routes/notification-preferences.routes';
+import alertRoutes from './interfaces/http/routes/alert.routes';
 import { initSocket } from './infrastructure/websocket/socket.service';
 import './infrastructure/events/changelog.subscriber';
+import './infrastructure/events/alerts.subscriber';
 
 const app = express();
 app.use(express.json());
@@ -28,6 +31,8 @@ app.use('/api/v1/invitations', invitationRoutes);
 app.use('/api/v1/households/:householdId/items', itemRoutes);
 app.use('/api/v1/households/:householdId/budget', budgetRoutes);
 app.use('/api/v1/households/:householdId/changelog', changelogRoutes);
+app.use('/api/v1/households/:householdId/preferences', preferencesRoutes);
+app.use('/api/v1/households/:householdId/alerts', alertRoutes);
 app.use('/api/v1/currency', currencyRoutes);
 
 app.get('/', (_req, res) => {
