@@ -9,7 +9,8 @@ export class CurrencyController {
   constructor(private convertCurrency: ConvertCurrencyUseCase) {}
 
   convert = async (req: Request, res: Response) => {
-    const { from, to, amount } = req.query as unknown as ConvertCurrencyRequestDto;
+    const { from, to, amount } =
+      req.query as unknown as ConvertCurrencyRequestDto;
     const payload: ConvertCurrencyPayload = {
       from: from.toUpperCase(),
       to: to.toUpperCase(),

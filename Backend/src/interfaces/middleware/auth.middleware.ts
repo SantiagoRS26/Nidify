@@ -20,7 +20,7 @@ export const authMiddleware =
       return;
     }
     try {
-      const payload = jwtService.verify(token);
+      const payload = jwtService.verifyAccess(token);
       (req as Request & { userId: string }).userId = payload.userId;
       next();
     } catch {
