@@ -13,6 +13,10 @@ export class InvitationRepository {
     }).lean()) as Invitation | null;
   }
 
+  async findById(id: string): Promise<Invitation | null> {
+    return (await InvitationModel.findById(id).lean()) as Invitation | null;
+  }
+
   async update(
     id: string,
     update: Partial<Invitation>,

@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto';
 import { InvitationRepository } from '../../infrastructure/persistence/repositories/invitation.repository';
 import { HouseholdMembershipRepository } from '../../infrastructure/persistence/repositories/household-membership.repository';
 import { UserRepository } from '../../infrastructure/persistence/repositories/user.repository';
+import { EmailService } from '../../infrastructure/notifications/email.service';
 import { MembershipRole } from '../../domain/models/enums/membership-role.enum';
 import { MembershipStatus } from '../../domain/models/enums/membership-status.enum';
 import { InvitationStatus } from '../../domain/models/enums/invitation-status.enum';
@@ -12,6 +13,7 @@ export class InviteToHouseholdUseCase {
     private membershipRepo: HouseholdMembershipRepository,
     private invitationRepo: InvitationRepository,
     private userRepo: UserRepository,
+    private emailService: EmailService,
   ) {}
 
   async execute(
@@ -33,15 +35,19 @@ export class InviteToHouseholdUseCase {
 
     const token = randomUUID();
     const now = new Date();
+    const expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
     const invitation = await this.invitationRepo.create({
       householdId,
       email,
       token,
       createdAt: now,
+      expiresAt,
       status: InvitationStatus.PENDING,
       invitedBy: inviterId,
       usageAttempts: 0,
     });
+
+    await this.emailService.sendInvitation(email, token);
 
     const existingUser = await this.userRepo.findByEmail(email);
     if (existingUser) {

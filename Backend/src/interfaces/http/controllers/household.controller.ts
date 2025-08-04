@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { CreateHouseholdUseCase } from '../../../application/use-cases/create-household.usecase';
 import { InviteToHouseholdUseCase } from '../../../application/use-cases/invite-to-household.usecase';
 import { RevokeMembershipUseCase } from '../../../application/use-cases/revoke-membership.usecase';
+import { CancelInvitationUseCase } from '../../../application/use-cases/cancel-invitation.usecase';
 import {
   CreateHouseholdRequestDto,
   InviteRequestDto,
@@ -16,6 +17,7 @@ export class HouseholdController {
     private createHousehold: CreateHouseholdUseCase,
     private inviteToHousehold: InviteToHouseholdUseCase,
     private revokeMembership: RevokeMembershipUseCase,
+    private cancelInvitationUseCase: CancelInvitationUseCase,
   ) {}
 
   create = async (req: Request, res: Response) => {
@@ -48,6 +50,20 @@ export class HouseholdController {
     };
     const userId = (req as AuthRequest).userId;
     await this.revokeMembership.execute(userId, householdId, memberId);
+    res.status(204).send();
+  };
+
+  cancelInvitation = async (req: Request, res: Response) => {
+    const { householdId, invitationId } = req.params as {
+      householdId: string;
+      invitationId: string;
+    };
+    const userId = (req as AuthRequest).userId;
+    await this.cancelInvitationUseCase.execute(
+      userId,
+      householdId,
+      invitationId,
+    );
     res.status(204).send();
   };
 }
