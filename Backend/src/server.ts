@@ -5,6 +5,7 @@ import authRoutes from './interfaces/http/routes/auth.routes';
 import householdRoutes from './interfaces/http/routes/household.routes';
 import invitationRoutes from './interfaces/http/routes/invitation.routes';
 import itemRoutes from './interfaces/http/routes/item.routes';
+import budgetRoutes from './interfaces/http/routes/budget.routes';
 
 const app = express();
 app.use(express.json());
@@ -17,6 +18,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/households', householdRoutes);
 app.use('/api/v1/invitations', invitationRoutes);
 app.use('/api/v1/households/:householdId/items', itemRoutes);
+app.use('/api/v1/households/:householdId/budget', budgetRoutes);
 
 app.get('/', (_req, res) => {
   res.send('API de Nidify');
