@@ -4,6 +4,7 @@ import { ItemPriority } from '../../domain/models/enums/item-priority.enum';
 import { ItemStatus } from '../../domain/models/enums/item-status.enum';
 import { ItemType } from '../../domain/models/enums/item-type.enum';
 import { PaymentSplit } from '../../domain/models/payment-split.model';
+import { calculatePaymentSplit } from '../../domain/services/payment-split.service';
 import { DomainEventBus } from '../../domain/events/domain-event-bus.interface';
 import { ItemCreatedEvent } from '../../domain/events/item.events';
 
@@ -38,9 +39,13 @@ export class CreateItemUseCase {
     payload: CreateItemPayload,
   ): Promise<Item> {
     const now = new Date();
+    const paymentSplit = payload.paymentSplit
+      ? calculatePaymentSplit(payload.price, payload.paymentSplit)
+      : undefined;
     const item: Omit<Item, 'id'> = {
       householdId,
       ...payload,
+      ...(paymentSplit ? { paymentSplit } : {}),
       createdAt: now,
       updatedAt: now,
       lastModifiedBy: userId,

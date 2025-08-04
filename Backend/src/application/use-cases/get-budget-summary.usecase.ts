@@ -40,9 +40,9 @@ export class GetBudgetSummaryUseCase {
           }
           const totals = memberTotalsMap[assignment.userId]!;
           if (item.type === ItemType.ONE_TIME) {
-            totals.initial += assignment.calculatedAmount;
+            totals.initial += assignment.calculatedAmount ?? 0;
           } else if (item.type === ItemType.RECURRING) {
-            totals.monthly += assignment.calculatedAmount;
+            totals.monthly += assignment.calculatedAmount ?? 0;
           }
         }
       }
