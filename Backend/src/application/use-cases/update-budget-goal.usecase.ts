@@ -2,6 +2,8 @@ import { BudgetGoalType } from '../../domain/models/enums/budget-goal-type.enum'
 import { Household } from '../../domain/models/household.model';
 import { BudgetChangeRepository } from '../../infrastructure/persistence/repositories/budget-change.repository';
 import { HouseholdRepository } from '../../infrastructure/persistence/repositories/household.repository';
+import { DomainEventBus } from '../../domain/events/domain-event-bus.interface';
+import { BudgetGoalUpdatedEvent } from '../../domain/events/budget.events';
 
 export interface UpdateBudgetGoalPayload {
   amount: number;
@@ -13,6 +15,7 @@ export class UpdateBudgetGoalUseCase {
   constructor(
     private householdRepo: HouseholdRepository,
     private changeRepo: BudgetChangeRepository,
+    private eventBus: DomainEventBus,
   ) {}
 
   async execute(
@@ -42,6 +45,7 @@ export class UpdateBudgetGoalUseCase {
 
     const updated = await this.householdRepo.update(householdId, update);
 
+    const timestamp = new Date();
     await this.changeRepo.create({
       householdId,
       type,
@@ -49,9 +53,20 @@ export class UpdateBudgetGoalUseCase {
       newAmount: payload.amount,
       currency: household.baseCurrency,
       userId,
-      timestamp: new Date(),
+      timestamp,
       ...(payload.reason ? { reason: payload.reason } : {}),
     });
+
+    const event: BudgetGoalUpdatedEvent = {
+      type: 'BudgetGoalUpdated',
+      occurredOn: timestamp,
+      householdId,
+      userId,
+      goalType: type,
+      previousAmount,
+      newAmount: payload.amount,
+    };
+    await this.eventBus.publish(event);
 
     return updated;
   }

@@ -4,6 +4,8 @@ import { ItemPriority } from '../../domain/models/enums/item-priority.enum';
 import { ItemStatus } from '../../domain/models/enums/item-status.enum';
 import { ItemType } from '../../domain/models/enums/item-type.enum';
 import { PaymentSplit } from '../../domain/models/payment-split.model';
+import { DomainEventBus } from '../../domain/events/domain-event-bus.interface';
+import { ItemUpdatedEvent } from '../../domain/events/item.events';
 
 export interface UpdateItemPayload {
   name?: string;
@@ -25,18 +27,38 @@ export interface UpdateItemPayload {
 }
 
 export class UpdateItemUseCase {
-  constructor(private itemRepo: ItemRepository) {}
+  constructor(
+    private itemRepo: ItemRepository,
+    private eventBus: DomainEventBus,
+  ) {}
 
   async execute(
     userId: string,
     itemId: string,
     payload: UpdateItemPayload,
   ): Promise<Item | null> {
+    const before = await this.itemRepo.findById(itemId);
+    if (!before) return null;
     const update: Partial<Item> = {
       ...payload,
       lastModifiedBy: userId,
       updatedAt: new Date(),
     };
-    return this.itemRepo.update(itemId, update);
+    const updated = await this.itemRepo.update(itemId, update);
+    if (updated) {
+      const event: ItemUpdatedEvent = {
+        type: 'ItemUpdated',
+        occurredOn: update.updatedAt as Date,
+        householdId: updated.householdId,
+        before,
+        after: updated,
+        userId,
+        ...(payload.lastModifiedByName
+          ? { userName: payload.lastModifiedByName }
+          : {}),
+      };
+      await this.eventBus.publish(event);
+    }
+    return updated;
   }
 }
