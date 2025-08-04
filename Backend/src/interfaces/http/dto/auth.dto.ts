@@ -1,14 +1,19 @@
-export interface RegisterRequestDto {
-  fullName: string;
-  email: string;
-  password: string;
-}
+import { z } from 'zod';
 
-export interface LoginRequestDto {
-  email: string;
-  password: string;
-}
+export const registerSchema = z.object({
+  fullName: z.string().min(1),
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+export type RegisterRequestDto = z.infer<typeof registerSchema>;
 
-export interface GoogleRequestDto {
-  idToken: string;
-}
+export const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1),
+});
+export type LoginRequestDto = z.infer<typeof loginSchema>;
+
+export const googleSchema = z.object({
+  idToken: z.string().min(1),
+});
+export type GoogleRequestDto = z.infer<typeof googleSchema>;
