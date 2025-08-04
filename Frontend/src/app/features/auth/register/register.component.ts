@@ -11,7 +11,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-import { AuthService } from '../auth.service';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -39,7 +39,7 @@ export class RegisterComponent {
     }
     const { name, email, password } = this.form.getRawValue();
     this.authService.register(name, email, password).subscribe(() => {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/home']);
     });
   }
 }
