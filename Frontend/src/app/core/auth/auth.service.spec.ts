@@ -7,6 +7,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { AuthService } from './auth.service';
 
+const API_URL = (import.meta as any).env['NG_APP_API_URL'] as string;
+
 describe('AuthService', () => {
   let service: AuthService;
   let httpMock: HttpTestingController;
@@ -26,7 +28,7 @@ describe('AuthService', () => {
 
   it('stores tokens on login', () => {
     service.login('test@example.com', '123456').subscribe();
-    const req = httpMock.expectOne('/auth/login');
+    const req = httpMock.expectOne(`${API_URL}/auth/login`);
     req.flush({
       user: {
         id: '1',
