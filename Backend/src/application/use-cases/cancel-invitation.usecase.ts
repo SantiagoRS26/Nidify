@@ -4,6 +4,8 @@ import { UserRepository } from '../../infrastructure/persistence/repositories/us
 import { InvitationStatus } from '../../domain/models/enums/invitation-status.enum';
 import { MembershipRole } from '../../domain/models/enums/membership-role.enum';
 import { MembershipStatus } from '../../domain/models/enums/membership-status.enum';
+import { UnauthorizedError } from '../../domain/errors/unauthorized.error';
+import { NotFoundError } from '../../domain/errors/not-found.error';
 
 export class CancelInvitationUseCase {
   constructor(
@@ -26,12 +28,12 @@ export class CancelInvitationUseCase {
       inviter.role !== MembershipRole.ADMIN ||
       inviter.status !== MembershipStatus.ACTIVE
     ) {
-      throw new Error('No autorizado');
+      throw new UnauthorizedError('No autorizado');
     }
 
     const invitation = await this.invitationRepo.findById(invitationId);
     if (!invitation || invitation.householdId !== householdId) {
-      throw new Error('Invitación no encontrada');
+      throw new NotFoundError('Invitación no encontrada');
     }
 
     if (invitation.status !== InvitationStatus.PENDING) {

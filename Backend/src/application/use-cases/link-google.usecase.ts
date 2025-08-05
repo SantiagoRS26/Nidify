@@ -1,6 +1,8 @@
 import { OAuth2Client } from 'google-auth-library';
 import { UserRepository } from '../../infrastructure/persistence/repositories/user.repository';
 import { User } from '../../domain/models/user.model';
+import { UnauthorizedError } from '../../domain/errors/unauthorized.error';
+import { NotFoundError } from '../../domain/errors/not-found.error';
 
 export class LinkGoogleUseCase {
   constructor(
@@ -12,12 +14,12 @@ export class LinkGoogleUseCase {
     const ticket = await this.googleClient.verifyIdToken({ idToken });
     const payload = ticket.getPayload();
     if (!payload?.sub) {
-      throw new Error('Token de Google inválido');
+      throw new UnauthorizedError('Token de Google inválido');
     }
     const externalId = payload.sub;
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error('Usuario no encontrado');
+      throw new NotFoundError('Usuario no encontrado');
     }
     if (user.oauthProviders.some((p) => p.provider === 'google')) {
       return user;

@@ -7,6 +7,7 @@ import { MembershipRole } from '../../domain/models/enums/membership-role.enum';
 import { MembershipStatus } from '../../domain/models/enums/membership-status.enum';
 import { InvitationStatus } from '../../domain/models/enums/invitation-status.enum';
 import { Invitation } from '../../domain/models/invitation.model';
+import { UnauthorizedError } from '../../domain/errors/unauthorized.error';
 
 export class InviteToHouseholdUseCase {
   constructor(
@@ -30,7 +31,7 @@ export class InviteToHouseholdUseCase {
       inviter.role !== MembershipRole.ADMIN ||
       inviter.status !== MembershipStatus.ACTIVE
     ) {
-      throw new Error('No autorizado');
+      throw new UnauthorizedError('No autorizado');
     }
 
     const token = randomUUID();
