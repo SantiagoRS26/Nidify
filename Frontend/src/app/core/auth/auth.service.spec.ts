@@ -7,7 +7,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { AuthService } from './auth.service';
 
-const API_URL = (import.meta as any).env['NG_APP_API_URL'] as string;
+const API_URL = import.meta.env.NG_APP_API_URL;
 
 describe('AuthService', () => {
   let service: AuthService;

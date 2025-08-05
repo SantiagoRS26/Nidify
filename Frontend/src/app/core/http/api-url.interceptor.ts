@@ -1,6 +1,6 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
-const apiUrl = (import.meta as any).env['NG_APP_API_URL'] ?? '';
+const apiUrl = import.meta.env.NG_APP_API_URL ?? '';
 
 export const apiUrlInterceptor: HttpInterceptorFn = (req, next) => {
   if (!req.url.startsWith('http')) {
