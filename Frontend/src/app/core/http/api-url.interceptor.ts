@@ -1,10 +1,9 @@
-import { HttpInterceptorFn } from '@angular/common/http';
-
-const apiUrl = import.meta.env.NG_APP_API_URL ?? '';
+import { HttpInterceptorFn } from "@angular/common/http";
+import { environment } from "../../../environments/environment";
 
 export const apiUrlInterceptor: HttpInterceptorFn = (req, next) => {
-  if (!req.url.startsWith('http')) {
-    req = req.clone({ url: `${apiUrl}${req.url}` });
+  if (!req.url.startsWith("http")) {
+    req = req.clone({ url: `${environment.apiUrl}${req.url}` });
   }
   return next(req);
 };
