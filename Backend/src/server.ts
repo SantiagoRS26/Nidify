@@ -14,6 +14,7 @@ import alertRoutes from './interfaces/http/routes/alert.routes';
 import { initSocket } from './infrastructure/websocket/socket.service';
 import './infrastructure/events/changelog.subscriber';
 import './infrastructure/events/alerts.subscriber';
+import { errorHandler } from './interfaces/http/middleware/error-handler.middleware';
 
 const app = express();
 app.use(express.json());
@@ -38,6 +39,8 @@ app.use('/api/v1/currency', currencyRoutes);
 app.get('/', (_req, res) => {
   res.send('API de Nidify');
 });
+
+app.use(errorHandler);
 
 server.listen(config.port, () => {
   console.log(`Servidor ejecutándose en el puerto ${config.port}`);

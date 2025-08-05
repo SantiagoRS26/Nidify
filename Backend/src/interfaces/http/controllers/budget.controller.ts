@@ -7,6 +7,7 @@ import {
 import { BudgetGoalType } from '../../../domain/models/enums/budget-goal-type.enum';
 import { UpdateBudgetRequestDto } from '../dto/budget.dto';
 import { notifyHousehold } from '../../../infrastructure/websocket/socket.service';
+import { NotFoundError } from '../../../domain/errors/not-found.error';
 
 interface AuthRequest extends Request {
   userId: string;
@@ -22,7 +23,7 @@ export class BudgetController {
     const { householdId } = req.params as { householdId: string };
     const summary = await this.getSummary.execute(householdId);
     if (!summary) {
-      return res.status(404).json({ error: 'Household not found' });
+      throw new NotFoundError('Household not found');
     }
     res.json({ summary });
   };
@@ -48,7 +49,7 @@ export class BudgetController {
       updatePayload,
     );
     if (!result) {
-      return res.status(404).json({ error: 'Household not found' });
+      throw new NotFoundError('Household not found');
     }
     notifyHousehold(householdId, 'budget:goal_updated', {
       type,
