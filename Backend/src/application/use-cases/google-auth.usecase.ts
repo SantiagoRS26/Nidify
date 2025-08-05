@@ -3,6 +3,7 @@ import { UserRepository } from '../../infrastructure/persistence/repositories/us
 import { JwtService } from '../../infrastructure/auth/jwt.service';
 import { User } from '../../domain/models/user.model';
 import { UserStatus } from '../../domain/models/enums/user-status.enum';
+import { UnauthorizedError } from '../../domain/errors/unauthorized.error';
 
 export class GoogleAuthUseCase {
   constructor(
@@ -17,7 +18,7 @@ export class GoogleAuthUseCase {
     const ticket = await this.googleClient.verifyIdToken({ idToken });
     const payload = ticket.getPayload();
     if (!payload?.sub || !payload.email || !payload.name) {
-      throw new Error('Token de Google inválido');
+      throw new UnauthorizedError('Token de Google inválido');
     }
     const externalId = payload.sub;
     const email = payload.email;

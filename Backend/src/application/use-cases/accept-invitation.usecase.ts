@@ -4,6 +4,8 @@ import { InvitationStatus } from '../../domain/models/enums/invitation-status.en
 import { MembershipStatus } from '../../domain/models/enums/membership-status.enum';
 import { MembershipRole } from '../../domain/models/enums/membership-role.enum';
 import { HouseholdMembership } from '../../domain/models/household-membership.model';
+import { BadRequestError } from '../../domain/errors/bad-request.error';
+import { ConflictError } from '../../domain/errors/conflict.error';
 
 export class AcceptInvitationUseCase {
   constructor(
@@ -14,7 +16,7 @@ export class AcceptInvitationUseCase {
   async execute(token: string, userId: string): Promise<HouseholdMembership> {
     const invitation = await this.invitationRepo.findByToken(token);
     if (!invitation || invitation.status !== InvitationStatus.PENDING) {
-      throw new Error('Invitación inválida');
+      throw new BadRequestError('Invitación inválida');
     }
 
     if (invitation.expiresAt && invitation.expiresAt < new Date()) {
@@ -22,7 +24,7 @@ export class AcceptInvitationUseCase {
         status: InvitationStatus.EXPIRED,
         usageAttempts: invitation.usageAttempts + 1,
       });
-      throw new Error('Invitación expirada');
+      throw new BadRequestError('Invitación expirada');
     }
 
     await this.invitationRepo.update(invitation.id, {
@@ -40,7 +42,7 @@ export class AcceptInvitationUseCase {
         MembershipStatus.ACTIVE,
       );
       if (!updated) {
-        throw new Error('No se pudo actualizar la membresía');
+        throw new ConflictError('No se pudo actualizar la membresía');
       }
       return updated;
     }

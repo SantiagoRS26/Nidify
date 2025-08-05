@@ -11,6 +11,7 @@ import {
 import { DeleteItemUseCase } from '../../../application/use-cases/delete-item.usecase';
 import { CreateItemRequestDto, UpdateItemRequestDto } from '../dto/item.dto';
 import { notifyHousehold } from '../../../infrastructure/websocket/socket.service';
+import { NotFoundError } from '../../../domain/errors/not-found.error';
 
 interface AuthRequest extends Request {
   userId: string;
@@ -53,7 +54,7 @@ export class ItemController {
       payload as UpdateItemPayload,
     );
     if (!item) {
-      return res.status(404).json({ error: 'Item not found' });
+      throw new NotFoundError('Item not found');
     }
     notifyHousehold(item.householdId, 'item:updated', item);
     res.json({ item });
@@ -64,7 +65,7 @@ export class ItemController {
     const userId = (req as AuthRequest).userId;
     const item = await this.deleteItem.execute(userId, itemId);
     if (!item) {
-      return res.status(404).json({ error: 'Item not found' });
+      throw new NotFoundError('Item not found');
     }
     notifyHousehold(item.householdId, 'item:deleted', { id: itemId });
     res.status(204).send();

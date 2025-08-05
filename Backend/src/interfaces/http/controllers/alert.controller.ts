@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { ListAlertsUseCase } from '../../../application/use-cases/list-alerts.usecase';
 import { MarkAlertReadUseCase } from '../../../application/use-cases/mark-alert-read.usecase';
+import { NotFoundError } from '../../../domain/errors/not-found.error';
 
 interface AuthRequest extends Request {
   userId: string;
@@ -24,7 +25,7 @@ export class AlertController {
     const userId = (req as AuthRequest).userId;
     const alert = await this.markAlertReadUseCase.execute(alertId, userId);
     if (!alert) {
-      return res.status(404).json({ error: 'Alert not found' });
+      throw new NotFoundError('Alert not found');
     }
     res.json({ alert });
   };
