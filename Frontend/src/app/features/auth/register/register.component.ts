@@ -10,8 +10,10 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { AuthService } from '../../../core/auth/auth.service';
+import { ProblemDetail } from '../../../core/http/problem-detail.model';
 
 @Component({
   selector: 'app-register',
@@ -26,6 +28,8 @@ export class RegisterComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
+  errorMessage: string | null = null;
+
   readonly form = this.fb.nonNullable.group({
     name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
@@ -38,8 +42,15 @@ export class RegisterComponent {
       return;
     }
     const { name, email, password } = this.form.getRawValue();
-    this.authService.register(name, email, password).subscribe(() => {
-      this.router.navigate(['/home']);
+    this.errorMessage = null;
+    this.authService.register(name, email, password).subscribe({
+      next: () => {
+        this.router.navigate(['/home']);
+      },
+      error: (err: HttpErrorResponse) => {
+        const problem = err.error as ProblemDetail;
+        this.errorMessage = problem.detail || 'Unexpected error';
+      },
     });
   }
 }

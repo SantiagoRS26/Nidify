@@ -6,5 +6,7 @@
   <input id="password" type="password" formControlName="password" />
 
   <button type="submit">Ingresar</button>
+
+  <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
 </form>
 <a routerLink="/register">Crear cuenta</a>

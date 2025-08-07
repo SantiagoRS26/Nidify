@@ -9,5 +9,7 @@
   <input id="password" type="password" formControlName="password" />
 
   <button type="submit">Registrarse</button>
+
+  <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
 </form>
 <a routerLink="/login">Ya tengo cuenta</a>
