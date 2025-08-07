@@ -1,1 +1,213 @@
-/* You can add global styles to this file, and also import other style files */
+/* Design tokens */
+:root {
+  /* Neutrals */
+  --base-00: #0f172a; /* text strong */
+  --base-20: #334155;
+  --base-40: #64748b;
+  --base-60: #94a3b8; /* text secondary / borders subtle */
+  --base-80: #eef2f7; /* surfaces elevated subtle */
+  --base-90: #f8fafc; /* background */
+  --white: #ffffff;
+
+  /* Accents */
+  --accent-primary: #14b8a6; /* teal */
+  --accent-success: #10b981; /* green */
+  --accent-warning: #f59e0b; /* amber */
+  --accent-attention: #fb7185; /* coral/rose */
+  --accent-info: #8b5cf6; /* violet */
+
+  /* Shadows, radii, spacing */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 6px 20px rgba(15, 23, 42, 0.08);
+}
+
+/* Base and typography */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+    Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+  color: var(--base-20);
+  background: radial-gradient(1200px 800px at 80% -10%, rgba(20, 184, 166, 0.08), rgba(255, 255, 255, 0))
+      no-repeat,
+    var(--base-90);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3 {
+  font-family: 'Poppins', 'Inter', ui-sans-serif, system-ui, -apple-system,
+    Segoe UI, Roboto, Helvetica, Arial;
+  color: var(--base-00);
+  margin: 0 0 var(--space-4);
+}
+
+h1 {
+  font-weight: 700;
+  font-size: 28px;
+}
+
+.text-muted {
+  color: var(--base-60);
+}
+
+/* Layout utilities */
+.container {
+  width: min(100%, 1000px);
+  margin-inline: auto;
+  padding: 0 var(--space-4);
+}
+
+.card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* Controls */
+label {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: var(--base-40);
+}
+
+input[type='text'],
+input[type='email'],
+input[type='password'] {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--base-80);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  color: var(--base-20);
+  transition: box-shadow 160ms ease, border-color 160ms ease;
+}
+
+input::placeholder {
+  color: var(--base-60);
+}
+
+input:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent-primary) 30%, var(--base-80));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-primary) 16%, transparent);
+}
+
+.field-error {
+  color: var(--accent-attention);
+  font-size: 12px;
+}
+
+.alert-error {
+  background: color-mix(in srgb, var(--accent-attention) 12%, white);
+  border: 1px solid color-mix(in srgb, var(--accent-attention) 40%, white);
+  color: #b91c1c;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--base-80);
+  color: var(--base-20);
+  cursor: pointer;
+  transition: transform 120ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent-primary) 92%, white), var(--accent-primary));
+  color: white;
+  box-shadow: 0 8px 16px rgba(20, 184, 166, 0.25);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.03);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.link {
+  color: var(--accent-info);
+  text-decoration: none;
+}
+.link:hover {
+  text-decoration: underline;
+}
+
+/* Auth layout */
+.auth-layout {
+  min-height: 100dvh;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  padding: var(--space-8) var(--space-4);
+}
+
+.auth-card {
+  width: min(100%, 420px);
+  padding: var(--space-6);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: var(--base-00);
+}
+
+.brand-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent-primary), color-mix(in srgb, var(--accent-info) 36%, var(--accent-primary)));
+  box-shadow: var(--shadow-sm);
+}
+
+.subtitle {
+  margin-top: -8px;
+  margin-bottom: var(--space-6);
+  color: var(--base-60);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+.form-actions {
+  margin-top: var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+}
