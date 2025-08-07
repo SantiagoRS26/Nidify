@@ -10,8 +10,10 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { AuthService } from '../../../core/auth/auth.service';
+import { ProblemDetail } from '../../../core/http/problem-detail.model';
 
 @Component({
   selector: 'app-login',
@@ -26,6 +28,8 @@ export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
+  errorMessage: string | null = null;
+
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
@@ -37,8 +41,15 @@ export class LoginComponent {
       return;
     }
     const { email, password } = this.form.getRawValue();
-    this.authService.login(email, password).subscribe(() => {
-      this.router.navigate(['/home']);
+    this.errorMessage = null;
+    this.authService.login(email, password).subscribe({
+      next: () => {
+        this.router.navigate(['/home']);
+      },
+      error: (err: HttpErrorResponse) => {
+        const problem = err.error as ProblemDetail;
+        this.errorMessage = problem.detail || 'Unexpected error';
+      },
     });
   }
 }

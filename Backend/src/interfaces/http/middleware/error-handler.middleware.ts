@@ -6,6 +6,29 @@ import { ConflictError } from '../../../domain/errors/conflict.error';
 import { BadRequestError } from '../../../domain/errors/bad-request.error';
 import { InvalidPaymentSplitError } from '../../../domain/errors/invalid-payment-split.error';
 import { ExternalServiceError } from '../../../domain/errors/external-service.error';
+import { ProblemDetailsDto } from '../dto/problem-details.dto';
+
+const TITLES: Record<number, string> = {
+  400: 'Bad Request',
+  401: 'Unauthorized',
+  404: 'Not Found',
+  409: 'Conflict',
+  502: 'Bad Gateway',
+  500: 'Internal Server Error',
+};
+
+function createProblem(status: number, detail: string): ProblemDetailsDto {
+  const problem: ProblemDetailsDto = {
+    type: 'about:blank',
+    status,
+    detail,
+  };
+  const title = TITLES[status];
+  if (title) {
+    problem.title = title;
+  }
+  return problem;
+}
 
 export function errorHandler(
   err: unknown,
@@ -16,26 +39,33 @@ export function errorHandler(
 ) {
   if (err instanceof ZodError) {
     const message = err.errors.map((e) => e.message).join(', ');
-    return res.status(400).json({ error: message });
+    const problem = createProblem(400, message);
+    return res.status(400).type('application/problem+json').json(problem);
   }
   if (
     err instanceof BadRequestError ||
     err instanceof InvalidPaymentSplitError
   ) {
-    return res.status(400).json({ error: err.message });
+    const problem = createProblem(400, err.message);
+    return res.status(400).type('application/problem+json').json(problem);
   }
   if (err instanceof UnauthorizedError) {
-    return res.status(401).json({ error: err.message });
+    const problem = createProblem(401, err.message);
+    return res.status(401).type('application/problem+json').json(problem);
   }
   if (err instanceof NotFoundError) {
-    return res.status(404).json({ error: err.message });
+    const problem = createProblem(404, err.message);
+    return res.status(404).type('application/problem+json').json(problem);
   }
   if (err instanceof ConflictError) {
-    return res.status(409).json({ error: err.message });
+    const problem = createProblem(409, err.message);
+    return res.status(409).type('application/problem+json').json(problem);
   }
   if (err instanceof ExternalServiceError) {
-    return res.status(502).json({ error: err.message });
+    const problem = createProblem(502, err.message);
+    return res.status(502).type('application/problem+json').json(problem);
   }
   console.error(err);
-  return res.status(500).json({ error: 'Internal server error' });
+  const problem = createProblem(500, 'Internal server error');
+  return res.status(500).type('application/problem+json').json(problem);
 }
