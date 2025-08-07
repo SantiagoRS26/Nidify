@@ -1,0 +1,5 @@
+<div *ngIf="problem$ | async as problem" class="modal" role="dialog" aria-modal="true">
+  <div class="modal-content">
+    <p>{{ problem.detail }}</p>
+  </div>
+</div>

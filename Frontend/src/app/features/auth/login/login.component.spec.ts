@@ -1,24 +1,35 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { TestBed } from '@angular/core/testing';
+import { Subject } from 'rxjs';
 
+import { ProblemHandlerService } from '../../../core/services/problem-handler.service';
+import { ProblemDetails } from '../../../shared/models/problem-details.model';
 import { LoginComponent } from './login.component';
 
+class ProblemHandlerStub {
+  private readonly subject = new Subject<ProblemDetails>();
+  readonly problems$ = this.subject.asObservable();
+  handle(problem: ProblemDetails): void {
+    this.subject.next(problem);
+  }
+}
+
 describe('LoginComponent', () => {
-  let component: LoginComponent;
-  let fixture: ComponentFixture<LoginComponent>;
+  let handler: ProblemHandlerStub;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [LoginComponent, HttpClientTestingModule, RouterTestingModule],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(LoginComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  beforeEach(() => {
+    handler = new ProblemHandlerStub();
+    TestBed.configureTestingModule({
+      imports: [LoginComponent],
+      providers: [{ provide: ProblemHandlerService, useValue: handler }],
+    });
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should display error from handler', () => {
+    const fixture = TestBed.createComponent(LoginComponent);
+    fixture.detectChanges();
+    handler.handle({ status: 400, detail: 'Invalid credentials' });
+    fixture.detectChanges();
+    const alert: HTMLElement | null = fixture.nativeElement.querySelector('.alert-error');
+    expect(alert?.textContent).toContain('Invalid credentials');
   });
 });
