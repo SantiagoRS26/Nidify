@@ -11,6 +11,7 @@ import {
   LoginRequestDto,
   GoogleRequestDto,
 } from '../dto/auth.dto';
+import { toPublicUser } from '../dto/user.dto';
 
 interface AuthRequest extends Request {
   userId: string;
@@ -40,7 +41,7 @@ export class AuthController {
       user.id,
     );
     res.cookie('refreshToken', refreshToken, this.cookieOptions);
-    res.json({ user, accessToken });
+    res.json({ user: toPublicUser(user), accessToken });
   };
 
   login = async (req: Request, res: Response) => {
@@ -50,7 +51,7 @@ export class AuthController {
       user.id,
     );
     res.cookie('refreshToken', refreshToken, this.cookieOptions);
-    res.json({ user, accessToken });
+    res.json({ user: toPublicUser(user), accessToken });
   };
 
   google = async (req: Request, res: Response) => {
@@ -60,7 +61,7 @@ export class AuthController {
       user.id,
     );
     res.cookie('refreshToken', refreshToken, this.cookieOptions);
-    res.json({ user, accessToken });
+    res.json({ user: toPublicUser(user), accessToken });
   };
 
   refresh = async (req: Request, res: Response) => {
@@ -98,6 +99,6 @@ export class AuthController {
       (req as AuthRequest).userId,
       idToken,
     );
-    res.json({ user });
+    res.json({ user: toPublicUser(user) });
   };
 }
