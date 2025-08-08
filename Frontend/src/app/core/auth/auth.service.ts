@@ -121,7 +121,11 @@ export class AuthService {
   }
 
   private handleActivity(): void {
-    if (this.isTokenExpired(this.accessToken, 120_000) && !this.refreshing) {
+    if (
+      this.accessToken &&
+      this.isTokenExpired(this.accessToken, 120_000) &&
+      !this.refreshing
+    ) {
       this.refreshing = true;
       this.refreshTokens()
         .pipe(finalize(() => (this.refreshing = false)))

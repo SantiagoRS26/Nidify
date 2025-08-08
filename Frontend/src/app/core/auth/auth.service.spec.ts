@@ -42,4 +42,16 @@ describe('AuthService', () => {
     expect(localStorage.getItem('user')).toContain('Test User');
     expect(localStorage.getItem('accessToken')).toBeNull();
   });
+
+  it('does not refresh token on activity when unauthenticated', () => {
+    document.dispatchEvent(new Event('click'));
+    httpMock.expectNone('/auth/refresh');
+  });
+
+  it('refreshes token on activity when expired', () => {
+    (service as any).accessToken = 'x.eyJleHAiOjB9.y';
+    document.dispatchEvent(new Event('click'));
+    const refresh = httpMock.expectOne('/auth/refresh');
+    refresh.flush({ accessToken: 'newAccess' });
+  });
 });
