@@ -8,7 +8,6 @@ import {
   RegisterRequestDto,
   LoginRequestDto,
   GoogleRequestDto,
-  RefreshRequestDto,
 } from '../dto/auth.dto';
 
 interface AuthRequest extends Request {
@@ -24,11 +23,20 @@ export class AuthController {
     private jwtService: JwtService,
   ) {}
 
+  private readonly cookieOptions = {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict' as const,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: '/api/v1/auth',
+  };
+
   register = async (req: Request, res: Response) => {
     const { fullName, email, password } = req.body as RegisterRequestDto;
     const user = await this.registerUser.execute(fullName, email, password);
-    const tokens = this.jwtService.generateTokens(user);
-    res.json({ user, ...tokens });
+    const { accessToken, refreshToken } = this.jwtService.generateTokens(user);
+    res.cookie('refreshToken', refreshToken, this.cookieOptions);
+    res.json({ user, accessToken });
   };
 
   login = async (req: Request, res: Response) => {
@@ -37,22 +45,30 @@ export class AuthController {
       email,
       password,
     );
-    res.json({ user, accessToken, refreshToken });
+    res.cookie('refreshToken', refreshToken, this.cookieOptions);
+    res.json({ user, accessToken });
   };
 
   google = async (req: Request, res: Response) => {
     const { idToken } = req.body as GoogleRequestDto;
     const { user, accessToken, refreshToken } =
       await this.googleAuth.execute(idToken);
-    res.json({ user, accessToken, refreshToken });
+    res.cookie('refreshToken', refreshToken, this.cookieOptions);
+    res.json({ user, accessToken });
   };
 
   refresh = async (req: Request, res: Response) => {
-    const { refreshToken } = req.body as RefreshRequestDto;
+    const refreshToken = req.cookies['refreshToken'] as string;
     const { userId } = this.jwtService.verifyRefresh(refreshToken);
     const accessToken = this.jwtService.signAccess(userId);
     const newRefreshToken = this.jwtService.signRefresh(userId);
-    res.json({ accessToken, refreshToken: newRefreshToken });
+    res.cookie('refreshToken', newRefreshToken, this.cookieOptions);
+    res.json({ accessToken });
+  };
+
+  logout = async (_req: Request, res: Response) => {
+    res.clearCookie('refreshToken', this.cookieOptions);
+    res.status(204).send();
   };
 
   linkGoogleAccount = async (req: Request, res: Response) => {

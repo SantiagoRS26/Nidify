@@ -10,12 +10,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { config } from '../../../config/env';
 import { authMiddleware } from '../../middleware/auth.middleware';
 import { validate } from '../../middleware/validation.middleware';
-import {
-  registerSchema,
-  loginSchema,
-  googleSchema,
-  refreshSchema,
-} from '../dto/auth.dto';
+import { registerSchema, loginSchema, googleSchema } from '../dto/auth.dto';
 
 const router = Router();
 
@@ -47,7 +42,8 @@ router.post(
 );
 router.post('/login', validate({ body: loginSchema }), controller.login);
 router.post('/google', validate({ body: googleSchema }), controller.google);
-router.post('/refresh', validate({ body: refreshSchema }), controller.refresh);
+router.post('/refresh', controller.refresh);
+router.post('/logout', controller.logout);
 router.post(
   '/google/link',
   authMiddleware(jwtService),
