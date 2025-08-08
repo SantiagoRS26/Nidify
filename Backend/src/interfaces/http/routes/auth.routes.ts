@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { AuthController } from '../controllers/auth.controller';
 import { UserRepository } from '../../../infrastructure/persistence/repositories/user.repository';
 import { JwtService } from '../../../infrastructure/auth/jwt.service';
+import { RefreshTokenService } from '../../../infrastructure/auth/refresh-token.service';
+import { RefreshTokenRepository } from '../../../infrastructure/persistence/repositories/refresh-token.repository';
 import { RegisterUserUseCase } from '../../../application/use-cases/register-user.usecase';
 import { LoginUserUseCase } from '../../../application/use-cases/login-user.usecase';
 import { GoogleAuthUseCase } from '../../../application/use-cases/google-auth.usecase';
@@ -16,15 +18,16 @@ const router = Router();
 
 const userRepository = new UserRepository();
 const jwtService = new JwtService();
+const refreshTokenRepository = new RefreshTokenRepository();
+const refreshTokenService = new RefreshTokenService(
+  jwtService,
+  refreshTokenRepository,
+);
 const googleClient = new OAuth2Client(config.googleClientId);
 
 const registerUser = new RegisterUserUseCase(userRepository);
-const loginUser = new LoginUserUseCase(userRepository, jwtService);
-const googleAuth = new GoogleAuthUseCase(
-  userRepository,
-  jwtService,
-  googleClient,
-);
+const loginUser = new LoginUserUseCase(userRepository);
+const googleAuth = new GoogleAuthUseCase(userRepository, googleClient);
 const linkGoogle = new LinkGoogleUseCase(userRepository, googleClient);
 
 const controller = new AuthController(
@@ -32,7 +35,7 @@ const controller = new AuthController(
   loginUser,
   googleAuth,
   linkGoogle,
-  jwtService,
+  refreshTokenService,
 );
 
 router.post(
@@ -44,6 +47,7 @@ router.post('/login', validate({ body: loginSchema }), controller.login);
 router.post('/google', validate({ body: googleSchema }), controller.google);
 router.post('/refresh', controller.refresh);
 router.post('/logout', controller.logout);
+router.post('/logout-all', controller.logoutAll);
 router.post(
   '/google/link',
   authMiddleware(jwtService),
