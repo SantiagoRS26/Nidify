@@ -1,6 +1,5 @@
 import { OAuth2Client } from 'google-auth-library';
 import { UserRepository } from '../../infrastructure/persistence/repositories/user.repository';
-import { JwtService } from '../../infrastructure/auth/jwt.service';
 import { User } from '../../domain/models/user.model';
 import { UserStatus } from '../../domain/models/enums/user-status.enum';
 import { UnauthorizedError } from '../../domain/errors/unauthorized.error';
@@ -8,13 +7,10 @@ import { UnauthorizedError } from '../../domain/errors/unauthorized.error';
 export class GoogleAuthUseCase {
   constructor(
     private userRepository: UserRepository,
-    private jwtService: JwtService,
     private googleClient: OAuth2Client,
   ) {}
 
-  async execute(
-    idToken: string,
-  ): Promise<{ user: User; accessToken: string; refreshToken: string }> {
+  async execute(idToken: string): Promise<{ user: User }> {
     const ticket = await this.googleClient.verifyIdToken({ idToken });
     const payload = ticket.getPayload();
     if (!payload?.sub || !payload.email || !payload.name) {
@@ -44,7 +40,6 @@ export class GoogleAuthUseCase {
       });
       user = (await this.userRepository.findById(user.id))!;
     }
-    const { accessToken, refreshToken } = this.jwtService.generateTokens(user);
-    return { user, accessToken, refreshToken };
+    return { user };
   }
 }

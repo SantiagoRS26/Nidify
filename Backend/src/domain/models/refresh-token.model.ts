@@ -6,10 +6,15 @@ export interface RefreshToken {
   id: string;
   /** Associated user */
   userId: string;
+  /** Family identifier for rotation */
+  familyId: string;
   /** Hashed token */
   token: string;
   /** Optional device or fingerprint */
   device?: string;
+  /** Optional metadata */
+  ip?: string;
+  userAgent?: string;
   /** Issued timestamp */
   issuedAt: Date;
   /** Expiration timestamp */

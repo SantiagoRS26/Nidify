@@ -9,8 +9,8 @@
     "start": "node dist/server.js",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
-    "test": "echo \"Jest not configured yet\" && exit 0",
-    "test:watch": "echo \"Jest not configured yet\" && exit 0",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "clean": "rm -rf dist",
     "format": "prettier --write .",
     "prepare": "husky install"
@@ -30,6 +30,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.17.0",
     "socket.io": "^4.7.5",
+    "uuid": "^9.0.1",
     "zod": "^3.25.76"
   },
   "devDependencies": {
@@ -46,9 +47,14 @@
     "globals": "^16.3.0",
     "husky": "^9.0.0",
     "lint-staged": "^15.0.0",
+    "mongodb-memory-server": "^10.1.4",
     "prettier": "^3.0.0",
+    "ts-jest": "^29.1.1",
     "ts-node-dev": "^2.0.0",
-    "typescript": "5.8.2"
+    "typescript": "5.8.2",
+    "@types/jest": "^29.5.11",
+    "@types/uuid": "^9.0.7",
+    "jest": "^29.7.0"
   },
   "lint-staged": {
     "src/**/*.{ts,js}": [

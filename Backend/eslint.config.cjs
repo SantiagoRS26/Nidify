@@ -30,4 +30,17 @@ module.exports = [
       ...prettierPlugin.configs.recommended.rules,
     },
   },
+  {
+    files: ['**/*.spec.ts'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        project: null,
+      },
+      globals: {
+        ...globals.node,
+        ...globals.jest,
+      },
+    },
+  },
 ];

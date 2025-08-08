@@ -3,7 +3,7 @@ import { RegisterUserUseCase } from '../../../application/use-cases/register-use
 import { LoginUserUseCase } from '../../../application/use-cases/login-user.usecase';
 import { GoogleAuthUseCase } from '../../../application/use-cases/google-auth.usecase';
 import { LinkGoogleUseCase } from '../../../application/use-cases/link-google.usecase';
-import { JwtService } from '../../../infrastructure/auth/jwt.service';
+import { RefreshTokenService } from '../../../infrastructure/auth/refresh-token.service';
 import { config } from '../../../config/env';
 import { UnauthorizedError } from '../../../domain/errors/unauthorized.error';
 import {
@@ -22,7 +22,7 @@ export class AuthController {
     private loginUser: LoginUserUseCase,
     private googleAuth: GoogleAuthUseCase,
     private linkGoogle: LinkGoogleUseCase,
-    private jwtService: JwtService,
+    private refreshTokenService: RefreshTokenService,
   ) {}
 
   private readonly cookieOptions = {
@@ -36,16 +36,18 @@ export class AuthController {
   register = async (req: Request, res: Response) => {
     const { fullName, email, password } = req.body as RegisterRequestDto;
     const user = await this.registerUser.execute(fullName, email, password);
-    const { accessToken, refreshToken } = this.jwtService.generateTokens(user);
+    const { accessToken, refreshToken } = await this.refreshTokenService.issue(
+      user.id,
+    );
     res.cookie('refreshToken', refreshToken, this.cookieOptions);
     res.json({ user, accessToken });
   };
 
   login = async (req: Request, res: Response) => {
     const { email, password } = req.body as LoginRequestDto;
-    const { user, accessToken, refreshToken } = await this.loginUser.execute(
-      email,
-      password,
+    const { user } = await this.loginUser.execute(email, password);
+    const { accessToken, refreshToken } = await this.refreshTokenService.issue(
+      user.id,
     );
     res.cookie('refreshToken', refreshToken, this.cookieOptions);
     res.json({ user, accessToken });
@@ -53,8 +55,10 @@ export class AuthController {
 
   google = async (req: Request, res: Response) => {
     const { idToken } = req.body as GoogleRequestDto;
-    const { user, accessToken, refreshToken } =
-      await this.googleAuth.execute(idToken);
+    const { user } = await this.googleAuth.execute(idToken);
+    const { accessToken, refreshToken } = await this.refreshTokenService.issue(
+      user.id,
+    );
     res.cookie('refreshToken', refreshToken, this.cookieOptions);
     res.json({ user, accessToken });
   };
@@ -64,19 +68,26 @@ export class AuthController {
     if (!refreshToken) {
       throw new UnauthorizedError('Refresh token required');
     }
-    let userId: string;
-    try {
-      ({ userId } = this.jwtService.verifyRefresh(refreshToken));
-    } catch {
-      throw new UnauthorizedError('Invalid refresh token');
-    }
-    const accessToken = this.jwtService.signAccess(userId);
-    const newRefreshToken = this.jwtService.signRefresh(userId);
+    const { accessToken, refreshToken: newRefreshToken } =
+      await this.refreshTokenService.rotate(refreshToken);
     res.cookie('refreshToken', newRefreshToken, this.cookieOptions);
     res.json({ accessToken });
   };
 
-  logout = async (_req: Request, res: Response) => {
+  logout = async (req: Request, res: Response) => {
+    const refreshToken = req.cookies['refreshToken'] as string | undefined;
+    if (refreshToken) {
+      await this.refreshTokenService.revoke(refreshToken);
+    }
+    res.clearCookie('refreshToken', this.cookieOptions);
+    res.status(204).send();
+  };
+
+  logoutAll = async (req: Request, res: Response) => {
+    const refreshToken = req.cookies['refreshToken'] as string | undefined;
+    if (refreshToken) {
+      await this.refreshTokenService.revokeFamily(refreshToken);
+    }
     res.clearCookie('refreshToken', this.cookieOptions);
     res.status(204).send();
   };
