@@ -62,6 +62,39 @@ export class AuthService {
     return localStorage.getItem('accessToken');
   }
 
+  /**
+   * Determines whether a JWT is expired or will expire within the next minute.
+   */
+  isTokenExpired(token: string | null = this.getToken()): boolean {
+    if (!token) {
+      return true;
+    }
+    try {
+      const [, payload] = token.split('.');
+      const { exp } = JSON.parse(atob(payload));
+      const expiresAt = exp * 1000;
+      const threshold = 60_000; // 1 minute
+      return Date.now() >= expiresAt - threshold;
+    } catch {
+      return true;
+    }
+  }
+
+  refreshTokens() {
+    const refreshToken = localStorage.getItem('refreshToken');
+    return this.http
+      .post<{ accessToken: string; refreshToken: string }>(
+        '/auth/refresh',
+        { refreshToken },
+      )
+      .pipe(
+        tap(({ accessToken, refreshToken: newRefresh }) => {
+          localStorage.setItem('accessToken', accessToken);
+          localStorage.setItem('refreshToken', newRefresh);
+        }),
+      );
+  }
+
   hasRole(roles: string[] | string): boolean {
     const user = this.userSubject.value;
     const required = Array.isArray(roles) ? roles : [roles];
