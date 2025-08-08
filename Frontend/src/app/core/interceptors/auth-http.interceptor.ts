@@ -24,6 +24,7 @@ export const authHttpInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error: HttpErrorResponse): Observable<HttpEvent<unknown>> => {
       if (
         error.status === 401 &&
+        token &&
         !req.url.includes('/auth/refresh') &&
         auth.isTokenExpired(token)
       ) {

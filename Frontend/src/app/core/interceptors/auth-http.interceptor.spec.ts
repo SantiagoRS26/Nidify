@@ -74,4 +74,17 @@ describe('authHttpInterceptor', () => {
     expect(retry2.request.headers.get('Authorization')).toBe('Bearer newAccess');
     retry2.flush('ok2');
   });
+
+  it('does not attempt to refresh when no token is present', (done) => {
+    http.post('/auth/login', {}).subscribe({
+      error: (err) => {
+        expect(err.status).toBe(401);
+        controller.expectNone('/auth/refresh');
+        done();
+      },
+    });
+
+    const login = controller.expectOne('/auth/login');
+    login.flush(null, { status: 401, statusText: 'Unauthorized' });
+  });
 });
