@@ -17,8 +17,3 @@ export const googleSchema = z.object({
   idToken: z.string().min(1),
 });
 export type GoogleRequestDto = z.infer<typeof googleSchema>;
-
-export const refreshSchema = z.object({
-  refreshToken: z.string().min(1),
-});
-export type RefreshRequestDto = z.infer<typeof refreshSchema>;

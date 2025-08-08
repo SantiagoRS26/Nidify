@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import http from 'http';
 import { config } from './config/env';
 import { connectMongo } from './infrastructure/persistence/mongoose-connection';
@@ -18,7 +19,13 @@ import './infrastructure/events/alerts.subscriber';
 import { errorHandler } from './interfaces/http/middleware/error-handler.middleware';
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  }),
+);
+app.use(cookieParser());
 app.use(express.json());
 
 const server = http.createServer(app);

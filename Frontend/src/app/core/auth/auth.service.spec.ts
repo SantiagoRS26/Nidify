@@ -7,8 +7,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { AuthService } from './auth.service';
 
-const API_URL = import.meta.env.NG_APP_API_URL;
-
 describe('AuthService', () => {
   let service: AuthService;
   let httpMock: HttpTestingController;
@@ -26,9 +24,10 @@ describe('AuthService', () => {
     localStorage.clear();
   });
 
-  it('stores tokens on login', () => {
+  it('stores access token in memory and user in storage on login', () => {
     service.login('test@example.com', '123456').subscribe();
-    const req = httpMock.expectOne(`${API_URL}/auth/login`);
+    const req = httpMock.expectOne('/auth/login');
+    expect(req.request.withCredentials).toBeTrue();
     req.flush({
       user: {
         id: '1',
@@ -37,10 +36,10 @@ describe('AuthService', () => {
         roles: ['admin'],
       },
       accessToken: 'token',
-      refreshToken: 'refresh',
     });
 
-    expect(localStorage.getItem('accessToken')).toBe('token');
-    expect(localStorage.getItem('refreshToken')).toBe('refresh');
+    expect(service.getToken()).toBe('token');
+    expect(localStorage.getItem('user')).toContain('Test User');
+    expect(localStorage.getItem('accessToken')).toBeNull();
   });
 });
