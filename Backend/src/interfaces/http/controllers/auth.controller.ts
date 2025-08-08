@@ -4,6 +4,8 @@ import { LoginUserUseCase } from '../../../application/use-cases/login-user.usec
 import { GoogleAuthUseCase } from '../../../application/use-cases/google-auth.usecase';
 import { LinkGoogleUseCase } from '../../../application/use-cases/link-google.usecase';
 import { JwtService } from '../../../infrastructure/auth/jwt.service';
+import { config } from '../../../config/env';
+import { UnauthorizedError } from '../../../domain/errors/unauthorized.error';
 import {
   RegisterRequestDto,
   LoginRequestDto,
@@ -25,7 +27,7 @@ export class AuthController {
 
   private readonly cookieOptions = {
     httpOnly: true,
-    secure: true,
+    secure: config.nodeEnv === 'production',
     sameSite: 'strict' as const,
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: '/api/v1/auth',
@@ -58,8 +60,16 @@ export class AuthController {
   };
 
   refresh = async (req: Request, res: Response) => {
-    const refreshToken = req.cookies['refreshToken'] as string;
-    const { userId } = this.jwtService.verifyRefresh(refreshToken);
+    const refreshToken = req.cookies['refreshToken'] as string | undefined;
+    if (!refreshToken) {
+      throw new UnauthorizedError('Refresh token required');
+    }
+    let userId: string;
+    try {
+      ({ userId } = this.jwtService.verifyRefresh(refreshToken));
+    } catch {
+      throw new UnauthorizedError('Invalid refresh token');
+    }
     const accessToken = this.jwtService.signAccess(userId);
     const newRefreshToken = this.jwtService.signRefresh(userId);
     res.cookie('refreshToken', newRefreshToken, this.cookieOptions);
