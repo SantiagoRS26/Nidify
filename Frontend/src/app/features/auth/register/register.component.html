@@ -9,10 +9,11 @@
 
     <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
       <div>
-        <label for="name">Nombre</label>
-        <input id="name" type="text" autocomplete="name" formControlName="name" placeholder="Tu nombre" />
-        <div class="field-error" *ngIf="form.controls.name.touched && form.controls.name.invalid">
-          El nombre es requerido
+        <label for="fullName">Nombre completo</label>
+        <input id="fullName" type="text" autocomplete="name" formControlName="fullName"
+          placeholder="Tu nombre completo" />
+        <div class="field-error" *ngIf="form.controls.fullName.touched && form.controls.fullName.invalid">
+          El nombre completo es requerido
         </div>
       </div>
 

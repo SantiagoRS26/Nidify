@@ -1,25 +1,22 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-} from '@angular/core';
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
+import { Router, RouterLink } from "@angular/router";
+import { CommonModule } from "@angular/common";
 
-import { AuthService } from '../../../core/auth/auth.service';
-import { ProblemInlineComponent } from '../../../shared/components/problem-inline/problem-inline.component';
+import { AuthService } from "../../../core/auth/auth.service";
+import { ProblemInlineComponent } from "../../../shared/components/problem-inline/problem-inline.component";
 
 @Component({
-  selector: 'app-register',
+  selector: "app-register",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, ProblemInlineComponent],
-  templateUrl: './register.component.html',
-  styleUrl: './register.component.scss',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterLink,
+    ProblemInlineComponent,
+  ],
+  templateUrl: "./register.component.html",
+  styleUrl: "./register.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegisterComponent {
@@ -28,9 +25,9 @@ export class RegisterComponent {
   private readonly router = inject(Router);
 
   readonly form = this.fb.nonNullable.group({
-    name: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
+    fullName: ["", Validators.required],
+    email: ["", [Validators.required, Validators.email]],
+    password: ["", Validators.required],
   });
 
   submit(): void {
@@ -38,10 +35,10 @@ export class RegisterComponent {
       this.form.markAllAsTouched();
       return;
     }
-    const { name, email, password } = this.form.getRawValue();
-    this.authService.register(name, email, password).subscribe({
+    const { fullName, email, password } = this.form.getRawValue();
+    this.authService.register(fullName, email, password).subscribe({
       next: () => {
-        this.router.navigate(['/home']);
+        this.router.navigate(["/home"]);
       },
     });
   }

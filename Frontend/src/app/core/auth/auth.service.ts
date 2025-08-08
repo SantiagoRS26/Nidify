@@ -1,9 +1,17 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { BehaviorSubject, catchError, finalize, map, of, Observable, tap } from 'rxjs';
+import { inject, Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Router } from "@angular/router";
+import {
+  BehaviorSubject,
+  catchError,
+  finalize,
+  map,
+  of,
+  Observable,
+  tap,
+} from "rxjs";
 
-import { User } from './user.model';
+import { User } from "./user.model";
 
 interface LoginRequest {
   email: string;
@@ -11,7 +19,7 @@ interface LoginRequest {
 }
 
 interface RegisterRequest {
-  name: string;
+  fullName: string;
   email: string;
   password: string;
 }
@@ -21,7 +29,7 @@ interface AuthResponse {
   accessToken: string;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
@@ -30,38 +38,38 @@ export class AuthService {
   private refreshing = false;
 
   private readonly userSubject = new BehaviorSubject<User | null>(
-    this.getStoredUser(),
+    this.getStoredUser()
   );
   readonly user$ = this.userSubject.asObservable();
 
   constructor() {
-    ['click', 'mousemove', 'keydown', 'scroll'].forEach((e) =>
-      document.addEventListener(e, () => this.handleActivity()),
+    ["click", "mousemove", "keydown", "scroll"].forEach((e) =>
+      document.addEventListener(e, () => this.handleActivity())
     );
   }
 
   login(email: string, password: string) {
     const body: LoginRequest = { email, password };
     return this.http
-      .post<AuthResponse>('/auth/login', body, { withCredentials: true })
+      .post<AuthResponse>("/auth/login", body, { withCredentials: true })
       .pipe(tap((res) => this.storeSession(res)));
   }
 
-  register(name: string, email: string, password: string) {
-    const body: RegisterRequest = { name, email, password };
+  register(fullName: string, email: string, password: string) {
+    const body: RegisterRequest = { fullName, email, password };
     return this.http
-      .post<AuthResponse>('/auth/register', body, { withCredentials: true })
+      .post<AuthResponse>("/auth/register", body, { withCredentials: true })
       .pipe(tap((res) => this.storeSession(res)));
   }
 
   logout(): void {
     this.accessToken = null;
-    localStorage.removeItem('user');
+    localStorage.removeItem("user");
     this.userSubject.next(null);
     void this.http
-      .post('/auth/logout', {}, { withCredentials: true })
+      .post("/auth/logout", {}, { withCredentials: true })
       .subscribe();
-    this.router.navigate(['/login']);
+    this.router.navigate(["/login"]);
   }
 
   isAuthenticated(): boolean {
@@ -75,12 +83,15 @@ export class AuthService {
   /**
    * Determines whether a JWT is expired or will expire within the given threshold.
    */
-  isTokenExpired(token: string | null = this.getToken(), threshold = 60_000): boolean {
+  isTokenExpired(
+    token: string | null = this.getToken(),
+    threshold = 60_000
+  ): boolean {
     if (!token) {
       return true;
     }
     try {
-      const [, payload] = token.split('.');
+      const [, payload] = token.split(".");
       const { exp } = JSON.parse(atob(payload));
       const expiresAt = exp * 1000;
       return Date.now() >= expiresAt - threshold;
@@ -91,7 +102,11 @@ export class AuthService {
 
   refreshTokens() {
     return this.http
-      .post<{ accessToken: string }>('/auth/refresh', {}, { withCredentials: true })
+      .post<{ accessToken: string }>(
+        "/auth/refresh",
+        {},
+        { withCredentials: true }
+      )
       .pipe(tap(({ accessToken }) => (this.accessToken = accessToken)));
   }
 
@@ -104,7 +119,7 @@ export class AuthService {
       catchError(() => {
         this.logout();
         return of(false);
-      }),
+      })
     );
   }
 
@@ -116,7 +131,7 @@ export class AuthService {
 
   private storeSession({ user, accessToken }: AuthResponse): void {
     this.accessToken = accessToken;
-    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem("user", JSON.stringify(user));
     this.userSubject.next(user);
   }
 
@@ -134,8 +149,7 @@ export class AuthService {
   }
 
   private getStoredUser(): User | null {
-    const raw = localStorage.getItem('user');
+    const raw = localStorage.getItem("user");
     return raw ? (JSON.parse(raw) as User) : null;
   }
 }
-
