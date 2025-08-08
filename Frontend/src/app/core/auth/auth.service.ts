@@ -9,6 +9,7 @@ import {
   of,
   Observable,
   tap,
+  EMPTY,
 } from "rxjs";
 
 import { User } from "./user.model";
@@ -36,17 +37,16 @@ export class AuthService {
 
   private accessToken: string | null = null;
   private refreshing = false;
+  private refreshTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private refreshBackoffMs = 30_000; // 30s
+  private readonly refreshBackoffMaxMs = 5 * 60_000; // 5m
 
   private readonly userSubject = new BehaviorSubject<User | null>(
     this.getStoredUser()
   );
   readonly user$ = this.userSubject.asObservable();
 
-  constructor() {
-    ["click", "mousemove", "keydown", "scroll"].forEach((e) =>
-      document.addEventListener(e, () => this.handleActivity())
-    );
-  }
+  constructor() {}
 
   login(email: string, password: string) {
     const body: LoginRequest = { email, password };
@@ -107,7 +107,7 @@ export class AuthService {
         {},
         { withCredentials: true }
       )
-      .pipe(tap(({ accessToken }) => (this.accessToken = accessToken)));
+      .pipe(tap(({ accessToken }) => this.onAccessTokenUpdated(accessToken)));
   }
 
   ensureSession(): Observable<boolean> {
@@ -130,26 +130,94 @@ export class AuthService {
   }
 
   private storeSession({ user, accessToken }: AuthResponse): void {
-    this.accessToken = accessToken;
+    this.onAccessTokenUpdated(accessToken);
     localStorage.setItem("user", JSON.stringify(user));
     this.userSubject.next(user);
   }
 
-  private handleActivity(): void {
-    if (
-      this.accessToken &&
-      this.isTokenExpired(this.accessToken, 120_000) &&
-      !this.refreshing
-    ) {
-      this.refreshing = true;
-      this.refreshTokens()
-        .pipe(finalize(() => (this.refreshing = false)))
-        .subscribe();
+  private onAccessTokenUpdated(accessToken: string): void {
+    this.accessToken = accessToken;
+    this.refreshBackoffMs = 30_000; // reset backoff on success
+    this.scheduleRefresh();
+  }
+
+  private scheduleRefresh(thresholdMs: number = 120_000): void {
+    if (!this.accessToken) {
+      this.clearScheduledRefresh();
+      return;
+    }
+    const expiresAt = this.getTokenExpiryMs(this.accessToken);
+    if (!expiresAt) {
+      this.clearScheduledRefresh();
+      return;
+    }
+    const targetTime = Math.max(0, expiresAt - thresholdMs);
+    const delay = Math.max(0, targetTime - Date.now());
+    this.clearScheduledRefresh();
+    this.refreshTimeoutId = setTimeout(
+      () => this.triggerScheduledRefresh(),
+      delay
+    );
+  }
+
+  private triggerScheduledRefresh(): void {
+    if (!this.accessToken) {
+      return;
+    }
+    if (this.refreshing) {
+      // Ya hay un refresh en curso, reprogramar con un pequeño retraso para revisar de nuevo
+      this.refreshTimeoutId = setTimeout(
+        () => this.triggerScheduledRefresh(),
+        5_000
+      );
+      return;
+    }
+    this.refreshing = true;
+    this.refreshTokens()
+      .pipe(
+        finalize(() => (this.refreshing = false)),
+        catchError(() => {
+          // Backend no disponible u otro error: no entrar en bucle, aplicar backoff
+          const nextDelay = this.refreshBackoffMs;
+          this.refreshBackoffMs = Math.min(
+            this.refreshBackoffMaxMs,
+            Math.floor(this.refreshBackoffMs * 2)
+          );
+          this.clearScheduledRefresh();
+          this.refreshTimeoutId = setTimeout(
+            () => this.triggerScheduledRefresh(),
+            nextDelay
+          );
+          return EMPTY;
+        })
+      )
+      .subscribe();
+  }
+
+  private clearScheduledRefresh(): void {
+    if (this.refreshTimeoutId) {
+      clearTimeout(this.refreshTimeoutId);
+      this.refreshTimeoutId = null;
+    }
+  }
+
+  private getTokenExpiryMs(token: string): number | null {
+    try {
+      const [, payload] = token.split(".");
+      const { exp } = JSON.parse(atob(payload));
+      return typeof exp === "number" ? exp * 1000 : null;
+    } catch {
+      return null;
     }
   }
 
   private getStoredUser(): User | null {
     const raw = localStorage.getItem("user");
     return raw ? (JSON.parse(raw) as User) : null;
+  }
+
+  // Asegurar limpieza
+  ngOnDestroy(): void {
+    this.clearScheduledRefresh();
   }
 }
