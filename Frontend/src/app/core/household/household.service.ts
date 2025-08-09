@@ -1,6 +1,6 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { inject, Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { BehaviorSubject, map, Observable, tap } from "rxjs";
 
 export interface Household {
   id: string;
@@ -15,11 +15,21 @@ export interface Invitation {
   expiresAt?: string;
 }
 
-@Injectable({ providedIn: 'root' })
+export interface HouseholdMembership {
+  id: string;
+  userId: string;
+  householdId: string;
+  role: "admin" | "member";
+  status: "pending" | "active" | "revoked";
+  joinedAt: string;
+  invitedBy?: string;
+}
+
+@Injectable({ providedIn: "root" })
 export class HouseholdService {
   private readonly http = inject(HttpClient);
   private readonly householdIdSubject = new BehaviorSubject<string | null>(
-    localStorage.getItem('householdId')
+    localStorage.getItem("householdId")
   );
   readonly householdId$ = this.householdIdSubject.asObservable();
 
@@ -31,31 +41,61 @@ export class HouseholdService {
     return this.householdIdSubject.value;
   }
 
+  getUserMemberships(): Observable<HouseholdMembership[]> {
+    return this.http
+      .get<{ memberships: HouseholdMembership[] }>("/auth/me/memberships")
+      .pipe(map(({ memberships }) => memberships));
+  }
+
+  initializeHouseholdState(): Observable<boolean> {
+    return this.getUserMemberships().pipe(
+      tap((memberships) => {
+        // Si el usuario tiene membresías activas, usar la primera como hogar actual
+        const activeMembership = memberships.find((m) => m.status === "active");
+        if (activeMembership) {
+          this.setHousehold(activeMembership.householdId);
+        } else {
+          // Si no tiene membresías activas, limpiar el estado local
+          this.clear();
+        }
+      }),
+      map((memberships) => memberships.some((m) => m.status === "active"))
+    );
+  }
+
   createHousehold(name: string, baseCurrency: string): Observable<Household> {
     return this.http
-      .post<{ household: Household }>('/households', { name, baseCurrency })
-      .pipe(tap(({ household }) => this.setHousehold(household.id)), map(({ household }) => household));
+      .post<{ household: Household }>("/households", { name, baseCurrency })
+      .pipe(
+        tap(({ household }) => this.setHousehold(household.id)),
+        map(({ household }) => household)
+      );
   }
 
   invite(email: string): Observable<Invitation> {
     const householdId = this.getHouseholdId();
     return this.http
-      .post<{ invitation: Invitation }>(`/households/${householdId}/invitations`, {
-        email,
-      })
+      .post<{ invitation: Invitation }>(
+        `/households/${householdId}/invitations`,
+        {
+          email,
+        }
+      )
       .pipe(map(({ invitation }) => invitation));
   }
 
   cancelInvitation(invitationId: string): Observable<void> {
     const householdId = this.getHouseholdId();
     return this.http.delete<void>(
-      `/households/${householdId}/invitations/${invitationId}`,
+      `/households/${householdId}/invitations/${invitationId}`
     );
   }
 
   acceptInvitation(token: string): Observable<string> {
     return this.http
-      .post<{ membership: { householdId: string } }>('/invitations/accept', { token })
+      .post<{ membership: { householdId: string } }>("/invitations/accept", {
+        token,
+      })
       .pipe(
         tap(({ membership }) => this.setHousehold(membership.householdId)),
         map(({ membership }) => membership.householdId)
@@ -63,13 +103,12 @@ export class HouseholdService {
   }
 
   clear(): void {
-    localStorage.removeItem('householdId');
+    localStorage.removeItem("householdId");
     this.householdIdSubject.next(null);
   }
 
   private setHousehold(id: string): void {
-    localStorage.setItem('householdId', id);
+    localStorage.setItem("householdId", id);
     this.householdIdSubject.next(id);
   }
 }
-

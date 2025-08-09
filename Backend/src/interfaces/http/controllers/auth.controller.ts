@@ -3,6 +3,7 @@ import { RegisterUserUseCase } from '../../../application/use-cases/register-use
 import { LoginUserUseCase } from '../../../application/use-cases/login-user.usecase';
 import { GoogleAuthUseCase } from '../../../application/use-cases/google-auth.usecase';
 import { LinkGoogleUseCase } from '../../../application/use-cases/link-google.usecase';
+import { GetUserMembershipsUseCase } from '../../../application/use-cases/get-user-memberships.usecase';
 import { RefreshTokenService } from '../../../infrastructure/auth/refresh-token.service';
 import { config } from '../../../config/env';
 import { UnauthorizedError } from '../../../domain/errors/unauthorized.error';
@@ -23,6 +24,7 @@ export class AuthController {
     private loginUser: LoginUserUseCase,
     private googleAuth: GoogleAuthUseCase,
     private linkGoogle: LinkGoogleUseCase,
+    private getUserMemberships: GetUserMembershipsUseCase,
     private refreshTokenService: RefreshTokenService,
   ) {}
 
@@ -100,5 +102,11 @@ export class AuthController {
       idToken,
     );
     res.json({ user: toPublicUser(user) });
+  };
+
+  getMemberships = async (req: Request, res: Response) => {
+    const userId = (req as AuthRequest).userId;
+    const memberships = await this.getUserMemberships.execute(userId);
+    res.json({ memberships });
   };
 }

@@ -1,26 +1,23 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-} from '@angular/core';
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
+import { Router, RouterLink } from "@angular/router";
+import { CommonModule } from "@angular/common";
 
-import { AuthService } from '../../../core/auth/auth.service';
-import { GoogleAuthService } from '../../../core/auth/google-auth.service';
-import { ProblemInlineComponent } from '../../../shared/components/problem-inline/problem-inline.component';
+import { AuthService } from "../../../core/auth/auth.service";
+import { GoogleAuthService } from "../../../core/auth/google-auth.service";
+import { ProblemInlineComponent } from "../../../shared/components/problem-inline/problem-inline.component";
 
 @Component({
-  selector: 'app-login',
+  selector: "app-login",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, ProblemInlineComponent],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterLink,
+    ProblemInlineComponent,
+  ],
+  templateUrl: "./login.component.html",
+  styleUrl: "./login.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent {
@@ -30,8 +27,8 @@ export class LoginComponent {
   private readonly router = inject(Router);
 
   readonly form = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
+    email: ["", [Validators.required, Validators.email]],
+    password: ["", Validators.required],
   });
 
   submit(): void {
@@ -42,18 +39,33 @@ export class LoginComponent {
     const { email, password } = this.form.getRawValue();
     this.authService.login(email, password).subscribe({
       next: () => {
-        this.router.navigate(['/home']);
+        this.router.navigate(["/home"]);
       },
     });
   }
 
   googleLogin(): void {
-    this.googleAuth.signIn().then((idToken) => {
-      this.authService.loginWithGoogle(idToken).subscribe({
-        next: () => {
-          this.router.navigate(['/home']);
-        },
+    this.googleAuth
+      .signIn()
+      .then((idToken) => {
+        this.authService.loginWithGoogle(idToken).subscribe({
+          next: () => {
+            this.router.navigate(["/home"]);
+          },
+          error: (error) => {
+            console.error("Error al autenticar con Google:", error);
+            // Aquí puedes agregar una notificación de error al usuario
+          },
+        });
+      })
+      .catch((error) => {
+        console.error("Error en Google Sign-In:", error);
+        // Manejo específico de errores de Google OAuth
+        if (error.includes("dominio")) {
+          console.warn(
+            "⚠️ Configuración requerida: Añade localhost:4200 a los dominios autorizados en Google Cloud Console"
+          );
+        }
       });
-    });
   }
 }

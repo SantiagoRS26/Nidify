@@ -52,10 +52,6 @@ export class AuthService {
 
   constructor() {}
 
-  /**
-   * Inicializa la sesión intentando un silent refresh.
-   * Debe ser llamado al inicio de la aplicación.
-   */
   async initialize(): Promise<boolean> {
     if (this.initialized) {
       return this.isAuthenticated();
@@ -63,14 +59,21 @@ export class AuthService {
 
     this.initialized = true;
 
-    // Si hay un usuario guardado, intentar silent refresh
     const storedUser = this.getStoredUser();
     if (storedUser) {
       try {
         await firstValueFrom(this.refreshTokens());
+
+        // Después de restaurar la sesión, inicializar el estado del hogar
+        this.householdService
+          .initializeHouseholdState()
+          .pipe(
+            catchError(() => of(false)) // Si falla, continuar sin error
+          )
+          .subscribe();
+
         return true;
       } catch {
-        // Silent refresh falló, limpiar usuario almacenado
         this.clearStoredUser();
         return false;
       }
@@ -88,7 +91,11 @@ export class AuthService {
 
   loginWithGoogle(idToken: string) {
     return this.http
-      .post<AuthResponse>("/auth/google", { idToken }, { withCredentials: true })
+      .post<AuthResponse>(
+        "/auth/google",
+        { idToken },
+        { withCredentials: true }
+      )
       .pipe(tap((res) => this.storeSession(res)));
   }
 
@@ -101,12 +108,16 @@ export class AuthService {
 
   linkGoogleAccount(idToken: string) {
     return this.http
-      .post<{ user: User }>("/auth/google/link", { idToken }, { withCredentials: true })
+      .post<{ user: User }>(
+        "/auth/google/link",
+        { idToken },
+        { withCredentials: true }
+      )
       .pipe(
         tap(({ user }) => {
           localStorage.setItem("user", JSON.stringify(user));
           this.userSubject.next(user);
-        }),
+        })
       );
   }
 
@@ -183,6 +194,14 @@ export class AuthService {
     this.onAccessTokenUpdated(accessToken);
     localStorage.setItem("user", JSON.stringify(user));
     this.userSubject.next(user);
+
+    // Inicializar el estado del hogar después del login exitoso
+    this.householdService
+      .initializeHouseholdState()
+      .pipe(
+        catchError(() => of(false)) // Si falla, continuar sin error
+      )
+      .subscribe();
   }
 
   private onAccessTokenUpdated(accessToken: string): void {
