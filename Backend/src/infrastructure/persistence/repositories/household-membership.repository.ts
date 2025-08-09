@@ -2,31 +2,36 @@ import { HouseholdMembership } from '../../../domain/models/household-membership
 import { HouseholdMembershipModel } from '../models/household-membership.schema';
 import { MembershipStatus } from '../../../domain/models/enums/membership-status.enum';
 
+type MembershipRecord = Omit<HouseholdMembership, 'id'> & { _id: unknown };
+
 export class HouseholdMembershipRepository {
+  private toDomain(doc: MembershipRecord): HouseholdMembership {
+    const { _id, ...membership } = doc;
+    return { id: String(_id), ...membership } as HouseholdMembership;
+  }
+
   async create(
     membership: Omit<HouseholdMembership, 'id'>,
   ): Promise<HouseholdMembership> {
     const created = await HouseholdMembershipModel.create(membership);
-    return {
-      id: created.id,
-      ...created.toObject(),
-    } as unknown as HouseholdMembership;
+    return this.toDomain(created.toObject() as MembershipRecord);
   }
 
   async findByUserAndHousehold(
     userId: string,
     householdId: string,
   ): Promise<HouseholdMembership | null> {
-    return (await HouseholdMembershipModel.findOne({
+    const doc = await HouseholdMembershipModel.findOne({
       userId,
       householdId,
-    }).lean()) as HouseholdMembership | null;
+    }).lean<MembershipRecord>();
+    return doc ? this.toDomain(doc) : null;
   }
 
   async findById(id: string): Promise<HouseholdMembership | null> {
-    return (await HouseholdMembershipModel.findById(
-      id,
-    ).lean()) as HouseholdMembership | null;
+    const doc =
+      await HouseholdMembershipModel.findById(id).lean<MembershipRecord>();
+    return doc ? this.toDomain(doc) : null;
   }
 
   async updateStatus(
@@ -37,8 +42,11 @@ export class HouseholdMembershipRepository {
     if (status === MembershipStatus.ACTIVE) {
       update.joinedAt = new Date();
     }
-    return (await HouseholdMembershipModel.findByIdAndUpdate(id, update, {
-      new: true,
-    }).lean()) as HouseholdMembership | null;
+    const updated = await HouseholdMembershipModel.findByIdAndUpdate(
+      id,
+      update,
+      { new: true },
+    ).lean<MembershipRecord>();
+    return updated ? this.toDomain(updated) : null;
   }
 }

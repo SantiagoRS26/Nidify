@@ -1,28 +1,38 @@
 import { Invitation } from '../../../domain/models/invitation.model';
 import { InvitationModel } from '../models/invitation.schema';
 
+type InvitationRecord = Omit<Invitation, 'id'> & { _id: unknown };
+
 export class InvitationRepository {
+  private toDomain(doc: InvitationRecord): Invitation {
+    const { _id, ...invitation } = doc;
+    return { id: String(_id), ...invitation } as Invitation;
+  }
+
   async create(invitation: Omit<Invitation, 'id'>): Promise<Invitation> {
     const created = await InvitationModel.create(invitation);
-    return { id: created.id, ...created.toObject() } as unknown as Invitation;
+    return this.toDomain(created.toObject() as InvitationRecord);
   }
 
   async findByToken(token: string): Promise<Invitation | null> {
-    return (await InvitationModel.findOne({
+    const doc = await InvitationModel.findOne({
       token,
-    }).lean()) as Invitation | null;
+    }).lean<InvitationRecord>();
+    return doc ? this.toDomain(doc) : null;
   }
 
   async findById(id: string): Promise<Invitation | null> {
-    return (await InvitationModel.findById(id).lean()) as Invitation | null;
+    const doc = await InvitationModel.findById(id).lean<InvitationRecord>();
+    return doc ? this.toDomain(doc) : null;
   }
 
   async update(
     id: string,
     update: Partial<Invitation>,
   ): Promise<Invitation | null> {
-    return (await InvitationModel.findByIdAndUpdate(id, update, {
+    const updated = await InvitationModel.findByIdAndUpdate(id, update, {
       new: true,
-    }).lean()) as Invitation | null;
+    }).lean<InvitationRecord>();
+    return updated ? this.toDomain(updated) : null;
   }
 }
