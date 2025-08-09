@@ -1,5 +1,6 @@
 import { Routes } from "@angular/router";
 import { AuthGuard } from "./core/auth/auth.guard";
+import { HouseholdGuard } from "./core/household/household.guard";
 
 export const routes: Routes = [
   {
@@ -25,7 +26,7 @@ export const routes: Routes = [
   },
   {
     path: "home",
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, HouseholdGuard],
     loadComponent: () =>
       import("./features/home/home.component").then((m) => m.HomeComponent),
     children: [
