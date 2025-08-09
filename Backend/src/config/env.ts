@@ -13,6 +13,9 @@ export const config = {
   googleRedirectUri:
     process.env.GOOGLE_REDIRECT_URI ??
     'http://localhost:3000/api/v1/auth/google/callback',
+  frontendRedirectUri:
+    process.env.FRONTEND_REDIRECT_URI ??
+    'http://localhost:4200/auth/google/callback',
   exchangeRateApiBase:
     process.env.EXCHANGE_RATE_API_BASE ?? 'https://api.exchangerate.host',
   exchangeRateTtlMinutes: Number(process.env.EXCHANGE_RATE_TTL_MINUTES ?? 60),
