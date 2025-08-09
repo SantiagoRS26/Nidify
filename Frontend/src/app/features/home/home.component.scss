@@ -1,1 +1,119 @@
+.app-shell {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100dvh;
+  color: var(--base-20);
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 var(--space-4);
+  background: var(--white);
+  border-bottom: 1px solid var(--base-80);
+  z-index: 10;
+}
+
+.topbar__title {
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: var(--base-00);
+}
+
+.topbar__action {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--base-40);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+}
+
+.content {
+  padding: var(--space-3) var(--space-4) 72px;
+}
+
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 var(--space-4);
+  background: var(--white);
+  border-top: 1px solid var(--base-80);
+  box-shadow: var(--shadow-sm);
+}
+
+.tabbar a {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--base-40);
+  text-decoration: none;
+  padding: 6px 8px;
+  border-radius: var(--radius-md);
+}
+
+.tabbar a.active {
+  color: var(--accent-primary);
+  background: color-mix(in srgb, var(--accent-primary) 10%, white);
+}
+
+.tabbar .icon {
+  font-size: 18px;
+}
+.tabbar .label {
+  font-size: 10px;
+}
+
+@media (min-width: 768px) {
+  .app-shell {
+    grid-template-columns: 80px 1fr;
+    grid-template-rows: 56px 1fr;
+    grid-template-areas:
+      'topbar topbar'
+      'nav content';
+  }
+  .topbar {
+    grid-area: topbar;
+  }
+  .tabbar {
+    position: sticky;
+    top: 56px;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    height: calc(100dvh - 56px);
+    display: grid;
+    grid-auto-rows: 56px;
+    justify-items: center;
+    padding: var(--space-3) var(--space-2);
+    background: var(--white);
+    border-right: 1px solid var(--base-80);
+    border-top: none;
+    grid-area: nav;
+  }
+  .content {
+    padding-bottom: var(--space-4);
+    grid-area: content;
+  }
+}
+
+.grid {
+  display: grid;
+  gap: 12px;
+}
+
+.grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
 /* estilos para home */

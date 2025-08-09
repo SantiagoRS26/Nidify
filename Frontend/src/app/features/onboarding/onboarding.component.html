@@ -1,0 +1,63 @@
+<div class="onboarding container">
+    <div class="hero">
+        <div class="brand">
+            <div class="brand-badge"></div>
+            <div>Nidify</div>
+        </div>
+        <h1>¡Bienvenido!</h1>
+        <p class="text-muted">
+            Empecemos creando tu hogar o aceptando una invitación.
+        </p>
+    </div>
+
+    <div class="grid">
+        <div class="card action-card">
+            <h3>Crear hogar</h3>
+            <p class="text-muted">Define el nombre, moneda base y metas presupuestales.</p>
+            <div class="form-grid">
+                <label>
+                    Nombre del hogar
+                    <input type="text" placeholder="Ej. Andrés y Julia" />
+                </label>
+                <label>
+                    Moneda base
+                    <select>
+                        <option>USD</option>
+                        <option>EUR</option>
+                        <option>ARS</option>
+                        <option>MXN</option>
+                    </select>
+                </label>
+                <label>
+                    Presupuesto inicial (opcional)
+                    <input type="number" placeholder="0" />
+                </label>
+                <label>
+                    Presupuesto mensual (opcional)
+                    <input type="number" placeholder="0" />
+                </label>
+            </div>
+            <div class="form-actions">
+                <a routerLink="/home" class="btn btn-primary btn-block">Crear hogar</a>
+            </div>
+        </div>
+
+        <div class="card action-card">
+            <h3>Aceptar invitación</h3>
+            <p class="text-muted">Pega tu token o link de invitación para unirte.</p>
+            <div class="form-grid">
+                <label>
+                    Token / Link
+                    <input type="text" placeholder="nidify://invite?token=..." />
+                </label>
+            </div>
+            <div class="form-actions">
+                <a routerLink="/home" class="btn btn-primary btn-block">Unirme al hogar</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="foot text-muted">
+        ¿Ya tienes sesión? <a routerLink="/home" class="link">Ir al dashboard</a>
+    </div>
+</div>

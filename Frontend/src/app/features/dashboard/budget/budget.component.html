@@ -1,0 +1,69 @@
+<div class="subheader">
+    <h2>Presupuesto</h2>
+    <div class="actions">
+        <button class="btn primary" (click)="showEditBudget.set(true)">Ajustar metas</button>
+    </div>
+
+</div>
+
+<section class="grid">
+    <div class="card">
+        <h3 style="margin:0 0 8px 0; font-size:15px">Metas presupuestales</h3>
+        <div class="row">
+            <div class="tile">
+                <div class="label">Inicial</div>
+                <div class="value">$ 0</div>
+            </div>
+            <div class="tile">
+                <div class="label">Mensual</div>
+                <div class="value">$ 0</div>
+            </div>
+        </div>
+        <button class="btn" style="margin-top:10px">Editar</button>
+    </div>
+
+    <!-- Modal: Editar presupuesto (solo UI) -->
+    <div class="modal" [class.open]="showEditBudget()">
+        <div class="backdrop" (click)="showEditBudget.set(false)"></div>
+        <div class="dialog card">
+            <div class="dialog__header">
+                <h3>Editar metas</h3>
+                <button class="icon" (click)="showEditBudget.set(false)">✕</button>
+            </div>
+            <div class="dialog__body">
+                <div class="form-grid">
+                    <label>Presupuesto inicial<input type="number" placeholder="0" /></label>
+                    <label>Presupuesto mensual<input type="number" placeholder="0" /></label>
+                    <label>Moneda<select>
+                            <option>USD</option>
+                            <option>EUR</option>
+                            <option>ARS</option>
+                            <option>MXN</option>
+                        </select></label>
+                </div>
+            </div>
+            <div class="dialog__actions">
+                <button class="btn" (click)="showEditBudget.set(false)">Cancelar</button>
+                <button class="btn primary">Guardar</button>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <h3 style="margin:0 0 8px 0; font-size:15px">Distribución por persona</h3>
+        <div class="row">
+            <div class="tile">
+                <div class="label">Tú</div>
+                <div class="value">$ 0</div>
+            </div>
+            <div class="tile">
+                <div class="label">Pareja</div>
+                <div class="value">$ 0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 style="margin:0 0 8px 0; font-size:15px">Recomendaciones</h3>
+        <p style="color:var(--muted); font-size:13px; margin:0">Agrega metas para comenzar a recibir sugerencias.</p>
+    </div>
+</section>
