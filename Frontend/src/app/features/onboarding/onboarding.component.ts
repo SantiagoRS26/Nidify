@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 
 import { HouseholdService } from "../../core/household/household.service";
 
@@ -17,6 +17,7 @@ export class OnboardingComponent {
   private readonly fb = inject(FormBuilder);
   private readonly householdService = inject(HouseholdService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   readonly createForm = this.fb.nonNullable.group({
     name: ["", [Validators.required]],
@@ -28,6 +29,15 @@ export class OnboardingComponent {
   readonly inviteForm = this.fb.nonNullable.group({
     token: ["", [Validators.required]],
   });
+
+  constructor() {
+    const token = this.route.snapshot.queryParamMap.get("token");
+    if (token) {
+      this.householdService.acceptInvitation(token).subscribe(() => {
+        this.router.navigate(["/home"]);
+      });
+    }
+  }
 
   onCreate(): void {
     if (this.createForm.invalid) {

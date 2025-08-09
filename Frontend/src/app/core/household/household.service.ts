@@ -8,6 +8,13 @@ export interface Household {
   baseCurrency: string;
 }
 
+export interface Invitation {
+  id: string;
+  email: string;
+  token: string;
+  expiresAt?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class HouseholdService {
   private readonly http = inject(HttpClient);
@@ -28,6 +35,22 @@ export class HouseholdService {
     return this.http
       .post<{ household: Household }>('/households', { name, baseCurrency })
       .pipe(tap(({ household }) => this.setHousehold(household.id)), map(({ household }) => household));
+  }
+
+  invite(email: string): Observable<Invitation> {
+    const householdId = this.getHouseholdId();
+    return this.http
+      .post<{ invitation: Invitation }>(`/households/${householdId}/invitations`, {
+        email,
+      })
+      .pipe(map(({ invitation }) => invitation));
+  }
+
+  cancelInvitation(invitationId: string): Observable<void> {
+    const householdId = this.getHouseholdId();
+    return this.http.delete<void>(
+      `/households/${householdId}/invitations/${invitationId}`,
+    );
   }
 
   acceptInvitation(token: string): Observable<string> {
