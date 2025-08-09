@@ -76,16 +76,26 @@ export class AuthController {
   };
 
   googleCallback = async (req: Request, res: Response) => {
+    const redirectUrl = new URL(config.frontendRedirectUri);
     const code = req.query.code as string | undefined;
+
     if (!code) {
-      throw new UnauthorizedError('Authorization code required');
+      redirectUrl.searchParams.set('error', 'Authorization code required');
+      return res.redirect(redirectUrl.toString());
     }
-    const { user } = await this.oauthLogin.execute(code);
-    const { accessToken, refreshToken } = await this.refreshTokenService.issue(
-      user.id,
-    );
-    res.cookie('refreshToken', refreshToken, this.cookieOptions);
-    res.json({ user: toPublicUser(user), accessToken });
+
+    try {
+      const { user } = await this.oauthLogin.execute(code);
+      const { accessToken, refreshToken } =
+        await this.refreshTokenService.issue(user.id);
+      res.cookie('refreshToken', refreshToken, this.cookieOptions);
+      redirectUrl.searchParams.set('token', accessToken);
+      redirectUrl.searchParams.set('user', JSON.stringify(toPublicUser(user)));
+      return res.redirect(redirectUrl.toString());
+    } catch {
+      redirectUrl.searchParams.set('error', 'OAuth login failed');
+      return res.redirect(redirectUrl.toString());
+    }
   };
 
   refresh = async (req: Request, res: Response) => {

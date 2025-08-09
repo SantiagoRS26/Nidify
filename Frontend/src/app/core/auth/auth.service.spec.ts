@@ -61,6 +61,18 @@ describe("AuthService", () => {
     expect(service.getToken()).toBe("gToken");
   });
 
+  it("stores session from oauth redirect", () => {
+    const user = {
+      id: "1",
+      fullName: "Test User",
+      email: "test@example.com",
+      roles: ["user"],
+    };
+    service.completeOAuthLogin(user, "cbToken");
+    expect(service.getToken()).toBe("cbToken");
+    expect(localStorage.getItem("user")).toContain("Test User");
+  });
+
   it("updates user on google account link", () => {
     service.linkGoogleAccount("idTok").subscribe();
     const req = httpMock.expectOne("/auth/google/link");

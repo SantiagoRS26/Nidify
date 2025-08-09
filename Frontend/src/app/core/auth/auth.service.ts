@@ -98,6 +98,10 @@ export class AuthService {
       .pipe(tap((res) => this.storeSession(res)));
   }
 
+  completeOAuthLogin(user: User, accessToken: string): void {
+    this.storeSession({ user, accessToken });
+  }
+
   register(fullName: string, email: string, password: string) {
     const body: RegisterRequest = { fullName, email, password };
     return this.http

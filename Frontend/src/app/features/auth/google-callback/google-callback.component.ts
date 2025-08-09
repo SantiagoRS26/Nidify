@@ -8,6 +8,7 @@ import {
 import { ActivatedRoute, Router } from "@angular/router";
 
 import { AuthService } from "../../../core/auth/auth.service";
+import { User } from "../../../core/auth/user.model";
 
 @Component({
   selector: "app-google-callback",
@@ -22,18 +23,23 @@ export class GoogleCallbackComponent implements OnInit {
   private readonly router = inject(Router);
 
   ngOnInit(): void {
-    const code = this.route.snapshot.queryParamMap.get("code");
-    if (!code) {
+    const token = this.route.snapshot.queryParamMap.get("token");
+    const userParam = this.route.snapshot.queryParamMap.get("user");
+    const error = this.route.snapshot.queryParamMap.get("error");
+
+    if (error || !token || !userParam) {
       this.router.navigate(["/login"]);
       return;
     }
-    this.authService.oauthLogin(code).subscribe({
-      next: () => this.router.navigate(["/home"]),
-      error: (err) => {
-        console.error("OAuth login failed", err);
-        this.router.navigate(["/login"]);
-      },
-    });
+
+    try {
+      const user: User = JSON.parse(decodeURIComponent(userParam));
+      this.authService.completeOAuthLogin(user, token);
+      this.router.navigate(["/home"]);
+    } catch (err) {
+      console.error("OAuth login failed", err);
+      this.router.navigate(["/login"]);
+    }
   }
 }
 
