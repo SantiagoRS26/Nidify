@@ -89,13 +89,12 @@ export class AuthService {
       .pipe(tap((res) => this.storeSession(res)));
   }
 
-  loginWithGoogle(idToken: string) {
+  oauthLogin(code: string) {
     return this.http
-      .post<AuthResponse>(
-        "/auth/google",
-        { idToken },
-        { withCredentials: true }
-      )
+      .get<AuthResponse>("/auth/google/callback", {
+        params: { code },
+        withCredentials: true,
+      })
       .pipe(tap((res) => this.storeSession(res)));
   }
 

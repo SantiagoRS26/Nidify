@@ -9,6 +9,10 @@ export const config = {
   jwtSecret: process.env.JWT_SECRET ?? 'changeme',
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET ?? 'changeme-refresh',
   googleClientId: process.env.GOOGLE_CLIENT_ID ?? '',
+  googleClientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+  googleRedirectUri:
+    process.env.GOOGLE_REDIRECT_URI ??
+    'http://localhost:3000/api/v1/auth/google/callback',
   exchangeRateApiBase:
     process.env.EXCHANGE_RATE_API_BASE ?? 'https://api.exchangerate.host',
   exchangeRateTtlMinutes: Number(process.env.EXCHANGE_RATE_TTL_MINUTES ?? 60),

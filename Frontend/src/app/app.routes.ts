@@ -18,6 +18,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: "auth/google/callback",
+    loadComponent: () =>
+      import("./features/auth/google-callback/google-callback.component").then(
+        (m) => m.GoogleCallbackComponent
+      ),
+  },
+  {
     path: "onboarding",
     loadComponent: () =>
       import("./features/onboarding/onboarding.component").then(

@@ -4,7 +4,9 @@ import { LoginUserUseCase } from '../../../application/use-cases/login-user.usec
 import { GoogleAuthUseCase } from '../../../application/use-cases/google-auth.usecase';
 import { LinkGoogleUseCase } from '../../../application/use-cases/link-google.usecase';
 import { GetUserMembershipsUseCase } from '../../../application/use-cases/get-user-memberships.usecase';
+import { OAuthLoginUseCase } from '../../../application/use-cases/oauth-login.usecase';
 import { RefreshTokenService } from '../../../infrastructure/auth/refresh-token.service';
+import { GoogleOAuthProvider } from '../../../infrastructure/auth/google-oauth.provider';
 import { config } from '../../../config/env';
 import { UnauthorizedError } from '../../../domain/errors/unauthorized.error';
 import {
@@ -26,6 +28,8 @@ export class AuthController {
     private linkGoogle: LinkGoogleUseCase,
     private getUserMemberships: GetUserMembershipsUseCase,
     private refreshTokenService: RefreshTokenService,
+    private googleOAuthProvider: GoogleOAuthProvider,
+    private oauthLogin: OAuthLoginUseCase,
   ) {}
 
   private readonly cookieOptions = {
@@ -59,6 +63,24 @@ export class AuthController {
   google = async (req: Request, res: Response) => {
     const { idToken } = req.body as GoogleRequestDto;
     const { user } = await this.googleAuth.execute(idToken);
+    const { accessToken, refreshToken } = await this.refreshTokenService.issue(
+      user.id,
+    );
+    res.cookie('refreshToken', refreshToken, this.cookieOptions);
+    res.json({ user: toPublicUser(user), accessToken });
+  };
+
+  googleRedirect = (_req: Request, res: Response) => {
+    const url = this.googleOAuthProvider.getAuthorizationUrl();
+    res.redirect(url);
+  };
+
+  googleCallback = async (req: Request, res: Response) => {
+    const code = req.query.code as string | undefined;
+    if (!code) {
+      throw new UnauthorizedError('Authorization code required');
+    }
+    const { user } = await this.oauthLogin.execute(code);
     const { accessToken, refreshToken } = await this.refreshTokenService.issue(
       user.id,
     );
