@@ -10,6 +10,7 @@ import {
   Observable,
   tap,
   EMPTY,
+  firstValueFrom,
 } from "rxjs";
 
 import { User } from "./user.model";
@@ -42,6 +43,7 @@ export class AuthService {
   private refreshTimeoutId: ReturnType<typeof setTimeout> | null = null;
   private refreshBackoffMs = 30_000; // 30s
   private readonly refreshBackoffMaxMs = 5 * 60_000; // 5m
+  private initialized = false;
 
   private readonly userSubject = new BehaviorSubject<User | null>(
     this.getStoredUser()
@@ -49,6 +51,33 @@ export class AuthService {
   readonly user$ = this.userSubject.asObservable();
 
   constructor() {}
+
+  /**
+   * Inicializa la sesión intentando un silent refresh.
+   * Debe ser llamado al inicio de la aplicación.
+   */
+  async initialize(): Promise<boolean> {
+    if (this.initialized) {
+      return this.isAuthenticated();
+    }
+
+    this.initialized = true;
+
+    // Si hay un usuario guardado, intentar silent refresh
+    const storedUser = this.getStoredUser();
+    if (storedUser) {
+      try {
+        await firstValueFrom(this.refreshTokens());
+        return true;
+      } catch {
+        // Silent refresh falló, limpiar usuario almacenado
+        this.clearStoredUser();
+        return false;
+      }
+    }
+
+    return false;
+  }
 
   login(email: string, password: string) {
     const body: LoginRequest = { email, password };
@@ -66,9 +95,10 @@ export class AuthService {
 
   logout(): void {
     this.accessToken = null;
-    localStorage.removeItem("user");
+    this.clearStoredUser();
     this.userSubject.next(null);
     this.householdService.clear();
+    this.clearScheduledRefresh();
     void this.http
       .post("/auth/logout", {}, { withCredentials: true })
       .subscribe();
@@ -217,6 +247,10 @@ export class AuthService {
   private getStoredUser(): User | null {
     const raw = localStorage.getItem("user");
     return raw ? (JSON.parse(raw) as User) : null;
+  }
+
+  private clearStoredUser(): void {
+    localStorage.removeItem("user");
   }
 
   // Asegurar limpieza
