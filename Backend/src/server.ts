@@ -13,6 +13,7 @@ import currencyRoutes from './interfaces/http/routes/currency.routes';
 import changelogRoutes from './interfaces/http/routes/changelog.routes';
 import preferencesRoutes from './interfaces/http/routes/notification-preferences.routes';
 import alertRoutes from './interfaces/http/routes/alert.routes';
+import userRoutes from './interfaces/http/routes/user.routes';
 import { initSocket } from './infrastructure/websocket/socket.service';
 import './infrastructure/events/changelog.subscriber';
 import './infrastructure/events/alerts.subscriber';
@@ -44,6 +45,7 @@ app.use('/api/v1/households/:householdId/changelog', changelogRoutes);
 app.use('/api/v1/households/:householdId/preferences', preferencesRoutes);
 app.use('/api/v1/households/:householdId/alerts', alertRoutes);
 app.use('/api/v1/currency', currencyRoutes);
+app.use('/api/v1/users', userRoutes);
 
 app.get('/', (_req, res) => {
   res.send('API de Nidify');

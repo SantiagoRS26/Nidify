@@ -9,6 +9,7 @@ import { RefreshTokenService } from '../../../infrastructure/auth/refresh-token.
 import { GoogleOAuthProvider } from '../../../infrastructure/auth/google-oauth.provider';
 import { config } from '../../../config/env';
 import { UnauthorizedError } from '../../../domain/errors/unauthorized.error';
+import { GeoIpService } from '../../../infrastructure/location/geo-ip.service';
 import {
   RegisterRequestDto,
   LoginRequestDto,
@@ -30,6 +31,7 @@ export class AuthController {
     private refreshTokenService: RefreshTokenService,
     private googleOAuthProvider: GoogleOAuthProvider,
     private oauthLogin: OAuthLoginUseCase,
+    private geoIpService: GeoIpService,
   ) {}
 
   private readonly cookieOptions = {
@@ -41,8 +43,16 @@ export class AuthController {
   };
 
   register = async (req: Request, res: Response) => {
-    const { fullName, email, password } = req.body as RegisterRequestDto;
-    const user = await this.registerUser.execute(fullName, email, password);
+    const { fullName, email, password, preferredCurrency } =
+      req.body as RegisterRequestDto;
+    const currency =
+      preferredCurrency ?? (await this.geoIpService.getCurrency(req.ip));
+    const user = await this.registerUser.execute(
+      fullName,
+      email,
+      password,
+      currency ?? undefined,
+    );
     const { accessToken, refreshToken } = await this.refreshTokenService.issue(
       user.id,
     );

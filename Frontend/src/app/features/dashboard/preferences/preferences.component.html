@@ -11,11 +11,8 @@
         <div class="form-grid">
             <label class="field">
                 <span class="label">Moneda preferida</span>
-                <select class="input">
-                    <option>USD</option>
-                    <option>EUR</option>
-                    <option>ARS</option>
-                    <option>MXN</option>
+                <select class="input" [(ngModel)]="selectedCurrency">
+                    <option *ngFor="let c of currencies" [value]="c">{{ c }}</option>
                 </select>
             </label>
             <label class="field">
@@ -28,7 +25,7 @@
                 </select>
             </label>
         </div>
-        <button class="btn primary" style="margin-top:10px">Guardar</button>
+        <button class="btn primary" style="margin-top:10px" (click)="save()">Guardar</button>
     </div>
 
     <div class="card">
