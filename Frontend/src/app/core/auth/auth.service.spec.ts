@@ -43,6 +43,39 @@ describe("AuthService", () => {
     expect(localStorage.getItem("accessToken")).toBeNull();
   });
 
+  it("stores session on google login", () => {
+    service.loginWithGoogle("token123").subscribe();
+    const req = httpMock.expectOne("/auth/google");
+    expect(req.request.body).toEqual({ idToken: "token123" });
+    expect(req.request.withCredentials).toBeTrue();
+    req.flush({
+      user: {
+        id: "1",
+        fullName: "Test User",
+        email: "test@example.com",
+        roles: ["user"],
+      },
+      accessToken: "gToken",
+    });
+    expect(service.getToken()).toBe("gToken");
+  });
+
+  it("updates user on google account link", () => {
+    service.linkGoogleAccount("idTok").subscribe();
+    const req = httpMock.expectOne("/auth/google/link");
+    expect(req.request.body).toEqual({ idToken: "idTok" });
+    expect(req.request.withCredentials).toBeTrue();
+    req.flush({
+      user: {
+        id: "1",
+        fullName: "Test User",
+        email: "test@example.com",
+        roles: ["user"],
+      },
+    });
+    expect(localStorage.getItem("user")).toContain("Test User");
+  });
+
   it("does not refresh token on activity when unauthenticated", () => {
     // No hay token cargado, no debe intentar refrescar automáticamente
     httpMock.expectNone("/auth/refresh");

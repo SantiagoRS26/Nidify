@@ -12,6 +12,7 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 import { AuthService } from '../../../core/auth/auth.service';
+import { GoogleAuthService } from '../../../core/auth/google-auth.service';
 import { ProblemInlineComponent } from '../../../shared/components/problem-inline/problem-inline.component';
 
 @Component({
@@ -25,6 +26,7 @@ import { ProblemInlineComponent } from '../../../shared/components/problem-inlin
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
+  private readonly googleAuth = inject(GoogleAuthService);
   private readonly router = inject(Router);
 
   readonly form = this.fb.nonNullable.group({
@@ -42,6 +44,16 @@ export class LoginComponent {
       next: () => {
         this.router.navigate(['/home']);
       },
+    });
+  }
+
+  googleLogin(): void {
+    this.googleAuth.signIn().then((idToken) => {
+      this.authService.loginWithGoogle(idToken).subscribe({
+        next: () => {
+          this.router.navigate(['/home']);
+        },
+      });
     });
   }
 }

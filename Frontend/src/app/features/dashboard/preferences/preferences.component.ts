@@ -1,5 +1,8 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
+
+import { AuthService } from "../../../core/auth/auth.service";
+import { GoogleAuthService } from "../../../core/auth/google-auth.service";
 
 @Component({
   selector: "app-preferences",
@@ -9,4 +12,13 @@ import { CommonModule } from "@angular/common";
   styleUrl: "./preferences.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PreferencesComponent {}
+export class PreferencesComponent {
+  private readonly authService = inject(AuthService);
+  private readonly googleAuth = inject(GoogleAuthService);
+
+  linkGoogle(): void {
+    this.googleAuth.signIn().then((idToken) => {
+      this.authService.linkGoogleAccount(idToken).subscribe();
+    });
+  }
+}
