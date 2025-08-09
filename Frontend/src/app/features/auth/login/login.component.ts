@@ -4,8 +4,8 @@ import { Router, RouterLink } from "@angular/router";
 import { CommonModule } from "@angular/common";
 
 import { AuthService } from "../../../core/auth/auth.service";
-import { GoogleAuthService } from "../../../core/auth/google-auth.service";
 import { ProblemInlineComponent } from "../../../shared/components/problem-inline/problem-inline.component";
+import { environment } from "../../../../environments/environment";
 
 @Component({
   selector: "app-login",
@@ -23,7 +23,6 @@ import { ProblemInlineComponent } from "../../../shared/components/problem-inlin
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
-  private readonly googleAuth = inject(GoogleAuthService);
   private readonly router = inject(Router);
 
   readonly form = this.fb.nonNullable.group({
@@ -45,27 +44,7 @@ export class LoginComponent {
   }
 
   googleLogin(): void {
-    this.googleAuth
-      .signIn()
-      .then((idToken) => {
-        this.authService.loginWithGoogle(idToken).subscribe({
-          next: () => {
-            this.router.navigate(["/home"]);
-          },
-          error: (error) => {
-            console.error("Error al autenticar con Google:", error);
-            // Aquí puedes agregar una notificación de error al usuario
-          },
-        });
-      })
-      .catch((error) => {
-        console.error("Error en Google Sign-In:", error);
-        // Manejo específico de errores de Google OAuth
-        if (error.includes("dominio")) {
-          console.warn(
-            "⚠️ Configuración requerida: Añade localhost:4200 a los dominios autorizados en Google Cloud Console"
-          );
-        }
-      });
+    window.location.href = `${environment.apiUrl}/auth/google`;
   }
 }
+

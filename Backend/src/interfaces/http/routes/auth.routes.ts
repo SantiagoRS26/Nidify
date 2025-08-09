@@ -12,6 +12,8 @@ import { LinkGoogleUseCase } from '../../../application/use-cases/link-google.us
 import { GetUserMembershipsUseCase } from '../../../application/use-cases/get-user-memberships.usecase';
 import { OAuth2Client } from 'google-auth-library';
 import { config } from '../../../config/env';
+import { GoogleOAuthProvider } from '../../../infrastructure/auth/google-oauth.provider';
+import { OAuthLoginUseCase } from '../../../application/use-cases/oauth-login.usecase';
 import { authMiddleware } from '../../middleware/auth.middleware';
 import { validate } from '../../middleware/validation.middleware';
 import { registerSchema, loginSchema, googleSchema } from '../dto/auth.dto';
@@ -27,12 +29,14 @@ const refreshTokenService = new RefreshTokenService(
   refreshTokenRepository,
 );
 const googleClient = new OAuth2Client(config.googleClientId);
+const googleOAuthProvider = new GoogleOAuthProvider();
 
 const registerUser = new RegisterUserUseCase(userRepository);
 const loginUser = new LoginUserUseCase(userRepository);
 const googleAuth = new GoogleAuthUseCase(userRepository, googleClient);
 const linkGoogle = new LinkGoogleUseCase(userRepository, googleClient);
 const getUserMemberships = new GetUserMembershipsUseCase(membershipRepository);
+const oauthLogin = new OAuthLoginUseCase(userRepository, googleOAuthProvider);
 
 const controller = new AuthController(
   registerUser,
@@ -41,6 +45,8 @@ const controller = new AuthController(
   linkGoogle,
   getUserMemberships,
   refreshTokenService,
+  googleOAuthProvider,
+  oauthLogin,
 );
 
 router.post(
@@ -50,6 +56,8 @@ router.post(
 );
 router.post('/login', validate({ body: loginSchema }), controller.login);
 router.post('/google', validate({ body: googleSchema }), controller.google);
+router.get('/google', controller.googleRedirect);
+router.get('/google/callback', controller.googleCallback);
 router.post('/refresh', controller.refresh);
 router.post('/logout', controller.logout);
 router.post('/logout-all', controller.logoutAll);

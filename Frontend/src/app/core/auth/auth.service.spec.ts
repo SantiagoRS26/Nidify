@@ -43,10 +43,11 @@ describe("AuthService", () => {
     expect(localStorage.getItem("accessToken")).toBeNull();
   });
 
-  it("stores session on google login", () => {
-    service.loginWithGoogle("token123").subscribe();
-    const req = httpMock.expectOne("/auth/google");
-    expect(req.request.body).toEqual({ idToken: "token123" });
+  it("stores session on oauth login", () => {
+    service.oauthLogin("code123").subscribe();
+    const req = httpMock.expectOne((r) => r.url === "/auth/google/callback");
+    expect(req.request.params.get("code")).toBe("code123");
+    expect(req.request.method).toBe("GET");
     expect(req.request.withCredentials).toBeTrue();
     req.flush({
       user: {
