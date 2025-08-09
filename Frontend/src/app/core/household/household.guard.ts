@@ -10,26 +10,17 @@ export class HouseholdGuard implements CanActivate {
   private readonly router = inject(Router);
 
   canActivate(): Observable<boolean> {
-    // Primero verificamos si hay datos locales
-    if (this.householdService.hasHousehold()) {
-      // Si hay datos locales, verificamos con el backend
-      return this.householdService.initializeHouseholdState().pipe(
-        map((hasActiveHousehold) => {
-          if (!hasActiveHousehold) {
-            this.router.navigate(["/onboarding"]);
-          }
-          return hasActiveHousehold;
-        }),
-        catchError(() => {
-          // En caso de error, asumir que no tiene hogar válido
+    return this.householdService.initializeHouseholdState().pipe(
+      map((hasActiveHousehold) => {
+        if (!hasActiveHousehold) {
           this.router.navigate(["/onboarding"]);
-          return of(false);
-        })
-      );
-    } else {
-      // Si no hay datos locales, redirigir directamente a onboarding
-      this.router.navigate(["/onboarding"]);
-      return of(false);
-    }
+        }
+        return hasActiveHousehold;
+      }),
+      catchError(() => {
+        this.router.navigate(["/onboarding"]);
+        return of(false);
+      })
+    );
   }
 }
