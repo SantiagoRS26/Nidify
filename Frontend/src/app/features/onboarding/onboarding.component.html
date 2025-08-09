@@ -11,50 +11,50 @@
     </div>
 
     <div class="grid">
-        <div class="card action-card">
+        <form class="card action-card" [formGroup]="createForm" (ngSubmit)="onCreate()">
             <h3>Crear hogar</h3>
             <p class="text-muted">Define el nombre, moneda base y metas presupuestales.</p>
             <div class="form-grid">
                 <label>
                     Nombre del hogar
-                    <input type="text" placeholder="Ej. Andrés y Julia" />
+                    <input type="text" formControlName="name" placeholder="Ej. Andrés y Julia" />
                 </label>
                 <label>
                     Moneda base
-                    <select>
-                        <option>USD</option>
-                        <option>EUR</option>
-                        <option>ARS</option>
-                        <option>MXN</option>
+                    <select formControlName="baseCurrency">
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="ARS">ARS</option>
+                        <option value="MXN">MXN</option>
                     </select>
                 </label>
                 <label>
                     Presupuesto inicial (opcional)
-                    <input type="number" placeholder="0" />
+                    <input type="number" formControlName="initialBudget" placeholder="0" />
                 </label>
                 <label>
                     Presupuesto mensual (opcional)
-                    <input type="number" placeholder="0" />
+                    <input type="number" formControlName="monthlyBudget" placeholder="0" />
                 </label>
             </div>
             <div class="form-actions">
-                <a routerLink="/home" class="btn btn-primary btn-block">Crear hogar</a>
+                <button type="submit" class="btn btn-primary btn-block">Crear hogar</button>
             </div>
-        </div>
+        </form>
 
-        <div class="card action-card">
+        <form class="card action-card" [formGroup]="inviteForm" (ngSubmit)="onAccept()">
             <h3>Aceptar invitación</h3>
             <p class="text-muted">Pega tu token o link de invitación para unirte.</p>
             <div class="form-grid">
                 <label>
                     Token / Link
-                    <input type="text" placeholder="nidify://invite?token=..." />
+                    <input type="text" formControlName="token" placeholder="nidify://invite?token=..." />
                 </label>
             </div>
             <div class="form-actions">
-                <a routerLink="/home" class="btn btn-primary btn-block">Unirme al hogar</a>
+                <button type="submit" class="btn btn-primary btn-block">Unirme al hogar</button>
             </div>
-        </div>
+        </form>
     </div>
 
     <div class="foot text-muted">

@@ -13,6 +13,7 @@ import {
 } from "rxjs";
 
 import { User } from "./user.model";
+import { HouseholdService } from "../household/household.service";
 
 interface LoginRequest {
   email: string;
@@ -34,6 +35,7 @@ interface AuthResponse {
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
+  private readonly householdService = inject(HouseholdService);
 
   private accessToken: string | null = null;
   private refreshing = false;
@@ -66,6 +68,7 @@ export class AuthService {
     this.accessToken = null;
     localStorage.removeItem("user");
     this.userSubject.next(null);
+    this.householdService.clear();
     void this.http
       .post("/auth/logout", {}, { withCredentials: true })
       .subscribe();
