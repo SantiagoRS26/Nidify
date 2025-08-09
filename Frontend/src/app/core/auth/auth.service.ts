@@ -86,11 +86,28 @@ export class AuthService {
       .pipe(tap((res) => this.storeSession(res)));
   }
 
+  loginWithGoogle(idToken: string) {
+    return this.http
+      .post<AuthResponse>("/auth/google", { idToken }, { withCredentials: true })
+      .pipe(tap((res) => this.storeSession(res)));
+  }
+
   register(fullName: string, email: string, password: string) {
     const body: RegisterRequest = { fullName, email, password };
     return this.http
       .post<AuthResponse>("/auth/register", body, { withCredentials: true })
       .pipe(tap((res) => this.storeSession(res)));
+  }
+
+  linkGoogleAccount(idToken: string) {
+    return this.http
+      .post<{ user: User }>("/auth/google/link", { idToken }, { withCredentials: true })
+      .pipe(
+        tap(({ user }) => {
+          localStorage.setItem("user", JSON.stringify(user));
+          this.userSubject.next(user);
+        }),
+      );
   }
 
   logout(): void {
