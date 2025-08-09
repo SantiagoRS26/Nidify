@@ -11,6 +11,7 @@ export class RegisterUserUseCase {
     fullName: string,
     email: string,
     password: string,
+    preferredCurrency?: string,
   ): Promise<User> {
     const existing = await this.userRepository.findByEmail(email);
     if (existing) {
@@ -25,6 +26,7 @@ export class RegisterUserUseCase {
       createdAt: new Date(),
       updatedAt: new Date(),
       status: UserStatus.ACTIVE,
+      ...(preferredCurrency ? { preferredCurrency } : {}),
     });
     return user;
   }

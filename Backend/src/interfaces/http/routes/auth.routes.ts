@@ -14,6 +14,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { config } from '../../../config/env';
 import { GoogleOAuthProvider } from '../../../infrastructure/auth/google-oauth.provider';
 import { OAuthLoginUseCase } from '../../../application/use-cases/oauth-login.usecase';
+import { GeoIpService } from '../../../infrastructure/location/geo-ip.service';
 import { authMiddleware } from '../../middleware/auth.middleware';
 import { validate } from '../../middleware/validation.middleware';
 import { registerSchema, loginSchema, googleSchema } from '../dto/auth.dto';
@@ -30,6 +31,7 @@ const refreshTokenService = new RefreshTokenService(
 );
 const googleClient = new OAuth2Client(config.googleClientId);
 const googleOAuthProvider = new GoogleOAuthProvider();
+const geoIpService = new GeoIpService();
 
 const registerUser = new RegisterUserUseCase(userRepository);
 const loginUser = new LoginUserUseCase(userRepository);
@@ -47,6 +49,7 @@ const controller = new AuthController(
   refreshTokenService,
   googleOAuthProvider,
   oauthLogin,
+  geoIpService,
 );
 
 router.post(

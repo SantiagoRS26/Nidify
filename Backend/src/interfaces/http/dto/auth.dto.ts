@@ -4,6 +4,7 @@ export const registerSchema = z.object({
   fullName: z.string().min(1),
   email: z.string().email(),
   password: z.string().min(6),
+  preferredCurrency: z.string().length(3).optional(),
 });
 export type RegisterRequestDto = z.infer<typeof registerSchema>;
 

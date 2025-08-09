@@ -5,6 +5,7 @@ import { CommonModule } from "@angular/common";
 
 import { AuthService } from "../../../core/auth/auth.service";
 import { ProblemInlineComponent } from "../../../shared/components/problem-inline/problem-inline.component";
+import { GeoService } from "../../../core/geo/geo.service";
 
 @Component({
   selector: "app-register",
@@ -23,6 +24,7 @@ export class RegisterComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly geo = inject(GeoService);
 
   readonly form = this.fb.nonNullable.group({
     fullName: ["", Validators.required],
@@ -36,10 +38,14 @@ export class RegisterComponent {
       return;
     }
     const { fullName, email, password } = this.form.getRawValue();
-    this.authService.register(fullName, email, password).subscribe({
-      next: () => {
-        this.router.navigate(["/home"]);
-      },
+    this.geo.getCurrency().then((currency) => {
+      this.authService
+        .register(fullName, email, password, currency ?? undefined)
+        .subscribe({
+          next: () => {
+            this.router.navigate(["/home"]);
+          },
+        });
     });
   }
 }

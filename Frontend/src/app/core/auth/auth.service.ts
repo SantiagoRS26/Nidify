@@ -25,6 +25,7 @@ interface RegisterRequest {
   fullName: string;
   email: string;
   password: string;
+  preferredCurrency?: string;
 }
 
 interface AuthResponse {
@@ -102,11 +103,36 @@ export class AuthService {
     this.storeSession({ user, accessToken });
   }
 
-  register(fullName: string, email: string, password: string) {
-    const body: RegisterRequest = { fullName, email, password };
+  register(
+    fullName: string,
+    email: string,
+    password: string,
+    preferredCurrency?: string,
+  ) {
+    const body: RegisterRequest = {
+      fullName,
+      email,
+      password,
+      preferredCurrency,
+    };
     return this.http
       .post<AuthResponse>("/auth/register", body, { withCredentials: true })
       .pipe(tap((res) => this.storeSession(res)));
+  }
+
+  updatePreferredCurrency(currency: string) {
+    return this.http
+      .patch<{ user: User }>(
+        "/users/me/currency",
+        { currency },
+        { withCredentials: true }
+      )
+      .pipe(
+        tap(({ user }) => {
+          localStorage.setItem("user", JSON.stringify(user));
+          this.userSubject.next(user);
+        })
+      );
   }
 
   linkGoogleAccount(idToken: string) {
