@@ -1,5 +1,7 @@
 import { Item } from '../../domain/models/item.model';
 import { ItemRepository } from '../../infrastructure/persistence/repositories/item.repository';
+import { CategoryRepository } from '../../infrastructure/persistence/repositories/category.repository';
+import { NotFoundError } from '../../domain/errors/not-found.error';
 import { ItemPriority } from '../../domain/models/enums/item-priority.enum';
 import { ItemStatus } from '../../domain/models/enums/item-status.enum';
 import { ItemType } from '../../domain/models/enums/item-type.enum';
@@ -30,6 +32,7 @@ export interface UpdateItemPayload {
 export class UpdateItemUseCase {
   constructor(
     private itemRepo: ItemRepository,
+    private categoryRepo: CategoryRepository,
     private eventBus: DomainEventBus,
   ) {}
 
@@ -42,6 +45,12 @@ export class UpdateItemUseCase {
     if (!before) return null;
     const price = payload.price ?? before.price;
     const split = payload.paymentSplit ?? before.paymentSplit;
+    if (payload.categoryId) {
+      const category = await this.categoryRepo.findById(payload.categoryId);
+      if (!category || category.householdId !== before.householdId) {
+        throw new NotFoundError('Category not found');
+      }
+    }
     const update: Partial<Item> = {
       ...payload,
       ...(split ? { paymentSplit: calculatePaymentSplit(price, split) } : {}),

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { ItemRepository } from '../../../infrastructure/persistence/repositories/item.repository';
+import { CategoryRepository } from '../../../infrastructure/persistence/repositories/category.repository';
 import { JwtService } from '../../../infrastructure/auth/jwt.service';
 import { authMiddleware } from '../../middleware/auth.middleware';
 import { validate } from '../../middleware/validation.middleware';
@@ -14,11 +15,20 @@ import { createItemSchema, updateItemSchema } from '../dto/item.dto';
 const router = Router({ mergeParams: true });
 
 const itemRepo = new ItemRepository();
+const categoryRepo = new CategoryRepository();
 const jwtService = new JwtService();
 
-const createItem = new CreateItemUseCase(itemRepo, domainEventBus);
+const createItem = new CreateItemUseCase(
+  itemRepo,
+  categoryRepo,
+  domainEventBus,
+);
 const listItems = new ListItemsUseCase(itemRepo);
-const updateItem = new UpdateItemUseCase(itemRepo, domainEventBus);
+const updateItem = new UpdateItemUseCase(
+  itemRepo,
+  categoryRepo,
+  domainEventBus,
+);
 const deleteItem = new DeleteItemUseCase(itemRepo, domainEventBus);
 
 const controller = new ItemController(
