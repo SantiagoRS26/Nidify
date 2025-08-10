@@ -10,6 +10,8 @@
     </select>
   </ng-container>
   <ng-template #singleHousehold>
-    <span class="household-name">{{ households[0]?.name }}</span>
+    <span *ngIf="households.length" class="household-name">
+      {{ households[0].name }}
+    </span>
   </ng-template>
 </ng-container>
