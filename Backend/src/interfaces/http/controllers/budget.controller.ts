@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { GetBudgetSummaryUseCase } from '../../../application/use-cases/get-budget-summary.usecase';
+import { GetBudgetSummaryUseCase } from '../../../application/use-cases/budget/get-budget-summary.usecase';
 import {
   UpdateBudgetGoalUseCase,
   UpdateBudgetGoalPayload,
-} from '../../../application/use-cases/update-budget-goal.usecase';
+} from '../../../application/use-cases/budget/update-budget-goal.usecase';
 import { BudgetGoalType } from '../../../domain/models/enums/budget-goal-type.enum';
 import { UpdateBudgetRequestDto } from '../dto/budget.dto';
 import { notifyHousehold } from '../../../infrastructure/websocket/socket.service';

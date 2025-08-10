@@ -4,10 +4,10 @@ import { ItemRepository } from '../../../infrastructure/persistence/repositories
 import { JwtService } from '../../../infrastructure/auth/jwt.service';
 import { authMiddleware } from '../../middleware/auth.middleware';
 import { validate } from '../../middleware/validation.middleware';
-import { CreateCategoryUseCase } from '../../../application/use-cases/create-category.usecase';
-import { ListCategoriesUseCase } from '../../../application/use-cases/list-categories.usecase';
-import { UpdateCategoryUseCase } from '../../../application/use-cases/update-category.usecase';
-import { DeleteCategoryUseCase } from '../../../application/use-cases/delete-category.usecase';
+import { CreateCategoryUseCase } from '../../../application/use-cases/category/create-category.usecase';
+import { ListCategoriesUseCase } from '../../../application/use-cases/category/list-categories.usecase';
+import { UpdateCategoryUseCase } from '../../../application/use-cases/category/update-category.usecase';
+import { DeleteCategoryUseCase } from '../../../application/use-cases/category/delete-category.usecase';
 import { CategoryController } from '../controllers/category.controller';
 import {
   createCategorySchema,

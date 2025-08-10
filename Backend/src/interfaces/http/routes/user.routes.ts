@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { UserPreferencesController } from '../controllers/user-preferences.controller';
 import { UserRepository } from '../../../infrastructure/persistence/repositories/user.repository';
-import { UpdatePreferredCurrencyUseCase } from '../../../application/use-cases/update-preferred-currency.usecase';
+import { UpdatePreferredCurrencyUseCase } from '../../../application/use-cases/currency/update-preferred-currency.usecase';
 import { authMiddleware } from '../../middleware/auth.middleware';
 import { JwtService } from '../../../infrastructure/auth/jwt.service';
 import { validate } from '../../middleware/validation.middleware';

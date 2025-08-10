@@ -2,13 +2,13 @@ import { Request, Response } from 'express';
 import {
   CreateCategoryUseCase,
   CreateCategoryPayload,
-} from '../../../application/use-cases/create-category.usecase';
-import { ListCategoriesUseCase } from '../../../application/use-cases/list-categories.usecase';
+} from '../../../application/use-cases/category/create-category.usecase';
+import { ListCategoriesUseCase } from '../../../application/use-cases/category/list-categories.usecase';
 import {
   UpdateCategoryUseCase,
   UpdateCategoryPayload,
-} from '../../../application/use-cases/update-category.usecase';
-import { DeleteCategoryUseCase } from '../../../application/use-cases/delete-category.usecase';
+} from '../../../application/use-cases/category/update-category.usecase';
+import { DeleteCategoryUseCase } from '../../../application/use-cases/category/delete-category.usecase';
 import {
   CreateCategoryRequestDto,
   UpdateCategoryRequestDto,

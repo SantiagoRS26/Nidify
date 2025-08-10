@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { UpdatePreferredCurrencyUseCase } from '../../../application/use-cases/update-preferred-currency.usecase';
+import { UpdatePreferredCurrencyUseCase } from '../../../application/use-cases/currency/update-preferred-currency.usecase';
 import { CurrencyPreferenceDto } from '../dto/currency-preference.dto';
 import { toPublicUser } from '../dto/user.dto';
 

@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { CreateHouseholdUseCase } from '../../../application/use-cases/create-household.usecase';
-import { InviteToHouseholdUseCase } from '../../../application/use-cases/invite-to-household.usecase';
-import { RevokeMembershipUseCase } from '../../../application/use-cases/revoke-membership.usecase';
-import { CancelInvitationUseCase } from '../../../application/use-cases/cancel-invitation.usecase';
-import { GetHouseholdUseCase } from '../../../application/use-cases/get-household.usecase';
+import { CreateHouseholdUseCase } from '../../../application/use-cases/household/create-household.usecase';
+import { InviteToHouseholdUseCase } from '../../../application/use-cases/household/invite-to-household.usecase';
+import { RevokeMembershipUseCase } from '../../../application/use-cases/household/revoke-membership.usecase';
+import { CancelInvitationUseCase } from '../../../application/use-cases/household/cancel-invitation.usecase';
+import { GetHouseholdUseCase } from '../../../application/use-cases/household/get-household.usecase';
 import { NotFoundError } from '../../../domain/errors/not-found.error';
 import {
   CreateHouseholdRequestDto,

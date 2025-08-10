@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { GetNotificationPreferencesUseCase } from '../../../application/use-cases/get-notification-preferences.usecase';
+import { GetNotificationPreferencesUseCase } from '../../../application/use-cases/notification/get-notification-preferences.usecase';
 import {
   UpdateNotificationPreferencesUseCase,
   UpdateNotificationPreferencesPayload,
-} from '../../../application/use-cases/update-notification-preferences.usecase';
+} from '../../../application/use-cases/notification/update-notification-preferences.usecase';
 import { NotificationPreferencesDto } from '../dto/notification-preferences.dto';
 
 interface AuthRequest extends Request {

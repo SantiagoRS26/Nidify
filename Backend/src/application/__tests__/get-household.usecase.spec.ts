@@ -2,7 +2,7 @@
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { HouseholdRepository } from '../../infrastructure/persistence/repositories/household.repository';
-import { GetHouseholdUseCase } from '../use-cases/get-household.usecase';
+import { GetHouseholdUseCase } from '../use-cases/household/get-household.usecase';
 
 describe('GetHouseholdUseCase', () => {
   let mongo: MongoMemoryServer;

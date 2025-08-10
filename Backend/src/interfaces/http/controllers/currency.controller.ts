@@ -2,8 +2,8 @@ import { Request, Response } from 'express';
 import {
   ConvertCurrencyUseCase,
   ConvertCurrencyPayload,
-} from '../../../application/use-cases/convert-currency.usecase';
-import { GetSupportedCurrenciesUseCase } from '../../../application/use-cases/get-supported-currencies.usecase';
+} from '../../../application/use-cases/currency/convert-currency.usecase';
+import { GetSupportedCurrenciesUseCase } from '../../../application/use-cases/currency/get-supported-currencies.usecase';
 import {
   ConvertCurrencyRequestDto,
   SupportedCurrenciesRequestDto,

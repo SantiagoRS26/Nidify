@@ -4,7 +4,7 @@ import { ItemRepository } from '../persistence/repositories/item.repository';
 import { NotificationPreferencesRepository } from '../persistence/repositories/notification-preferences.repository';
 import { AlertRepository } from '../persistence/repositories/alert.repository';
 import { UserRepository } from '../persistence/repositories/user.repository';
-import { GetBudgetSummaryUseCase } from '../../application/use-cases/get-budget-summary.usecase';
+import { GetBudgetSummaryUseCase } from '../../application/use-cases/budget/get-budget-summary.usecase';
 import { AlertType } from '../../domain/models/enums/alert-type.enum';
 import {
   ItemCreatedEvent,
