@@ -12,4 +12,8 @@ export interface Category {
   order?: number;
   /** Indicates if it is a default/base category */
   isBase?: boolean;
+  /** Creation timestamp */
+  createdAt: Date;
+  /** Last update timestamp */
+  updatedAt: Date;
 }
