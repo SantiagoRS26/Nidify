@@ -1,0 +1,15 @@
+<ng-container *ngIf="(households$ | async) as households">
+  <ng-container *ngIf="households.length > 1; else singleHousehold">
+    <select
+      class="household-select"
+      [value]="(householdId$ | async) ?? ''"
+      (change)="onSelect($any($event.target).value)"
+      aria-label="Seleccionar hogar"
+    >
+      <option *ngFor="let h of households" [value]="h.id">{{ h.name }}</option>
+    </select>
+  </ng-container>
+  <ng-template #singleHousehold>
+    <span class="household-name">{{ households[0]?.name }}</span>
+  </ng-template>
+</ng-container>

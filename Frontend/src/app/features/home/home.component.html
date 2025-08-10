@@ -1,9 +1,12 @@
 <div class="app-shell">
     <header class="topbar">
         <div class="topbar__title">Nidify</div>
-        <button class="topbar__action" (click)="logout()" aria-label="Cerrar sesión">
-            ⎋
-        </button>
+        <div class="topbar__actions">
+            <app-household-switcher></app-household-switcher>
+            <button class="topbar__action" (click)="logout()" aria-label="Cerrar sesión">
+                ⎋
+            </button>
+        </div>
     </header>
 
     <main class="content">

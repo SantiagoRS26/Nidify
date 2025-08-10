@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+.household-select {
+  padding: 4px 8px;
+  border: 1px solid var(--base-80);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  color: var(--base-20);
+}
+
+.household-name {
+  font-weight: 500;
+}
