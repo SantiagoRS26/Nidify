@@ -3,6 +3,8 @@ import { CreateHouseholdUseCase } from '../../../application/use-cases/create-ho
 import { InviteToHouseholdUseCase } from '../../../application/use-cases/invite-to-household.usecase';
 import { RevokeMembershipUseCase } from '../../../application/use-cases/revoke-membership.usecase';
 import { CancelInvitationUseCase } from '../../../application/use-cases/cancel-invitation.usecase';
+import { GetHouseholdUseCase } from '../../../application/use-cases/get-household.usecase';
+import { NotFoundError } from '../../../domain/errors/not-found.error';
 import {
   CreateHouseholdRequestDto,
   InviteRequestDto,
@@ -18,6 +20,7 @@ export class HouseholdController {
     private inviteToHousehold: InviteToHouseholdUseCase,
     private revokeMembership: RevokeMembershipUseCase,
     private cancelInvitationUseCase: CancelInvitationUseCase,
+    private getHousehold: GetHouseholdUseCase,
   ) {}
 
   create = async (req: Request, res: Response) => {
@@ -65,5 +68,14 @@ export class HouseholdController {
       invitationId,
     );
     res.status(204).send();
+  };
+
+  get = async (req: Request, res: Response) => {
+    const { householdId } = req.params as { householdId: string };
+    const household = await this.getHousehold.execute(householdId);
+    if (!household) {
+      throw new NotFoundError('Household not found');
+    }
+    res.json({ household });
   };
 }

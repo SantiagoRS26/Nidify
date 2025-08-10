@@ -8,7 +8,10 @@ export class HouseholdRepository {
   }
 
   async findById(id: string): Promise<Household | null> {
-    return (await HouseholdModel.findById(id).lean()) as Household | null;
+    const found = await HouseholdModel.findById(id).lean();
+    return found
+      ? ({ id: found._id.toString(), ...found } as unknown as Household)
+      : null;
   }
 
   async update(
@@ -18,6 +21,8 @@ export class HouseholdRepository {
     const updated = await HouseholdModel.findByIdAndUpdate(id, update, {
       new: true,
     }).lean();
-    return updated as Household | null;
+    return updated
+      ? ({ id: updated._id.toString(), ...updated } as unknown as Household)
+      : null;
   }
 }
