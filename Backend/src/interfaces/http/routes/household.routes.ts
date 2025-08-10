@@ -10,6 +10,7 @@ import { CreateHouseholdUseCase } from '../../../application/use-cases/create-ho
 import { InviteToHouseholdUseCase } from '../../../application/use-cases/invite-to-household.usecase';
 import { RevokeMembershipUseCase } from '../../../application/use-cases/revoke-membership.usecase';
 import { CancelInvitationUseCase } from '../../../application/use-cases/cancel-invitation.usecase';
+import { GetHouseholdUseCase } from '../../../application/use-cases/get-household.usecase';
 import { EmailService } from '../../../infrastructure/notifications/email.service';
 import { validate } from '../../middleware/validation.middleware';
 import { createHouseholdSchema, inviteSchema } from '../dto/household.dto';
@@ -39,12 +40,14 @@ const cancelInvitation = new CancelInvitationUseCase(
   invitationRepo,
   userRepo,
 );
+const getHousehold = new GetHouseholdUseCase(householdRepo);
 
 const controller = new HouseholdController(
   createHousehold,
   inviteToHousehold,
   revokeMembership,
   cancelInvitation,
+  getHousehold,
 );
 
 router.post(
@@ -53,6 +56,7 @@ router.post(
   validate({ body: createHouseholdSchema }),
   controller.create,
 );
+router.get('/:householdId', authMiddleware(jwtService), controller.get);
 router.post(
   '/:householdId/invitations',
   authMiddleware(jwtService),
