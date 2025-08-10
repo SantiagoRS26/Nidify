@@ -3,10 +3,17 @@ import {
   ConvertCurrencyUseCase,
   ConvertCurrencyPayload,
 } from '../../../application/use-cases/convert-currency.usecase';
-import { ConvertCurrencyRequestDto } from '../dto/currency.dto';
+import { GetSupportedCurrenciesUseCase } from '../../../application/use-cases/get-supported-currencies.usecase';
+import {
+  ConvertCurrencyRequestDto,
+  SupportedCurrenciesRequestDto,
+} from '../dto/currency.dto';
 
 export class CurrencyController {
-  constructor(private convertCurrency: ConvertCurrencyUseCase) {}
+  constructor(
+    private convertCurrency: ConvertCurrencyUseCase,
+    private getSupportedCurrencies: GetSupportedCurrenciesUseCase,
+  ) {}
 
   convert = async (req: Request, res: Response) => {
     const { from, to, amount } =
@@ -18,5 +25,13 @@ export class CurrencyController {
     };
     const conversion = await this.convertCurrency.execute(payload);
     res.json({ conversion });
+  };
+
+  supported = async (req: Request, res: Response) => {
+    const { base } = req.query as unknown as SupportedCurrenciesRequestDto;
+    const currencies = await this.getSupportedCurrencies.execute(
+      (base ?? 'USD').toUpperCase(),
+    );
+    res.json({ currencies });
   };
 }

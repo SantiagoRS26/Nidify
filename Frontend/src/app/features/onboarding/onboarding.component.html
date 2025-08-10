@@ -22,10 +22,9 @@
                 <label>
                     Moneda base
                     <select formControlName="baseCurrency">
-                        <option value="USD">USD</option>
-                        <option value="EUR">EUR</option>
-                        <option value="ARS">ARS</option>
-                        <option value="MXN">MXN</option>
+                        <option *ngFor="let c of currencies$ | async" [value]="c">
+                            {{ c }}
+                        </option>
                     </select>
                 </label>
                 <label>

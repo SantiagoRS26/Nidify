@@ -5,6 +5,7 @@ import { FormsModule } from "@angular/forms";
 import { AuthService } from "../../../core/auth/auth.service";
 import { GoogleAuthService } from "../../../core/auth/google-auth.service";
 import { GeoService } from "../../../core/geo/geo.service";
+import { CurrencyService } from "../../../core/currency/currency.service";
 import { take } from "rxjs";
 
 @Component({
@@ -19,9 +20,10 @@ export class PreferencesComponent {
   private readonly authService = inject(AuthService);
   private readonly googleAuth = inject(GoogleAuthService);
   private readonly geo = inject(GeoService);
+  private readonly currencyService = inject(CurrencyService);
 
-  currencies = ["USD", "EUR", "ARS", "MXN"];
-  selectedCurrency = this.currencies[0];
+  readonly currencies$ = this.currencyService.getSupported();
+  selectedCurrency = "USD";
 
   constructor() {
     this.authService.user$.pipe(take(1)).subscribe((user) => {
@@ -49,3 +51,4 @@ export class PreferencesComponent {
       .subscribe();
   }
 }
+

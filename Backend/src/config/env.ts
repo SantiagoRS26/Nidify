@@ -17,6 +17,6 @@ export const config = {
     process.env.FRONTEND_REDIRECT_URI ??
     'http://localhost:4200/auth/google/callback',
   exchangeRateApiBase:
-    process.env.EXCHANGE_RATE_API_BASE ?? 'https://api.exchangerate.host',
-  exchangeRateTtlMinutes: Number(process.env.EXCHANGE_RATE_TTL_MINUTES ?? 60),
+    process.env.EXCHANGE_RATE_API_BASE ?? 'https://open.er-api.com/v6/latest',
+  exchangeRateTtlMinutes: Number(process.env.EXCHANGE_RATE_TTL_MINUTES ?? 1440),
 };

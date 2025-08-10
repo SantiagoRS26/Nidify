@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
 import { Router, ActivatedRoute } from "@angular/router";
 
 import { HouseholdService } from "../../core/household/household.service";
+import { CurrencyService } from "../../core/currency/currency.service";
 
 @Component({
   selector: "app-onboarding",
@@ -16,6 +17,7 @@ import { HouseholdService } from "../../core/household/household.service";
 export class OnboardingComponent {
   private readonly fb = inject(FormBuilder);
   private readonly householdService = inject(HouseholdService);
+  private readonly currencyService = inject(CurrencyService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -29,6 +31,8 @@ export class OnboardingComponent {
   readonly inviteForm = this.fb.nonNullable.group({
     token: ["", [Validators.required]],
   });
+
+  readonly currencies$ = this.currencyService.getSupported();
 
   constructor() {
     const token = this.route.snapshot.queryParamMap.get("token");

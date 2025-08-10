@@ -7,3 +7,11 @@ export const convertCurrencySchema = z.object({
 });
 
 export type ConvertCurrencyRequestDto = z.infer<typeof convertCurrencySchema>;
+
+export const supportedCurrenciesSchema = z.object({
+  base: z.string().length(3).optional(),
+});
+
+export type SupportedCurrenciesRequestDto = z.infer<
+  typeof supportedCurrenciesSchema
+>;

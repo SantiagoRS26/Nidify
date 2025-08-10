@@ -12,7 +12,7 @@
             <label class="field">
                 <span class="label">Moneda preferida</span>
                 <select class="input" [(ngModel)]="selectedCurrency">
-                    <option *ngFor="let c of currencies" [value]="c">{{ c }}</option>
+                    <option *ngFor="let c of currencies$ | async" [value]="c">{{ c }}</option>
                 </select>
             </label>
             <label class="field">
