@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { BehaviorSubject, map, Observable, tap } from "rxjs";
+import { BehaviorSubject, forkJoin, map, Observable, of, switchMap, tap } from "rxjs";
 
 export interface Household {
   id: string;
@@ -45,6 +45,23 @@ export class HouseholdService {
     return this.http
       .get<{ memberships: HouseholdMembership[] }>("/auth/me/memberships")
       .pipe(map(({ memberships }) => memberships));
+  }
+
+  getUserHouseholds(): Observable<Household[]> {
+    return this.getUserMemberships().pipe(
+      switchMap((memberships) => {
+        if (!memberships.length) {
+          return of([]);
+        }
+        return forkJoin(
+          memberships.map((m) =>
+            this.http
+              .get<{ household: Household }>(`/households/${m.householdId}`)
+              .pipe(map(({ household }) => household))
+          )
+        );
+      })
+    );
   }
 
   initializeHouseholdState(): Observable<boolean> {
@@ -100,6 +117,10 @@ export class HouseholdService {
         tap(({ membership }) => this.setHousehold(membership.householdId)),
         map(({ membership }) => membership.householdId)
       );
+  }
+
+  selectHousehold(id: string): void {
+    this.setHousehold(id);
   }
 
   clear(): void {
