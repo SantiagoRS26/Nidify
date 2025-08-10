@@ -6,11 +6,11 @@ import { InvitationRepository } from '../../../infrastructure/persistence/reposi
 import { UserRepository } from '../../../infrastructure/persistence/repositories/user.repository';
 import { JwtService } from '../../../infrastructure/auth/jwt.service';
 import { authMiddleware } from '../../middleware/auth.middleware';
-import { CreateHouseholdUseCase } from '../../../application/use-cases/create-household.usecase';
-import { InviteToHouseholdUseCase } from '../../../application/use-cases/invite-to-household.usecase';
-import { RevokeMembershipUseCase } from '../../../application/use-cases/revoke-membership.usecase';
-import { CancelInvitationUseCase } from '../../../application/use-cases/cancel-invitation.usecase';
-import { GetHouseholdUseCase } from '../../../application/use-cases/get-household.usecase';
+import { CreateHouseholdUseCase } from '../../../application/use-cases/household/create-household.usecase';
+import { InviteToHouseholdUseCase } from '../../../application/use-cases/household/invite-to-household.usecase';
+import { RevokeMembershipUseCase } from '../../../application/use-cases/household/revoke-membership.usecase';
+import { CancelInvitationUseCase } from '../../../application/use-cases/household/cancel-invitation.usecase';
+import { GetHouseholdUseCase } from '../../../application/use-cases/household/get-household.usecase';
 import { EmailService } from '../../../infrastructure/notifications/email.service';
 import { validate } from '../../middleware/validation.middleware';
 import { createHouseholdSchema, inviteSchema } from '../dto/household.dto';

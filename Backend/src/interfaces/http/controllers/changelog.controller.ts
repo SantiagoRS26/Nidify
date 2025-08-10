@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ListChangelogUseCase } from '../../../application/use-cases/list-changelog.usecase';
+import { ListChangelogUseCase } from '../../../application/use-cases/changelog/list-changelog.usecase';
 
 export class ChangelogController {
   constructor(private listChangelog: ListChangelogUseCase) {}

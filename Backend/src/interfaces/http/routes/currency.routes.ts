@@ -2,13 +2,13 @@ import { Router } from 'express';
 import { CurrencyController } from '../controllers/currency.controller';
 import { ExchangeRateRepository } from '../../../infrastructure/persistence/repositories/exchange-rate.repository';
 import { ExchangeRateProvider } from '../../../infrastructure/currency/exchange-rate.provider';
-import { ConvertCurrencyUseCase } from '../../../application/use-cases/convert-currency.usecase';
+import { ConvertCurrencyUseCase } from '../../../application/use-cases/currency/convert-currency.usecase';
 import { validate } from '../../middleware/validation.middleware';
 import {
   convertCurrencySchema,
   supportedCurrenciesSchema,
 } from '../dto/currency.dto';
-import { GetSupportedCurrenciesUseCase } from '../../../application/use-cases/get-supported-currencies.usecase';
+import { GetSupportedCurrenciesUseCase } from '../../../application/use-cases/currency/get-supported-currencies.usecase';
 
 const router = Router();
 

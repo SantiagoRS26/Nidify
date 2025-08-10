@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { NotificationPreferencesController } from '../controllers/notification-preferences.controller';
 import { NotificationPreferencesRepository } from '../../../infrastructure/persistence/repositories/notification-preferences.repository';
-import { GetNotificationPreferencesUseCase } from '../../../application/use-cases/get-notification-preferences.usecase';
-import { UpdateNotificationPreferencesUseCase } from '../../../application/use-cases/update-notification-preferences.usecase';
+import { GetNotificationPreferencesUseCase } from '../../../application/use-cases/notification/get-notification-preferences.usecase';
+import { UpdateNotificationPreferencesUseCase } from '../../../application/use-cases/notification/update-notification-preferences.usecase';
 import { JwtService } from '../../../infrastructure/auth/jwt.service';
 import { authMiddleware } from '../../middleware/auth.middleware';
 import { validate } from '../../middleware/validation.middleware';

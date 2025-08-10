@@ -4,7 +4,7 @@ import { InvitationRepository } from '../../../infrastructure/persistence/reposi
 import { HouseholdMembershipRepository } from '../../../infrastructure/persistence/repositories/household-membership.repository';
 import { JwtService } from '../../../infrastructure/auth/jwt.service';
 import { authMiddleware } from '../../middleware/auth.middleware';
-import { AcceptInvitationUseCase } from '../../../application/use-cases/accept-invitation.usecase';
+import { AcceptInvitationUseCase } from '../../../application/use-cases/household/accept-invitation.usecase';
 import { validate } from '../../middleware/validation.middleware';
 import { acceptInvitationSchema } from '../dto/household.dto';
 

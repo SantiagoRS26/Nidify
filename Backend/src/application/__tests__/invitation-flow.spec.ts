@@ -1,8 +1,8 @@
 /* eslint-env jest */
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { InviteToHouseholdUseCase } from '../use-cases/invite-to-household.usecase';
-import { AcceptInvitationUseCase } from '../use-cases/accept-invitation.usecase';
+import { InviteToHouseholdUseCase } from '../use-cases/household/invite-to-household.usecase';
+import { AcceptInvitationUseCase } from '../use-cases/household/accept-invitation.usecase';
 import { HouseholdMembershipRepository } from '../../infrastructure/persistence/repositories/household-membership.repository';
 import { InvitationRepository } from '../../infrastructure/persistence/repositories/invitation.repository';
 import { UserRepository } from '../../infrastructure/persistence/repositories/user.repository';

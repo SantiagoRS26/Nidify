@@ -2,13 +2,13 @@ import { Request, Response } from 'express';
 import {
   CreateItemUseCase,
   CreateItemPayload,
-} from '../../../application/use-cases/create-item.usecase';
-import { ListItemsUseCase } from '../../../application/use-cases/list-items.usecase';
+} from '../../../application/use-cases/item/create-item.usecase';
+import { ListItemsUseCase } from '../../../application/use-cases/item/list-items.usecase';
 import {
   UpdateItemUseCase,
   UpdateItemPayload,
-} from '../../../application/use-cases/update-item.usecase';
-import { DeleteItemUseCase } from '../../../application/use-cases/delete-item.usecase';
+} from '../../../application/use-cases/item/update-item.usecase';
+import { DeleteItemUseCase } from '../../../application/use-cases/item/delete-item.usecase';
 import { CreateItemRequestDto, UpdateItemRequestDto } from '../dto/item.dto';
 import { notifyHousehold } from '../../../infrastructure/websocket/socket.service';
 import { NotFoundError } from '../../../domain/errors/not-found.error';

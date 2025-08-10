@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { ListAlertsUseCase } from '../../../application/use-cases/list-alerts.usecase';
-import { MarkAlertReadUseCase } from '../../../application/use-cases/mark-alert-read.usecase';
+import { ListAlertsUseCase } from '../../../application/use-cases/alert/list-alerts.usecase';
+import { MarkAlertReadUseCase } from '../../../application/use-cases/alert/mark-alert-read.usecase';
 import { NotFoundError } from '../../../domain/errors/not-found.error';
 
 interface AuthRequest extends Request {

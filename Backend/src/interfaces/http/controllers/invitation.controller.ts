@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { AcceptInvitationUseCase } from '../../../application/use-cases/accept-invitation.usecase';
+import { AcceptInvitationUseCase } from '../../../application/use-cases/household/accept-invitation.usecase';
 import { AcceptInvitationRequestDto } from '../dto/household.dto';
 import { notifyHousehold } from '../../../infrastructure/websocket/socket.service';
 

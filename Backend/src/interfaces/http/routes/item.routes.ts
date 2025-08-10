@@ -4,10 +4,10 @@ import { CategoryRepository } from '../../../infrastructure/persistence/reposito
 import { JwtService } from '../../../infrastructure/auth/jwt.service';
 import { authMiddleware } from '../../middleware/auth.middleware';
 import { validate } from '../../middleware/validation.middleware';
-import { CreateItemUseCase } from '../../../application/use-cases/create-item.usecase';
-import { ListItemsUseCase } from '../../../application/use-cases/list-items.usecase';
-import { UpdateItemUseCase } from '../../../application/use-cases/update-item.usecase';
-import { DeleteItemUseCase } from '../../../application/use-cases/delete-item.usecase';
+import { CreateItemUseCase } from '../../../application/use-cases/item/create-item.usecase';
+import { ListItemsUseCase } from '../../../application/use-cases/item/list-items.usecase';
+import { UpdateItemUseCase } from '../../../application/use-cases/item/update-item.usecase';
+import { DeleteItemUseCase } from '../../../application/use-cases/item/delete-item.usecase';
 import { domainEventBus } from '../../../infrastructure/events/domain-event-bus';
 import { ItemController } from '../controllers/item.controller';
 import { createItemSchema, updateItemSchema } from '../dto/item.dto';

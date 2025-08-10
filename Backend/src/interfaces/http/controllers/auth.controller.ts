@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { RegisterUserUseCase } from '../../../application/use-cases/register-user.usecase';
-import { LoginUserUseCase } from '../../../application/use-cases/login-user.usecase';
-import { GoogleAuthUseCase } from '../../../application/use-cases/google-auth.usecase';
-import { LinkGoogleUseCase } from '../../../application/use-cases/link-google.usecase';
-import { GetUserMembershipsUseCase } from '../../../application/use-cases/get-user-memberships.usecase';
-import { OAuthLoginUseCase } from '../../../application/use-cases/oauth-login.usecase';
+import { RegisterUserUseCase } from '../../../application/use-cases/auth/register-user.usecase';
+import { LoginUserUseCase } from '../../../application/use-cases/auth/login-user.usecase';
+import { GoogleAuthUseCase } from '../../../application/use-cases/auth/google-auth.usecase';
+import { LinkGoogleUseCase } from '../../../application/use-cases/auth/link-google.usecase';
+import { GetUserMembershipsUseCase } from '../../../application/use-cases/household/get-user-memberships.usecase';
+import { OAuthLoginUseCase } from '../../../application/use-cases/auth/oauth-login.usecase';
 import { RefreshTokenService } from '../../../infrastructure/auth/refresh-token.service';
 import { GoogleOAuthProvider } from '../../../infrastructure/auth/google-oauth.provider';
 import { config } from '../../../config/env';
