@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CurrencyInputDirective } from '../../../shared/directives/currency-input.directive';
-import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
+import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { CurrencyInputDirective } from "../../../shared/directives/currency-input.directive";
+import { CurrencyFormatPipe } from "../../../shared/pipes/currency-format.pipe";
 
 @Component({
   selector: "app-budget",

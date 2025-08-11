@@ -1,38 +1,33 @@
 <div class="subheader">
-  <h2>Invitaciones</h2>
+    <h2>Invitaciones</h2>
 </div>
 
 <section class="grid">
-  <div class="card">
-    <h3 style="margin:0 0 8px 0; font-size:15px">Invitar a tu pareja</h3>
-    <form class="row" [formGroup]="inviteForm" (ngSubmit)="onInvite()">
-      <input
-        class="input"
-        type="email"
-        formControlName="email"
-        placeholder="email@ejemplo.com"
-      />
-      <button class="btn primary" type="submit">Enviar invitación</button>
-    </form>
-  </div>
+    <div class="card">
+        <h3 style="margin:0 0 8px 0; font-size:15px">Invitar a tu pareja</h3>
+        <form class="row" [formGroup]="inviteForm" (ngSubmit)="onInvite()">
+            <input class="input" type="email" formControlName="email" placeholder="email@ejemplo.com" />
+            <button class="btn primary" type="submit">Enviar invitación</button>
+        </form>
+    </div>
 
-  <div class="card" *ngIf="invitations().length > 0">
-    <h3 style="margin:0 0 8px 0; font-size:15px">Invitaciones</h3>
-    <ul class="list">
-      <li class="item" *ngFor="let inv of invitations()">
-        <div>
-          <div class="title">{{ inv.email }}</div>
-          <div class="meta">Pendiente • {{ getExpiration(inv) }}</div>
-        </div>
-        <div class="actions">
-          <button class="btn" type="button" (click)="copyLink(inv)">
-            Copiar link
-          </button>
-          <button class="btn danger" type="button" (click)="cancel(inv)">
-            Cancelar
-          </button>
-        </div>
-      </li>
-    </ul>
-  </div>
+    <div class="card" *ngIf="invitations().length > 0">
+        <h3 style="margin:0 0 8px 0; font-size:15px">Invitaciones</h3>
+        <ul class="list">
+            <li class="item" *ngFor="let inv of invitations()">
+                <div>
+                    <div class="title">{{ inv.email }}</div>
+                    <div class="meta">Pendiente • {{ getExpiration(inv) }}</div>
+                </div>
+                <div class="actions">
+                    <button class="btn" type="button" (click)="copyLink(inv)">
+                        Copiar link
+                    </button>
+                    <button class="btn danger" type="button" (click)="cancel(inv)">
+                        Cancelar
+                    </button>
+                </div>
+            </li>
+        </ul>
+    </div>
 </section>

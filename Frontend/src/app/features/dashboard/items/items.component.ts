@@ -1,28 +1,33 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { CurrencyInputDirective } from '../../../shared/directives/currency-input.directive';
-import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
-import { ItemsService } from '../../../core/items/items.service';
-import { CategoryService } from '../../../core/categories/category.service';
-import { Item } from '../../../shared/models/item.model';
-import { Category } from '../../../shared/models/category.model';
-import { ItemType } from '../../../shared/models/item-type.enum';
-import { ItemPriority } from '../../../shared/models/item-priority.enum';
-import { ItemStatus } from '../../../shared/models/item-status.enum';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
+import { CurrencyInputDirective } from "../../../shared/directives/currency-input.directive";
+import { CurrencyFormatPipe } from "../../../shared/pipes/currency-format.pipe";
+import { ItemsService } from "../../../core/items/items.service";
+import { CategoryService } from "../../../core/categories/category.service";
+import { Item } from "../../../shared/models/item.model";
+import { Category } from "../../../shared/models/category.model";
+import { ItemType } from "../../../shared/models/item-type.enum";
+import { ItemPriority } from "../../../shared/models/item-priority.enum";
+import { ItemStatus } from "../../../shared/models/item-status.enum";
 import {
   ITEM_TYPE_LABELS,
   ITEM_PRIORITY_LABELS,
   ITEM_STATUS_LABELS,
-} from '../../../shared/models/item-labels';
-import { CurrencyService } from '../../../core/currency/currency.service';
-import { AuthService } from '../../../core/auth/auth.service';
-import { take } from 'rxjs';
-import { SplitModalComponent } from './split-modal.component';
-import { PaymentSplit } from '../../../shared/models/payment-split.model';
+} from "../../../shared/models/item-labels";
+import { CurrencyService } from "../../../core/currency/currency.service";
+import { AuthService } from "../../../core/auth/auth.service";
+import { take } from "rxjs";
+import { SplitModalComponent } from "./split-modal.component";
+import { PaymentSplit } from "../../../shared/models/payment-split.model";
 
 @Component({
-  selector: 'app-items',
+  selector: "app-items",
   standalone: true,
   imports: [
     CommonModule,
@@ -31,8 +36,8 @@ import { PaymentSplit } from '../../../shared/models/payment-split.model';
     CurrencyFormatPipe,
     SplitModalComponent,
   ],
-  templateUrl: './items.component.html',
-  styleUrl: './items.component.scss',
+  templateUrl: "./items.component.html",
+  styleUrl: "./items.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ItemsComponent {
@@ -46,11 +51,11 @@ export class ItemsComponent {
   readonly categories = signal<Category[]>([]);
   readonly currencies$ = this.currencyService.getSupported();
 
-  private defaultCurrency = 'USD';
+  private defaultCurrency = "USD";
 
   readonly members = [
-    { userId: 'me', label: 'Tú' },
-    { userId: 'partner', label: 'Pareja' },
+    { userId: "me", label: "Tú" },
+    { userId: "partner", label: "Pareja" },
   ];
 
   readonly paymentSplit = signal<PaymentSplit | null>(null);
@@ -60,12 +65,10 @@ export class ItemsComponent {
     label: ITEM_TYPE_LABELS[value],
   }));
 
-  readonly itemPriorityOptions = Object.values(ItemPriority).map(
-    (value) => ({
-      value,
-      label: ITEM_PRIORITY_LABELS[value],
-    }),
-  );
+  readonly itemPriorityOptions = Object.values(ItemPriority).map((value) => ({
+    value,
+    label: ITEM_PRIORITY_LABELS[value],
+  }));
 
   readonly itemStatusOptions = Object.values(ItemStatus).map((value) => ({
     value,
@@ -73,14 +76,14 @@ export class ItemsComponent {
   }));
 
   readonly itemForm = this.fb.nonNullable.group({
-    name: ['', Validators.required],
-    categoryId: [''],
+    name: ["", Validators.required],
+    categoryId: [""],
     type: [ItemType.ONE_TIME, Validators.required],
     price: [0, Validators.required],
     currency: [this.defaultCurrency, Validators.required],
     priority: [ItemPriority.NECESSARY, Validators.required],
     status: [ItemStatus.TO_QUOTE, Validators.required],
-    purchaseLink: [''],
+    purchaseLink: [""],
   });
 
   showNewItemModal = signal(false);
@@ -92,7 +95,7 @@ export class ItemsComponent {
     this.authService.user$.pipe(take(1)).subscribe((user) => {
       if (user?.preferredCurrency) {
         this.defaultCurrency = user.preferredCurrency;
-        this.itemForm.get('currency')?.setValue(this.defaultCurrency);
+        this.itemForm.get("currency")?.setValue(this.defaultCurrency);
       }
     });
   }
@@ -105,14 +108,14 @@ export class ItemsComponent {
   openNew(): void {
     this.editingId.set(null);
     this.itemForm.reset({
-      name: '',
-      categoryId: '',
+      name: "",
+      categoryId: "",
       type: ItemType.ONE_TIME,
       price: 0,
       currency: this.defaultCurrency,
       priority: ItemPriority.NECESSARY,
       status: ItemStatus.TO_QUOTE,
-      purchaseLink: '',
+      purchaseLink: "",
     });
     this.showNewItemModal.set(true);
     this.paymentSplit.set(null);
@@ -122,13 +125,13 @@ export class ItemsComponent {
     this.editingId.set(item.id);
     this.itemForm.patchValue({
       name: item.name,
-      categoryId: item.categoryId ?? '',
+      categoryId: item.categoryId ?? "",
       type: item.type,
       price: item.price,
       currency: item.currency,
       priority: item.priority,
       status: item.status,
-      purchaseLink: item.purchaseLink ?? '',
+      purchaseLink: item.purchaseLink ?? "",
     });
     this.showNewItemModal.set(true);
     this.paymentSplit.set(item.paymentSplit ?? null);
@@ -136,7 +139,7 @@ export class ItemsComponent {
 
   getCategoryName(id?: string): string {
     const cat = this.categories().find((c) => c.id === id);
-    return cat ? cat.name : '';
+    return cat ? cat.name : "";
   }
 
   getStatusLabel(status: ItemStatus): string {
@@ -172,10 +175,7 @@ export class ItemsComponent {
   }
 
   private isSplitValid(split: PaymentSplit, total: number): boolean {
-    const sum = split.assignments.reduce(
-      (acc, a) => acc + (a.amount ?? 0),
-      0,
-    );
+    const sum = split.assignments.reduce((acc, a) => acc + (a.amount ?? 0), 0);
     return Math.round(sum * 100) === Math.round(total * 100);
   }
 
@@ -197,7 +197,7 @@ export class ItemsComponent {
     if (id) {
       this.itemsService.update(id, payload).subscribe((updated) => {
         this.items.update((list) =>
-          list.map((i) => (i.id === updated.id ? updated : i)),
+          list.map((i) => (i.id === updated.id ? updated : i))
         );
         this.showNewItemModal.set(false);
       });

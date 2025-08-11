@@ -46,9 +46,6 @@ export class PreferencesComponent {
   }
 
   save(): void {
-    this.authService
-      .updatePreferredCurrency(this.selectedCurrency)
-      .subscribe();
+    this.authService.updatePreferredCurrency(this.selectedCurrency).subscribe();
   }
 }
-

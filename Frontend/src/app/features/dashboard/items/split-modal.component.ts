@@ -1,15 +1,25 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormArray, FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { CurrencyInputDirective } from '../../../shared/directives/currency-input.directive';
-import { PaymentAssignment, PaymentSplit } from '../../../shared/models/payment-split.model';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  inject,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormArray, FormBuilder, ReactiveFormsModule } from "@angular/forms";
+import { CurrencyInputDirective } from "../../../shared/directives/currency-input.directive";
+import {
+  PaymentAssignment,
+  PaymentSplit,
+} from "../../../shared/models/payment-split.model";
 
 @Component({
-  selector: 'app-split-modal',
+  selector: "app-split-modal",
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, CurrencyInputDirective],
-  templateUrl: './split-modal.component.html',
-  styleUrl: './split-modal.component.scss',
+  templateUrl: "./split-modal.component.html",
+  styleUrl: "./split-modal.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SplitModalComponent {
@@ -24,11 +34,11 @@ export class SplitModalComponent {
         this.assignments.push(
           this.fb.group({
             userId: [a.userId],
-            label: [a.label ?? ''],
+            label: [a.label ?? ""],
             percentage: [a.percentage ?? null],
             amount: [a.amount ?? null],
-          }),
-        ),
+          })
+        )
       );
       this.recalculate();
     }
@@ -42,7 +52,7 @@ export class SplitModalComponent {
   });
 
   get assignments(): FormArray {
-    return this.form.get('assignments') as FormArray;
+    return this.form.get("assignments") as FormArray;
   }
 
   ngOnInit(): void {
@@ -54,8 +64,8 @@ export class SplitModalComponent {
             label: [m.label],
             percentage: [null],
             amount: [null],
-          }),
-        ),
+          })
+        )
       );
     }
   }
@@ -67,24 +77,28 @@ export class SplitModalComponent {
   private recalculate(): void {
     const total = this.total;
     this.assignments.controls.forEach((ctrl) => {
-      const percentage = ctrl.get('percentage')?.value;
-      const amount = ctrl.get('amount')?.value;
+      const percentage = ctrl.get("percentage")?.value;
+      const amount = ctrl.get("amount")?.value;
       let finalAmount = amount;
       let finalPercentage = percentage;
-      if (percentage !== null && percentage !== '' && !isNaN(Number(percentage))) {
+      if (
+        percentage !== null &&
+        percentage !== "" &&
+        !isNaN(Number(percentage))
+      ) {
         finalAmount = (Number(percentage) / 100) * total;
-        ctrl.get('amount')?.setValue(finalAmount, { emitEvent: false });
-      } else if (amount !== null && amount !== '' && !isNaN(Number(amount))) {
+        ctrl.get("amount")?.setValue(finalAmount, { emitEvent: false });
+      } else if (amount !== null && amount !== "" && !isNaN(Number(amount))) {
         finalPercentage = total ? (Number(amount) / total) * 100 : 0;
-        ctrl.get('percentage')?.setValue(finalPercentage, { emitEvent: false });
+        ctrl.get("percentage")?.setValue(finalPercentage, { emitEvent: false });
       }
     });
   }
 
   isValidSum(): boolean {
     const sum = this.assignments.controls.reduce(
-      (acc, ctrl) => acc + Number(ctrl.get('amount')?.value || 0),
-      0,
+      (acc, ctrl) => acc + Number(ctrl.get("amount")?.value || 0),
+      0
     );
     return Math.round(sum * 100) === Math.round(this.total * 100);
   }
@@ -94,14 +108,15 @@ export class SplitModalComponent {
     if (!this.isValidSum()) {
       return;
     }
-    const assignments: PaymentAssignment[] = this.assignments.controls.map((ctrl) => ({
-      userId: ctrl.get('userId')?.value,
-      label: ctrl.get('label')?.value,
-      percentage: Number(ctrl.get('percentage')?.value) || 0,
-      amount: Number(ctrl.get('amount')?.value) || 0,
-      calculatedAmount: Number(ctrl.get('amount')?.value) || 0,
-    }));
+    const assignments: PaymentAssignment[] = this.assignments.controls.map(
+      (ctrl) => ({
+        userId: ctrl.get("userId")?.value,
+        label: ctrl.get("label")?.value,
+        percentage: Number(ctrl.get("percentage")?.value) || 0,
+        amount: Number(ctrl.get("amount")?.value) || 0,
+        calculatedAmount: Number(ctrl.get("amount")?.value) || 0,
+      })
+    );
     this.save.emit({ assignments });
   }
 }
-

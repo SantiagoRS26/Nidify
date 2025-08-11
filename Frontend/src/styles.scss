@@ -1,213 +1,373 @@
-/* Design tokens */
+/* =========================================================
+   GLASSY WEB THEME — Global Styles
+   ========================================================= */
+
+/* ---------- Design tokens ---------- */
 :root {
-  /* Neutrals */
-  --base-00: #0f172a; /* text strong */
-  --base-20: #334155;
-  --base-40: #64748b;
-  --base-60: #94a3b8; /* text secondary / borders subtle */
-  --base-80: #eef2f7; /* surfaces elevated subtle */
-  --base-90: #f8fafc; /* background */
-  --white: #ffffff;
+  /* Color system (OKLCH-ish via sRGB aproximado) */
+  --bg-0: #eef3f9;          /* fondo base */
+  --bg-1: #f7fafc;          /* fallback/white mix */
+  --ink-1: #0f172a;         /* texto fuerte */
+  --ink-2: #334155;         /* texto normal */
+  --ink-3: #64748b;         /* texto secundario */
 
-  /* Accents */
-  --accent-primary: #14b8a6; /* teal */
-  --accent-success: #10b981; /* green */
-  --accent-warning: #f59e0b; /* amber */
-  --accent-attention: #fb7185; /* coral/rose */
-  --accent-info: #8b5cf6; /* violet */
+  --accent: #14b8a6;        /* teal principal */
+  --accent-600: #0ea5a0;
+  --accent-50: rgba(20,184,166,.10);
 
-  /* Shadows, radii, spacing */
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --info: #8b5cf6;
+  --success: #10b981;
+
+  /* Glass tokens */
+  --glass-fill: rgba(255,255,255,.55);
+  --glass-border: rgba(255,255,255,.38);
+  --glass-shadow: 0 16px 48px rgba(15,23,42,.16), 0 2px 10px rgba(15,23,42,.06);
+  --blur: 18px;
+  --sat: 160%;
+
+  /* Radius & spacing */
+  --r-ctrl: 14px;
+  --r-card: 18px;
+  --r-pill: 999px;
+
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+
+  /* Typography */
+  --fs-12: 12px;
+  --fs-14: 14px;
+  --fs-16: 16px;
+  --fs-18: 18px;
+  --fs-22: 22px;
+
+  /* Aliases para compatibilidad con componentes existentes */
+  --space-2: var(--s-2);
+  --space-3: var(--s-3);
+  --space-4: var(--s-4);
+  --space-5: var(--s-5);
+  --space-6: var(--s-6);
+  --space-8: var(--s-8);
+  --space-10: var(--s-10);
+
+  /* Color aliases para componentes dashboard */
+  --white: rgba(255, 255, 255, 0.9);
+  --base-00: var(--ink-1);
+  --base-20: var(--ink-2);
+  --base-40: var(--ink-3);
+  --base-60: color-mix(in srgb, var(--ink-3) 70%, transparent);
+  --base-80: rgba(15, 23, 42, 0.08);
+  --muted: var(--ink-3);
+
+  /* Layout tokens */
   --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  --radius-md: var(--r-ctrl);
+  --radius-lg: var(--r-card);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: var(--glass-shadow);
 
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 6px 20px rgba(15, 23, 42, 0.08);
+  /* Accent colors aliases */
+  --accent-primary: var(--accent);
+  --accent-info: var(--info);
 }
 
-/* Base and typography */
-html,
-body {
-  height: 100%;
-}
+*,
+*::before,
+*::after { box-sizing: border-box; }
 
+/* ---------- Base ---------- */
+html, body { height: 100%; }
 body {
-  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
-    Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
-  color: var(--base-20);
-  background: radial-gradient(1200px 800px at 80% -10%, rgba(20, 184, 166, 0.08), rgba(255, 255, 255, 0))
-      no-repeat,
-    var(--base-90);
-  line-height: 1.5;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+  color: var(--ink-2);
+  line-height: 1.55;
+
+  /* Fondo con gradientes suaves + “glow” del acento */
+  background:
+    radial-gradient(1200px 800px at 85% -10%, rgba(20,184,166,.12), rgba(255,255,255,0)) no-repeat,
+    radial-gradient(900px 700px at -10% 20%, rgba(139,92,246,.10), rgba(255,255,255,0)) no-repeat,
+    linear-gradient(180deg, var(--bg-1), var(--bg-0));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-y: auto;
 }
 
-h1,
-h2,
-h3 {
-  font-family: 'Poppins', 'Inter', ui-sans-serif, system-ui, -apple-system,
-    Segoe UI, Roboto, Helvetica, Arial;
-  color: var(--base-00);
-  margin: 0 0 var(--space-4);
+h1,h2,h3 {
+  font-family: 'Poppins','Inter',ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  color: var(--ink-1);
+  margin: 0 0 var(--s-4);
+}
+h1 { font-weight: 700; font-size: 28px; letter-spacing: -.01em; }
+.text-muted { color: var(--ink-3); }
+
+/* ---------- Layout utilities ---------- */
+.center-screen {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: var(--s-8) var(--s-4);
 }
 
-h1 {
-  font-weight: 700;
-  font-size: 28px;
+.stack { display: grid; gap: var(--s-4); }
+.row   { display: flex; align-items: center; gap: var(--s-3); }
+
+/* ---------- Glass surfaces ---------- */
+.glass {
+  background: var(--glass-fill);
+  backdrop-filter: saturate(var(--sat)) blur(var(--blur));
+  -webkit-backdrop-filter: saturate(var(--sat)) blur(var(--blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--r-card);
+  box-shadow: var(--glass-shadow);
 }
 
-.text-muted {
-  color: var(--base-60);
+.card-pad { padding: var(--s-6); }
+
+/* ---------- Brand ---------- */
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  color: var(--ink-1); font-weight: 700;
+}
+.brand-badge {
+  width: 40px; height: 40px; border-radius: 12px;
+  background:
+    radial-gradient(60% 80% at 30% 20%, rgba(255,255,255,.45), rgba(255,255,255,0)),
+    linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 40%, var(--info)));
+  box-shadow: 0 8px 24px rgba(20,184,166,.28);
 }
 
-/* Layout utilities */
-.container {
-  width: min(100%, 1000px);
-  margin-inline: auto;
-  padding: 0 var(--space-4);
-}
-
-.card {
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-}
-
-/* Controls */
+/* ---------- Form ---------- */
 label {
   display: inline-block;
   margin-bottom: 6px;
-  font-size: 14px;
-  color: var(--base-40);
+  font-size: var(--fs-14);
+  color: var(--ink-3);
 }
 
-input[type='text'],
-input[type='email'],
-input[type='password'] {
+.input {
+  display: block;
+  box-sizing: border-box; /* evita desbordes por padding/border */
   width: 100%;
-  padding: 12px 14px;
-  border: 1px solid var(--base-80);
-  border-radius: var(--radius-md);
-  background: var(--white);
-  color: var(--base-20);
-  transition: box-shadow 160ms ease, border-color 160ms ease;
+  height: 48px;
+  padding: 0 var(--s-4);
+  border-radius: var(--r-ctrl);
+  border: 1px solid rgba(15,23,42,.08);
+  background: rgba(255,255,255,.9);
+  color: var(--ink-2);
+  transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
 }
 
-input::placeholder {
-  color: var(--base-60);
+.input--with-leading { padding-left: 42px; }
+.input--with-trailing { padding-right: 42px; }
+
+.input::placeholder {
+  color: color-mix(in srgb, var(--ink-3) 80%, white);
 }
 
-input:focus {
+.input:focus,
+.input:focus-visible {
   outline: none;
-  border-color: color-mix(in srgb, var(--accent-primary) 30%, var(--base-80));
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-primary) 16%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 42%, white);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 24%, transparent);
+  background: #fff;
 }
 
-.field-error {
-  color: var(--accent-attention);
-  font-size: 12px;
+/* Ajusta el contenedor del input con íconos */
+.input-group {
+  position: relative;
+  width: 100%;
 }
 
-.alert-error {
-  background: color-mix(in srgb, var(--accent-attention) 12%, white);
-  border: 1px solid color-mix(in srgb, var(--accent-attention) 40%, white);
-  color: #b91c1c;
-  padding: 10px 12px;
-  border-radius: var(--radius-md);
+.input-leading,
+.input-trailing {
+  position: absolute;
+  inset-block: 0;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  pointer-events: none;
+  color: var(--ink-3);
 }
 
+
+.helper { font-size: var(--fs-12); color: var(--ink-3); }
+.field-error { color: var(--danger); font-size: var(--fs-12); }
+
+/* ---------- Buttons ---------- */
 .btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 16px;
-  border: 0;
-  border-radius: var(--radius-md);
-  background: var(--base-80);
-  color: var(--base-20);
-  cursor: pointer;
-  transition: transform 120ms ease, background 160ms ease, box-shadow 160ms ease;
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  height: 48px; padding: 0 var(--s-6);
+  border-radius: var(--r-ctrl); border: 0; cursor: pointer;
+  transition: transform .12s ease, filter .16s ease, box-shadow .16s ease;
 }
-
-.btn:active {
-  transform: translateY(1px);
-}
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
 
 .btn-primary {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--accent-primary) 92%, white), var(--accent-primary));
-  color: white;
-  box-shadow: 0 8px 16px rgba(20, 184, 166, 0.25);
+  color: #fff;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 94%, white), var(--accent));
+  box-shadow: 0 10px 22px rgba(20,184,166,.32), inset 0 1px 0 rgba(255,255,255,.35);
 }
+.btn-primary:hover { filter: brightness(1.03); }
 
-.btn-primary:hover {
-  filter: brightness(1.03);
+.btn-ghost {
+  background: rgba(255,255,255,.8);
+  border: 1px solid rgba(15,23,42,.08);
+  color: var(--ink-2);
+  box-shadow: 0 2px 8px rgba(15,23,42,.06);
 }
-
-.btn-block {
-  width: 100%;
-}
+.btn-block { width: 100%; }
 
 .link {
-  color: var(--accent-info);
-  text-decoration: none;
+  color: var(--info); font-weight: 600; text-decoration: none;
 }
-.link:hover {
-  text-decoration: underline;
+.link:hover { text-decoration: underline; }
+
+/* ---------- Auth layout ---------- */
+.auth-card { width: min(100%, 460px); }
+.subtitle { margin-top: -6px; color: var(--ink-3); margin-bottom: var(--s-6); }
+
+/* ---------- Alerts ---------- */
+.alert {
+  padding: 10px 12px; border-radius: var(--r-ctrl);
+  border: 1px solid rgba(15,23,42,.08);
+  background: rgba(255,255,255,.8);
+}
+.alert-error { border-color: color-mix(in srgb, var(--danger) 40%, white); color: #b91c1c; }
+
+/* ---------- Divider ---------- */
+.divider {
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s-3);
+  color: var(--ink-3); font-size: var(--fs-14);
+}
+.divider::before, .divider::after {
+  content: ""; height: 1px; background: rgba(15,23,42,.08);
 }
 
-/* Auth layout */
-.auth-layout {
-  min-height: 100dvh;
+
+/* --- Layout de auth unificado --- */
+.auth-layout,
+.center-screen {
   display: grid;
+  place-items: center;      /* centra vertical y horizontal */
+  min-height: 100svh;       /* altura real del viewport (iOS/Android) */
+  padding-inline: var(--s-4);
+  /* padding vertical que NO provoca scroll en pantallas altas,
+     pero mantiene respiración en pantallas bajas */
+  padding-block: clamp(24px, 4vh, 56px);
+}
+
+/* Preferir 100dvh cuando el navegador lo soporte (quita “barras” móviles) */
+@supports (min-height: 100dvh) {
+  .auth-layout,
+  .center-screen { min-height: 100dvh; }
+}
+
+/* Card (sin cambios funcionales, solo por claridad) */
+.auth-card { width: min(100%, 460px); }
+
+/* Inputs (nos aseguramos de que nunca se desborden) */
+.input { box-sizing: border-box; width: 100%; }
+
+/* =========================================================
+   UTILIDADES ADICIONALES PARA DASHBOARD
+   ========================================================= */
+
+/* Cards y contenedores glassy adicionales */
+.glass-card {
+  background: var(--glass-fill);
+  backdrop-filter: saturate(var(--sat)) blur(var(--blur));
+  -webkit-backdrop-filter: saturate(var(--sat)) blur(var(--blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--r-card);
+  box-shadow: var(--glass-shadow);
+  padding: var(--s-5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 20px 60px rgba(15, 23, 42, 0.20), 
+    0 4px 14px rgba(15, 23, 42, 0.08);
+}
+
+/* Layout grid responsivo */
+.responsive-grid {
+  display: grid;
+  gap: var(--s-4);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+@media (min-width: 768px) {
+  .responsive-grid {
+    gap: var(--s-5);
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+}
+
+/* Badges y etiquetas mejoradas */
+.glass-badge {
+  font-size: var(--fs-12);
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--glass-border);
+  color: var(--ink-2);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+/* Botones secundarios glassy */
+.btn-glass {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--glass-border);
+  color: var(--ink-2);
+  padding: var(--s-2) var(--s-4);
+  border-radius: var(--r-ctrl);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.16s ease;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  cursor: pointer;
+  display: inline-flex;
   align-items: center;
-  justify-items: center;
-  padding: var(--space-8) var(--space-4);
+  gap: var(--s-2);
 }
 
-.auth-card {
-  width: min(100%, 420px);
-  padding: var(--space-6);
+.btn-glass:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
 }
 
-.brand {
+/* Headers de sección */
+.section-header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: var(--s-5);
+  padding: var(--s-4);
+  background: var(--glass-fill);
+  backdrop-filter: saturate(var(--sat)) blur(var(--blur));
+  -webkit-backdrop-filter: saturate(var(--sat)) blur(var(--blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--r-card);
+  box-shadow: var(--glass-shadow);
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: var(--fs-22);
   font-weight: 700;
-  color: var(--base-00);
-}
-
-.brand-badge {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--accent-primary), color-mix(in srgb, var(--accent-info) 36%, var(--accent-primary)));
-  box-shadow: var(--shadow-sm);
-}
-
-.subtitle {
-  margin-top: -8px;
-  margin-bottom: var(--space-6);
-  color: var(--base-60);
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-4);
-}
-
-.form-actions {
-  margin-top: var(--space-4);
-  display: grid;
-  gap: var(--space-3);
+  color: var(--ink-1);
+  letter-spacing: -0.01em;
 }

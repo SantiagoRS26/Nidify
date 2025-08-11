@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
 
@@ -44,7 +49,7 @@ export class InvitationsComponent {
   cancel(invitation: Invitation): void {
     this.householdService.cancelInvitation(invitation.id).subscribe(() => {
       this.invitations.update((list) =>
-        list.filter((i) => i.id !== invitation.id),
+        list.filter((i) => i.id !== invitation.id)
       );
     });
   }
@@ -55,7 +60,7 @@ export class InvitationsComponent {
     }
     const diff = Math.ceil(
       (new Date(invitation.expiresAt).getTime() - Date.now()) /
-        (1000 * 60 * 60 * 24),
+        (1000 * 60 * 60 * 24)
     );
     return `expira en ${diff} días`;
   }

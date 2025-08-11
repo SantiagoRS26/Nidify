@@ -26,7 +26,8 @@
             <div class="item__head">
                 <div>
                     <div class="item__title">{{ item.name }}</div>
-                    <div class="item__meta">{{ getCategoryName(item.categoryId) }} • {{ getStatusLabel(item.status) }}</div>
+                    <div class="item__meta">{{ getCategoryName(item.categoryId) }} • {{ getStatusLabel(item.status) }}
+                    </div>
                 </div>
                 <div class="item__price">{{ item.price | currencyFormat }} {{ item.currency }}</div>
             </div>
@@ -51,22 +52,22 @@
         <form class="dialog__body form-grid" [formGroup]="itemForm">
             <label>Nombre<input type="text" placeholder="Sillón" formControlName="name" /></label>
             <label>Categoría<select formControlName="categoryId">
-                        <option value="">Sin categoría</option>
-                        <option *ngFor="let cat of categories()" [value]="cat.id">{{ cat.name }}</option>
-                    </select></label>
+                    <option value="">Sin categoría</option>
+                    <option *ngFor="let cat of categories()" [value]="cat.id">{{ cat.name }}</option>
+                </select></label>
             <label>Tipo<select formControlName="type">
-                        <option *ngFor="let t of itemTypeOptions" [value]="t.value">{{ t.label }}</option>
-                    </select></label>
+                    <option *ngFor="let t of itemTypeOptions" [value]="t.value">{{ t.label }}</option>
+                </select></label>
             <label>Precio<input type="text" placeholder="0" formControlName="price" currencyInput /></label>
             <label>Moneda<select formControlName="currency">
-                        <option *ngFor="let c of currencies$ | async" [value]="c">{{ c }}</option>
-                    </select></label>
+                    <option *ngFor="let c of currencies$ | async" [value]="c">{{ c }}</option>
+                </select></label>
             <label>Prioridad<select formControlName="priority">
-                        <option *ngFor="let p of itemPriorityOptions" [value]="p.value">{{ p.label }}</option>
-                    </select></label>
+                    <option *ngFor="let p of itemPriorityOptions" [value]="p.value">{{ p.label }}</option>
+                </select></label>
             <label>Estado<select formControlName="status">
-                        <option *ngFor="let s of itemStatusOptions" [value]="s.value">{{ s.label }}</option>
-                    </select></label>
+                    <option *ngFor="let s of itemStatusOptions" [value]="s.value">{{ s.label }}</option>
+                </select></label>
             <label>Link de compra<input type="text" placeholder="https://..." formControlName="purchaseLink" /></label>
             <button class="btn" type="button" (click)="openSplit()">Dividir pago</button>
         </form>
@@ -76,11 +77,5 @@
         </div>
     </div>
 </div>
-<app-split-modal
-    *ngIf="showSplitModal()"
-    [members]="members"
-    [total]="itemForm.get('price')?.value || 0"
-    [initialSplit]="paymentSplit()"
-    (cancel)="showSplitModal.set(false)"
-    (save)="onSplitSave($event)"
-></app-split-modal>
+<app-split-modal *ngIf="showSplitModal()" [members]="members" [total]="itemForm.get('price')?.value || 0"
+    [initialSplit]="paymentSplit()" (cancel)="showSplitModal.set(false)" (save)="onSplitSave($event)"></app-split-modal>

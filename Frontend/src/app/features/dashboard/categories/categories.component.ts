@@ -1,15 +1,20 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { CategoryService } from '../../../core/categories/category.service';
-import { Category } from '../../../shared/models/category.model';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
+import { CategoryService } from "../../../core/categories/category.service";
+import { Category } from "../../../shared/models/category.model";
 
 @Component({
-  selector: 'app-categories',
+  selector: "app-categories",
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './categories.component.html',
-  styleUrl: './categories.component.scss',
+  templateUrl: "./categories.component.html",
+  styleUrl: "./categories.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CategoriesComponent {
@@ -19,8 +24,8 @@ export class CategoriesComponent {
   readonly categories = signal<Category[]>([]);
 
   readonly categoryForm = this.fb.nonNullable.group({
-    name: ['', Validators.required],
-    description: [''],
+    name: ["", Validators.required],
+    description: [""],
   });
 
   readonly editingId = signal<string | null>(null);
@@ -37,7 +42,7 @@ export class CategoriesComponent {
     this.editingId.set(cat.id);
     this.categoryForm.patchValue({
       name: cat.name,
-      description: cat.description ?? '',
+      description: cat.description ?? "",
     });
   }
 
@@ -50,7 +55,7 @@ export class CategoriesComponent {
     if (id) {
       this.categoryService.update(id, data).subscribe((updated) => {
         this.categories.update((list) =>
-          list.map((c) => (c.id === updated.id ? updated : c)),
+          list.map((c) => (c.id === updated.id ? updated : c))
         );
         this.categoryForm.reset();
         this.editingId.set(null);
