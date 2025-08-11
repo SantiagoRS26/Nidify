@@ -1,0 +1,20 @@
+<div class="subheader">
+  <h2>Categorías</h2>
+</div>
+
+<section class="categories">
+  <ul class="list">
+    <li class="item" *ngFor="let cat of categories()">
+      <div class="item__title">{{ cat.name }}</div>
+      <button class="btn" (click)="edit(cat)">Editar</button>
+    </li>
+  </ul>
+
+  <form class="form-grid" [formGroup]="categoryForm" (ngSubmit)="save()">
+    <label>Nombre<input type="text" formControlName="name" /></label>
+    <label>Descripción<input type="text" formControlName="description" /></label>
+    <button class="btn primary" type="submit">
+      {{ editingId() ? 'Actualizar' : 'Crear' }}
+    </button>
+  </form>
+</section>

@@ -54,6 +54,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: "categorias",
+        loadComponent: () =>
+          import("./features/dashboard/categories/categories.component").then(
+            (m) => m.CategoriesComponent
+          ),
+      },
+      {
         path: "presupuesto",
         loadComponent: () =>
           import("./features/dashboard/budget/budget.component").then(

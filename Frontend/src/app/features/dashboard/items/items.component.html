@@ -1,9 +1,9 @@
 <div class="subheader">
     <h2>Ítems</h2>
     <div class="actions desktop-only">
-        <button class="btn primary" (click)="showNewItemModal.set(true)">Nuevo ítem</button>
+        <button class="btn primary" (click)="openNew()">Nuevo ítem</button>
     </div>
-    <button class="fab mobile-only" aria-label="Nuevo ítem" (click)="showNewItemModal.set(true)">＋</button>
+    <button class="fab mobile-only" aria-label="Nuevo ítem" (click)="openNew()">＋</button>
     <div class="sr-only">Botón de acción flotante para crear un nuevo ítem</div>
 </div>
 
@@ -22,69 +22,54 @@
     </div>
 
     <div class="list grid">
-        <div class="item card">
+        <div class="item card" *ngFor="let item of items()">
             <div class="item__head">
                 <div>
-                    <div class="item__title">Ejemplo de ítem</div>
-                    <div class="item__meta">Muebles • Por cotizar</div>
+                    <div class="item__title">{{ item.name }}</div>
+                    <div class="item__meta">{{ getCategoryName(item.categoryId) }} • {{ item.status }}</div>
                 </div>
-                <div class="item__price">$ 0</div>
+                <div class="item__price">{{ item.price | currency:item.currency }}</div>
             </div>
             <div class="item__footer">
                 <div class="split">50% tú • 50% pareja</div>
                 <div class="tags">
-                    <span class="tag">Prioridad: Necesario</span>
-                    <button class="btn" (click)="showSplitModal.set(true)">Dividir pago</button>
+                    <span class="tag">Prioridad: {{ item.priority }}</span>
+                    <button class="btn" (click)="edit(item)">Editar</button>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Modal: Nuevo ítem (solo UI) -->
 <div class="modal" [class.open]="showNewItemModal()">
     <div class="backdrop" (click)="showNewItemModal.set(false)"></div>
     <div class="dialog card">
         <div class="dialog__header">
-            <h3>Nuevo ítem</h3>
+            <h3>{{ editingId() ? 'Editar ítem' : 'Nuevo ítem' }}</h3>
             <button class="icon" (click)="showNewItemModal.set(false)">✕</button>
         </div>
-        <div class="dialog__body">
-            <div class="form-grid">
-                <label>Nombre<input type="text" placeholder="Sillón" /></label>
-                <label>Categoría<select>
-                        <option>Muebles</option>
-                        <option>Electro</option>
-                        <option>Servicios</option>
+        <form class="dialog__body form-grid" [formGroup]="itemForm">
+            <label>Nombre<input type="text" placeholder="Sillón" formControlName="name" /></label>
+            <label>Categoría<select formControlName="categoryId">
+                        <option value="">Sin categoría</option>
+                        <option *ngFor="let cat of categories()" [value]="cat.id">{{ cat.name }}</option>
                     </select></label>
-                <label>Tipo<select>
-                        <option>Único</option>
-                        <option>Recurrente</option>
+            <label>Tipo<select formControlName="type">
+                        <option *ngFor="let t of itemTypes" [value]="t">{{ t }}</option>
                     </select></label>
-                <label>Precio<input type="number" placeholder="0" /></label>
-                <label>Moneda<select>
-                        <option>USD</option>
-                        <option>EUR</option>
-                        <option>ARS</option>
-                        <option>MXN</option>
+            <label>Precio<input type="number" placeholder="0" formControlName="price" /></label>
+            <label>Moneda<input type="text" formControlName="currency" /></label>
+            <label>Prioridad<select formControlName="priority">
+                        <option *ngFor="let p of itemPriorities" [value]="p">{{ p }}</option>
                     </select></label>
-                <label>Prioridad<select>
-                        <option>Necesario</option>
-                        <option>Opcional</option>
-                        <option>Capricho</option>
+            <label>Estado<select formControlName="status">
+                        <option *ngFor="let s of itemStatuses" [value]="s">{{ s }}</option>
                     </select></label>
-                <label>Estado<select>
-                        <option>Por cotizar</option>
-                        <option>Cotizado</option>
-                        <option>Comprado</option>
-                        <option>Descartado</option>
-                    </select></label>
-                <label>Link de compra<input type="text" placeholder="https://..." /></label>
-            </div>
-        </div>
+            <label>Link de compra<input type="text" placeholder="https://..." formControlName="purchaseLink" /></label>
+        </form>
         <div class="dialog__actions">
             <button class="btn" (click)="showNewItemModal.set(false)">Cancelar</button>
-            <button class="btn primary">Guardar</button>
+            <button class="btn primary" (click)="save()">Guardar</button>
         </div>
     </div>
 </div>
