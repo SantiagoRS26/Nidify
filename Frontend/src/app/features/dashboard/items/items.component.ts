@@ -18,11 +18,19 @@ import {
 import { CurrencyService } from '../../../core/currency/currency.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { take } from 'rxjs';
+import { SplitModalComponent } from './split-modal.component';
+import { PaymentSplit } from '../../../shared/models/payment-split.model';
 
 @Component({
   selector: 'app-items',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CurrencyInputDirective, CurrencyFormatPipe],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    CurrencyInputDirective,
+    CurrencyFormatPipe,
+    SplitModalComponent,
+  ],
   templateUrl: './items.component.html',
   styleUrl: './items.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,6 +47,13 @@ export class ItemsComponent {
   readonly currencies$ = this.currencyService.getSupported();
 
   private defaultCurrency = 'USD';
+
+  readonly members = [
+    { userId: 'me', label: 'Tú' },
+    { userId: 'partner', label: 'Pareja' },
+  ];
+
+  readonly paymentSplit = signal<PaymentSplit | null>(null);
 
   readonly itemTypeOptions = Object.values(ItemType).map((value) => ({
     value,
@@ -100,6 +115,7 @@ export class ItemsComponent {
       purchaseLink: '',
     });
     this.showNewItemModal.set(true);
+    this.paymentSplit.set(null);
   }
 
   edit(item: Item): void {
@@ -115,6 +131,7 @@ export class ItemsComponent {
       purchaseLink: item.purchaseLink ?? '',
     });
     this.showNewItemModal.set(true);
+    this.paymentSplit.set(item.paymentSplit ?? null);
   }
 
   getCategoryName(id?: string): string {
@@ -130,6 +147,38 @@ export class ItemsComponent {
     return ITEM_PRIORITY_LABELS[priority];
   }
 
+  openSplit(): void {
+    this.showSplitModal.set(true);
+  }
+
+  onSplitSave(split: PaymentSplit): void {
+    this.paymentSplit.set(split);
+    this.showSplitModal.set(false);
+  }
+
+  private recalcSplit(split: PaymentSplit, total: number): PaymentSplit {
+    return {
+      assignments: split.assignments.map((a) => {
+        const amount = a.amount ?? ((a.percentage ?? 0) / 100) * total;
+        const percentage = a.percentage ?? (total ? (amount / total) * 100 : 0);
+        return {
+          ...a,
+          amount,
+          percentage,
+          calculatedAmount: amount,
+        };
+      }),
+    };
+  }
+
+  private isSplitValid(split: PaymentSplit, total: number): boolean {
+    const sum = split.assignments.reduce(
+      (acc, a) => acc + (a.amount ?? 0),
+      0,
+    );
+    return Math.round(sum * 100) === Math.round(total * 100);
+  }
+
   save(): void {
     if (this.itemForm.invalid) {
       return;
@@ -137,15 +186,23 @@ export class ItemsComponent {
     const data = this.itemForm.getRawValue();
     data.price = Number(data.price);
     const id = this.editingId();
+    let payload: any = data;
+    if (this.paymentSplit()) {
+      const split = this.recalcSplit(this.paymentSplit()!, data.price);
+      if (!this.isSplitValid(split, data.price)) {
+        return;
+      }
+      payload = { ...data, paymentSplit: split };
+    }
     if (id) {
-      this.itemsService.update(id, data).subscribe((updated) => {
+      this.itemsService.update(id, payload).subscribe((updated) => {
         this.items.update((list) =>
           list.map((i) => (i.id === updated.id ? updated : i)),
         );
         this.showNewItemModal.set(false);
       });
     } else {
-      this.itemsService.create(data).subscribe((created) => {
+      this.itemsService.create(payload).subscribe((created) => {
         this.items.update((list) => [...list, created]);
         this.showNewItemModal.set(false);
       });
