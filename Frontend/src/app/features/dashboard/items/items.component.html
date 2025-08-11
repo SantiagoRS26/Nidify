@@ -26,14 +26,14 @@
             <div class="item__head">
                 <div>
                     <div class="item__title">{{ item.name }}</div>
-                    <div class="item__meta">{{ getCategoryName(item.categoryId) }} • {{ item.status }}</div>
+                    <div class="item__meta">{{ getCategoryName(item.categoryId) }} • {{ getStatusLabel(item.status) }}</div>
                 </div>
                 <div class="item__price">{{ item.price | currency:item.currency }}</div>
             </div>
             <div class="item__footer">
                 <div class="split">50% tú • 50% pareja</div>
                 <div class="tags">
-                    <span class="tag">Prioridad: {{ item.priority }}</span>
+                    <span class="tag">Prioridad: {{ getPriorityLabel(item.priority) }}</span>
                     <button class="btn" (click)="edit(item)">Editar</button>
                 </div>
             </div>
@@ -55,15 +55,15 @@
                         <option *ngFor="let cat of categories()" [value]="cat.id">{{ cat.name }}</option>
                     </select></label>
             <label>Tipo<select formControlName="type">
-                        <option *ngFor="let t of itemTypes" [value]="t">{{ t }}</option>
+                        <option *ngFor="let t of itemTypeOptions" [value]="t.value">{{ t.label }}</option>
                     </select></label>
             <label>Precio<input type="number" placeholder="0" formControlName="price" /></label>
             <label>Moneda<input type="text" formControlName="currency" /></label>
             <label>Prioridad<select formControlName="priority">
-                        <option *ngFor="let p of itemPriorities" [value]="p">{{ p }}</option>
+                        <option *ngFor="let p of itemPriorityOptions" [value]="p.value">{{ p.label }}</option>
                     </select></label>
             <label>Estado<select formControlName="status">
-                        <option *ngFor="let s of itemStatuses" [value]="s">{{ s }}</option>
+                        <option *ngFor="let s of itemStatusOptions" [value]="s.value">{{ s.label }}</option>
                     </select></label>
             <label>Link de compra<input type="text" placeholder="https://..." formControlName="purchaseLink" /></label>
         </form>
