@@ -1,0 +1,26 @@
+.subheader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.list {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  background: var(--base-100);
+  border-radius: var(--radius-2);
+}
+
+.form-grid {
+  display: grid;
+  gap: var(--space-3);
+}
