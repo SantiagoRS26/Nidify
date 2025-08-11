@@ -8,6 +8,11 @@ import { Category } from '../../../shared/models/category.model';
 import { ItemType } from '../../../shared/models/item-type.enum';
 import { ItemPriority } from '../../../shared/models/item-priority.enum';
 import { ItemStatus } from '../../../shared/models/item-status.enum';
+import {
+  ITEM_TYPE_LABELS,
+  ITEM_PRIORITY_LABELS,
+  ITEM_STATUS_LABELS,
+} from '../../../shared/models/item-labels';
 
 @Component({
   selector: 'app-items',
@@ -25,9 +30,22 @@ export class ItemsComponent {
   readonly items = signal<Item[]>([]);
   readonly categories = signal<Category[]>([]);
 
-  readonly itemTypes = Object.values(ItemType);
-  readonly itemPriorities = Object.values(ItemPriority);
-  readonly itemStatuses = Object.values(ItemStatus);
+  readonly itemTypeOptions = Object.values(ItemType).map((value) => ({
+    value,
+    label: ITEM_TYPE_LABELS[value],
+  }));
+
+  readonly itemPriorityOptions = Object.values(ItemPriority).map(
+    (value) => ({
+      value,
+      label: ITEM_PRIORITY_LABELS[value],
+    }),
+  );
+
+  readonly itemStatusOptions = Object.values(ItemStatus).map((value) => ({
+    value,
+    label: ITEM_STATUS_LABELS[value],
+  }));
 
   readonly itemForm = this.fb.nonNullable.group({
     name: ['', Validators.required],
@@ -86,6 +104,14 @@ export class ItemsComponent {
   getCategoryName(id?: string): string {
     const cat = this.categories().find((c) => c.id === id);
     return cat ? cat.name : '';
+  }
+
+  getStatusLabel(status: ItemStatus): string {
+    return ITEM_STATUS_LABELS[status];
+  }
+
+  getPriorityLabel(priority: ItemPriority): string {
+    return ITEM_PRIORITY_LABELS[priority];
   }
 
   save(): void {
