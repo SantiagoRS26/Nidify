@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormArray, FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { CurrencyInputDirective } from '../../../shared/directives/currency-input.directive';
 import { PaymentAssignment, PaymentSplit } from '../../../shared/models/payment-split.model';
 
 @Component({
   selector: 'app-split-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, CurrencyInputDirective],
   templateUrl: './split-modal.component.html',
   styleUrl: './split-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

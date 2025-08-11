@@ -14,7 +14,7 @@
           </label>
           <label>
             {{ ctrl.get('label')?.value }} (monto)
-            <input type="number" formControlName="amount" (input)="onChange()" />
+            <input type="text" formControlName="amount" currencyInput (input)="onChange()" />
           </label>
         </div>
       </div>
