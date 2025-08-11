@@ -1,0 +1,30 @@
+<div class="modal open">
+  <div class="backdrop" (click)="cancel.emit()"></div>
+  <div class="dialog card">
+    <div class="dialog__header">
+      <h3>Dividir pago</h3>
+      <button class="icon" (click)="cancel.emit()">✕</button>
+    </div>
+    <form class="dialog__body" [formGroup]="form">
+      <div class="split-grid" formArrayName="assignments">
+        <div class="assignment" *ngFor="let ctrl of assignments.controls; let i = index" [formGroupName]="i">
+          <label>
+            {{ ctrl.get('label')?.value }} (%)
+            <input type="number" formControlName="percentage" (input)="onChange()" />
+          </label>
+          <label>
+            {{ ctrl.get('label')?.value }} (monto)
+            <input type="number" formControlName="amount" (input)="onChange()" />
+          </label>
+        </div>
+      </div>
+      <p class="text-muted" style="margin-top:8px">
+        Asegúrate que la suma de aportes coincida con el total.
+      </p>
+    </form>
+    <div class="dialog__actions">
+      <button class="btn" type="button" (click)="cancel.emit()">Cancelar</button>
+      <button class="btn primary" type="button" (click)="apply()" [disabled]="!isValidSum()">Aplicar</button>
+    </div>
+  </div>
+</div>
