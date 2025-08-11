@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { CurrencyInputDirective } from '../../../shared/directives/currency-input.directive';
 import { ItemsService } from '../../../core/items/items.service';
 import { CategoryService } from '../../../core/categories/category.service';
 import { Item } from '../../../shared/models/item.model';
@@ -20,7 +21,7 @@ import { take } from 'rxjs';
 @Component({
   selector: 'app-items',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, CurrencyInputDirective],
   templateUrl: './items.component.html',
   styleUrl: './items.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -133,6 +134,7 @@ export class ItemsComponent {
       return;
     }
     const data = this.itemForm.getRawValue();
+    data.price = Number(data.price);
     const id = this.editingId();
     if (id) {
       this.itemsService.update(id, data).subscribe((updated) => {

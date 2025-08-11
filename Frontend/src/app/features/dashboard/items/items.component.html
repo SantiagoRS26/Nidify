@@ -57,7 +57,7 @@
             <label>Tipo<select formControlName="type">
                         <option *ngFor="let t of itemTypeOptions" [value]="t.value">{{ t.label }}</option>
                     </select></label>
-            <label>Precio<input type="number" placeholder="0" formControlName="price" /></label>
+            <label>Precio<input type="text" placeholder="0" formControlName="price" currencyInput /></label>
             <label>Moneda<select formControlName="currency">
                         <option *ngFor="let c of currencies$ | async" [value]="c">{{ c }}</option>
                     </select></label>
