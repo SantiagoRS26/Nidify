@@ -68,6 +68,7 @@
                         <option *ngFor="let s of itemStatusOptions" [value]="s.value">{{ s.label }}</option>
                     </select></label>
             <label>Link de compra<input type="text" placeholder="https://..." formControlName="purchaseLink" /></label>
+            <button class="btn" type="button" (click)="openSplit()">Dividir pago</button>
         </form>
         <div class="dialog__actions">
             <button class="btn" (click)="showNewItemModal.set(false)">Cancelar</button>
@@ -75,25 +76,11 @@
         </div>
     </div>
 </div>
-
-<!-- Modal: Dividir pago (solo UI) -->
-<div class="modal" [class.open]="showSplitModal()">
-    <div class="backdrop" (click)="showSplitModal.set(false)"></div>
-    <div class="dialog card">
-        <div class="dialog__header">
-            <h3>Dividir pago</h3>
-            <button class="icon" (click)="showSplitModal.set(false)">✕</button>
-        </div>
-        <div class="dialog__body">
-            <div class="split-grid">
-                <label>Tu aporte (%)<input type="number" value="50" /></label>
-                <label>Pareja (%)<input type="number" value="50" /></label>
-            </div>
-            <p class="text-muted" style="margin-top:8px">Puedes usar porcentajes. En el futuro se soportarán montos.</p>
-        </div>
-        <div class="dialog__actions">
-            <button class="btn" (click)="showSplitModal.set(false)">Cancelar</button>
-            <button class="btn primary">Aplicar</button>
-        </div>
-    </div>
-</div>
+<app-split-modal
+    *ngIf="showSplitModal()"
+    [members]="members"
+    [total]="itemForm.get('price')?.value || 0"
+    [initialSplit]="paymentSplit()"
+    (cancel)="showSplitModal.set(false)"
+    (save)="onSplitSave($event)"
+></app-split-modal>
