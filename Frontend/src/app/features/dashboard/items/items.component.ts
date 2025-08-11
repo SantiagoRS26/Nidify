@@ -13,6 +13,9 @@ import {
   ITEM_PRIORITY_LABELS,
   ITEM_STATUS_LABELS,
 } from '../../../shared/models/item-labels';
+import { CurrencyService } from '../../../core/currency/currency.service';
+import { AuthService } from '../../../core/auth/auth.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-items',
@@ -26,9 +29,14 @@ export class ItemsComponent {
   private readonly fb = inject(FormBuilder);
   private readonly itemsService = inject(ItemsService);
   private readonly categoryService = inject(CategoryService);
+  private readonly currencyService = inject(CurrencyService);
+  private readonly authService = inject(AuthService);
 
   readonly items = signal<Item[]>([]);
   readonly categories = signal<Category[]>([]);
+  readonly currencies$ = this.currencyService.getSupported();
+
+  private defaultCurrency = 'USD';
 
   readonly itemTypeOptions = Object.values(ItemType).map((value) => ({
     value,
@@ -52,7 +60,7 @@ export class ItemsComponent {
     categoryId: [''],
     type: [ItemType.ONE_TIME, Validators.required],
     price: [0, Validators.required],
-    currency: ['USD', Validators.required],
+    currency: [this.defaultCurrency, Validators.required],
     priority: [ItemPriority.NECESSARY, Validators.required],
     status: [ItemStatus.TO_QUOTE, Validators.required],
     purchaseLink: [''],
@@ -64,6 +72,12 @@ export class ItemsComponent {
 
   constructor() {
     this.load();
+    this.authService.user$.pipe(take(1)).subscribe((user) => {
+      if (user?.preferredCurrency) {
+        this.defaultCurrency = user.preferredCurrency;
+        this.itemForm.get('currency')?.setValue(this.defaultCurrency);
+      }
+    });
   }
 
   load(): void {
@@ -78,7 +92,7 @@ export class ItemsComponent {
       categoryId: '',
       type: ItemType.ONE_TIME,
       price: 0,
-      currency: 'USD',
+      currency: this.defaultCurrency,
       priority: ItemPriority.NECESSARY,
       status: ItemStatus.TO_QUOTE,
       purchaseLink: '',
