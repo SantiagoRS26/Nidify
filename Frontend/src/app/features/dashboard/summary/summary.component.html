@@ -9,14 +9,14 @@
     <div class="card" style="display:flex; gap:10px; align-items:center; justify-content:space-between;">
         <div>
             <div style="font-size:12px; color:var(--muted)">Presupuesto inicial</div>
-            <div style="font-size:22px; font-weight:700">$ 0</div>
+            <div style="font-size:22px; font-weight:700">{{ 0 | currencyFormat }}</div>
         </div>
         <div class="badge">0% usado</div>
     </div>
     <div class="card" style="display:flex; gap:10px; align-items:center; justify-content:space-between;">
         <div>
             <div style="font-size:12px; color:var(--muted)">Mensual estimado</div>
-            <div style="font-size:22px; font-weight:700">$ 0 / mes</div>
+            <div style="font-size:22px; font-weight:700">{{ 0 | currencyFormat }} / mes</div>
         </div>
         <div class="badge">0 ítems</div>
     </div>

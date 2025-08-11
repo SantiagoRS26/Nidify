@@ -28,7 +28,7 @@
                     <div class="item__title">{{ item.name }}</div>
                     <div class="item__meta">{{ getCategoryName(item.categoryId) }} • {{ getStatusLabel(item.status) }}</div>
                 </div>
-                <div class="item__price">{{ item.price | currency:item.currency }}</div>
+                <div class="item__price">{{ item.price | currencyFormat }} {{ item.currency }}</div>
             </div>
             <div class="item__footer">
                 <div class="split">50% tú • 50% pareja</div>

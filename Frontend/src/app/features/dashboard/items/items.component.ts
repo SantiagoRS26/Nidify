@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { CurrencyInputDirective } from '../../../shared/directives/currency-input.directive';
+import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
 import { ItemsService } from '../../../core/items/items.service';
 import { CategoryService } from '../../../core/categories/category.service';
 import { Item } from '../../../shared/models/item.model';
@@ -21,7 +22,7 @@ import { take } from 'rxjs';
 @Component({
   selector: 'app-items',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CurrencyInputDirective],
+  imports: [CommonModule, ReactiveFormsModule, CurrencyInputDirective, CurrencyFormatPipe],
   templateUrl: './items.component.html',
   styleUrl: './items.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

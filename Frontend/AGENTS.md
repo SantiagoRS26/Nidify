@@ -98,6 +98,7 @@ src/
 ## 8. Internacionalización y formato  
 - Soporte para múltiples monedas y formatos numéricos.  
 - Abstraer formateo de moneda/fechas en servicios reutilizables.  
+- Utilizar el pipe `currencyFormat` para mostrar montos con separadores de miles.
 - Evitar hardcodear strings: preparar para i18n si se expande.  
 
 ---
