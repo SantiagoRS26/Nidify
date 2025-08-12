@@ -56,4 +56,11 @@ export class ItemsService {
       )
       .pipe(map(({ item }) => item));
   }
+
+  delete(itemId: string): Observable<void> {
+    const householdId = this.household.getHouseholdId();
+    return this.http.delete<void>(
+      `/households/${householdId}/items/${itemId}`,
+    );
+  }
 }

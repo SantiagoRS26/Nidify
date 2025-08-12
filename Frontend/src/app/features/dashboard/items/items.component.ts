@@ -146,6 +146,12 @@ export class ItemsComponent {
     this.paymentSplit.set(item.paymentSplit ?? null);
   }
 
+  delete(item: Item): void {
+    this.itemsService.delete(item.id).subscribe(() => {
+      this.items.update((list) => list.filter((i) => i.id !== item.id));
+    });
+  }
+
   getCategoryName(id?: string): string {
     const cat = this.categories().find((c) => c.id === id);
     return cat ? cat.name : "";
