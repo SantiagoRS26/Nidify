@@ -11,6 +11,7 @@ export class JwtService {
     expiresIn: string | number = '7d',
   ): string {
     const { userId, jti, familyId } = payload;
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (jwt.sign as any)(
       { sub: userId, jti, familyId },

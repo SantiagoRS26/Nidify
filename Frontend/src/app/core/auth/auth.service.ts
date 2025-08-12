@@ -65,12 +65,9 @@ export class AuthService {
       try {
         await firstValueFrom(this.refreshTokens());
 
-        // Después de restaurar la sesión, inicializar el estado del hogar
         this.householdService
           .initializeHouseholdState()
-          .pipe(
-            catchError(() => of(false)) // Si falla, continuar sin error
-          )
+          .pipe(catchError(() => of(false)))
           .subscribe();
 
         return true;
@@ -107,7 +104,7 @@ export class AuthService {
     fullName: string,
     email: string,
     password: string,
-    preferredCurrency?: string,
+    preferredCurrency?: string
   ) {
     const body: RegisterRequest = {
       fullName,
@@ -170,9 +167,6 @@ export class AuthService {
     return this.accessToken;
   }
 
-  /**
-   * Determines whether a JWT is expired or will expire within the given threshold.
-   */
   isTokenExpired(
     token: string | null = this.getToken(),
     threshold = 60_000
@@ -224,18 +218,15 @@ export class AuthService {
     localStorage.setItem("user", JSON.stringify(user));
     this.userSubject.next(user);
 
-    // Inicializar el estado del hogar después del login exitoso
     this.householdService
       .initializeHouseholdState()
-      .pipe(
-        catchError(() => of(false)) // Si falla, continuar sin error
-      )
+      .pipe(catchError(() => of(false)))
       .subscribe();
   }
 
   private onAccessTokenUpdated(accessToken: string): void {
     this.accessToken = accessToken;
-    this.refreshBackoffMs = 30_000; // reset backoff on success
+    this.refreshBackoffMs = 30_000;
     this.scheduleRefresh();
   }
 
@@ -263,7 +254,6 @@ export class AuthService {
       return;
     }
     if (this.refreshing) {
-      // Ya hay un refresh en curso, reprogramar con un pequeño retraso para revisar de nuevo
       this.refreshTimeoutId = setTimeout(
         () => this.triggerScheduledRefresh(),
         5_000
@@ -275,7 +265,6 @@ export class AuthService {
       .pipe(
         finalize(() => (this.refreshing = false)),
         catchError(() => {
-          // Backend no disponible u otro error: no entrar en bucle, aplicar backoff
           const nextDelay = this.refreshBackoffMs;
           this.refreshBackoffMs = Math.min(
             this.refreshBackoffMaxMs,
@@ -318,7 +307,6 @@ export class AuthService {
     localStorage.removeItem("user");
   }
 
-  // Asegurar limpieza
   ngOnDestroy(): void {
     this.clearScheduledRefresh();
   }

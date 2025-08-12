@@ -1,5 +1,5 @@
-import { Router } from '@angular/router';
-import { ProblemDetails } from '../../shared/models/problem-details.model';
+import { Router } from "@angular/router";
+import { ProblemDetails } from "../../shared/models/problem-details.model";
 
 export type ProblemHandler = (problem: ProblemDetails, router: Router) => void;
 
@@ -11,25 +11,27 @@ export const problemHandlers: Record<number, ProblemHandler> = {
   429: tooManyRequests,
 };
 
-export const defaultProblemHandler: ProblemHandler = (problem: ProblemDetails) => {
+export const defaultProblemHandler: ProblemHandler = (
+  problem: ProblemDetails
+) => {
   // eslint-disable-next-line no-console
-  console.error('Unhandled problem', problem);
+  console.error("Unhandled problem", problem);
 };
 
 function redirectToLogin(_: ProblemDetails, router: Router): void {
-  router.navigate(['/login']);
+  router.navigate(["/login"]);
 }
 
 function notFound(_: ProblemDetails, router: Router): void {
-  router.navigate(['/not-found']);
+  router.navigate(["/not-found"]);
 }
 
 function conflict(problem: ProblemDetails): void {
   // eslint-disable-next-line no-console
-  console.warn('Conflict', problem);
+  console.warn("Conflict", problem);
 }
 
 function tooManyRequests(problem: ProblemDetails): void {
   // eslint-disable-next-line no-console
-  console.warn('Too many requests', problem);
+  console.warn("Too many requests", problem);
 }

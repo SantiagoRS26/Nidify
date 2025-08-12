@@ -1,6 +1,14 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { BehaviorSubject, forkJoin, map, Observable, of, switchMap, tap } from "rxjs";
+import {
+  BehaviorSubject,
+  forkJoin,
+  map,
+  Observable,
+  of,
+  switchMap,
+  tap,
+} from "rxjs";
 
 export interface Household {
   id: string;
@@ -67,12 +75,10 @@ export class HouseholdService {
   initializeHouseholdState(): Observable<boolean> {
     return this.getUserMemberships().pipe(
       tap((memberships) => {
-        // Si el usuario tiene membresías activas, usar la primera como hogar actual
         const activeMembership = memberships.find((m) => m.status === "active");
         if (activeMembership) {
           this.setHousehold(activeMembership.householdId);
         } else {
-          // Si no tiene membresías activas, limpiar el estado local
           this.clear();
         }
       }),

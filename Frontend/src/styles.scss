@@ -1,17 +1,15 @@
-/* =========================================================
-   GLASSY WEB THEME — Global Styles
-   ========================================================= */
 
-/* ---------- Design tokens ---------- */
+
+
 :root {
-  /* Color system (OKLCH-ish via sRGB aproximado) */
-  --bg-0: #eef3f9;          /* fondo base */
-  --bg-1: #f7fafc;          /* fallback/white mix */
-  --ink-1: #0f172a;         /* texto fuerte */
-  --ink-2: #334155;         /* texto normal */
-  --ink-3: #64748b;         /* texto secundario */
 
-  --accent: #14b8a6;        /* teal principal */
+  --bg-0: #eef3f9;
+  --bg-1: #f7fafc;
+  --ink-1: #0f172a;
+  --ink-2: #334155;
+  --ink-3: #64748b;
+
+  --accent: #14b8a6;
   --accent-600: #0ea5a0;
   --accent-50: rgba(20,184,166,.10);
 
@@ -20,14 +18,14 @@
   --info: #8b5cf6;
   --success: #10b981;
 
-  /* Glass tokens */
+
   --glass-fill: rgba(255,255,255,.55);
   --glass-border: rgba(255,255,255,.38);
   --glass-shadow: 0 16px 48px rgba(15,23,42,.16), 0 2px 10px rgba(15,23,42,.06);
   --blur: 18px;
   --sat: 160%;
 
-  /* Radius & spacing */
+
   --r-ctrl: 14px;
   --r-card: 18px;
   --r-pill: 999px;
@@ -40,14 +38,14 @@
   --s-8: 32px;
   --s-10: 40px;
 
-  /* Typography */
+
   --fs-12: 12px;
   --fs-14: 14px;
   --fs-16: 16px;
   --fs-18: 18px;
   --fs-22: 22px;
 
-  /* Aliases para compatibilidad con componentes existentes */
+
   --space-2: var(--s-2);
   --space-3: var(--s-3);
   --space-4: var(--s-4);
@@ -56,7 +54,7 @@
   --space-8: var(--s-8);
   --space-10: var(--s-10);
 
-  /* Color aliases para componentes dashboard */
+
   --white: rgba(255, 255, 255, 0.9);
   --base-00: var(--ink-1);
   --base-20: var(--ink-2);
@@ -65,7 +63,7 @@
   --base-80: rgba(15, 23, 42, 0.08);
   --muted: var(--ink-3);
 
-  /* Layout tokens */
+
   --radius-sm: 8px;
   --radius-md: var(--r-ctrl);
   --radius-lg: var(--r-card);
@@ -73,7 +71,7 @@
   --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
   --shadow-lg: var(--glass-shadow);
 
-  /* Accent colors aliases */
+
   --accent-primary: var(--accent);
   --accent-info: var(--info);
 }
@@ -82,14 +80,14 @@
 *::before,
 *::after { box-sizing: border-box; }
 
-/* ---------- Base ---------- */
+
 html, body { height: 100%; }
 body {
   font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
   color: var(--ink-2);
   line-height: 1.55;
 
-  /* Fondo con gradientes suaves + “glow” del acento */
+
   background:
     radial-gradient(1200px 800px at 85% -10%, rgba(20,184,166,.12), rgba(255,255,255,0)) no-repeat,
     radial-gradient(900px 700px at -10% 20%, rgba(139,92,246,.10), rgba(255,255,255,0)) no-repeat,
@@ -107,7 +105,7 @@ h1,h2,h3 {
 h1 { font-weight: 700; font-size: 28px; letter-spacing: -.01em; }
 .text-muted { color: var(--ink-3); }
 
-/* ---------- Layout utilities ---------- */
+
 .center-screen {
   min-height: 100dvh;
   display: grid;
@@ -118,7 +116,7 @@ h1 { font-weight: 700; font-size: 28px; letter-spacing: -.01em; }
 .stack { display: grid; gap: var(--s-4); }
 .row   { display: flex; align-items: center; gap: var(--s-3); }
 
-/* ---------- Glass surfaces ---------- */
+
 .glass {
   background: var(--glass-fill);
   backdrop-filter: saturate(var(--sat)) blur(var(--blur));
@@ -130,7 +128,7 @@ h1 { font-weight: 700; font-size: 28px; letter-spacing: -.01em; }
 
 .card-pad { padding: var(--s-6); }
 
-/* ---------- Brand ---------- */
+
 .brand {
   display: flex; align-items: center; gap: 10px;
   color: var(--ink-1); font-weight: 700;
@@ -143,7 +141,7 @@ h1 { font-weight: 700; font-size: 28px; letter-spacing: -.01em; }
   box-shadow: 0 8px 24px rgba(20,184,166,.28);
 }
 
-/* ---------- Form ---------- */
+
 label {
   display: inline-block;
   margin-bottom: 6px;
@@ -153,7 +151,7 @@ label {
 
 .input {
   display: block;
-  box-sizing: border-box; /* evita desbordes por padding/border */
+  box-sizing: border-box;
   width: 100%;
   height: 48px;
   padding: 0 var(--s-4);
@@ -179,7 +177,7 @@ label {
   background: #fff;
 }
 
-/* Ajusta el contenedor del input con íconos */
+
 .input-group {
   position: relative;
   width: 100%;
@@ -200,7 +198,7 @@ label {
 .helper { font-size: var(--fs-12); color: var(--ink-3); }
 .field-error { color: var(--danger); font-size: var(--fs-12); }
 
-/* ---------- Buttons ---------- */
+
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
   height: 48px; padding: 0 var(--s-6);
@@ -231,11 +229,11 @@ label {
 }
 .link:hover { text-decoration: underline; }
 
-/* ---------- Auth layout ---------- */
+
 .auth-card { width: min(100%, 460px); }
 .subtitle { margin-top: -6px; color: var(--ink-3); margin-bottom: var(--s-6); }
 
-/* ---------- Alerts ---------- */
+
 .alert {
   padding: 10px 12px; border-radius: var(--r-ctrl);
   border: 1px solid rgba(15,23,42,.08);
@@ -243,7 +241,7 @@ label {
 }
 .alert-error { border-color: color-mix(in srgb, var(--danger) 40%, white); color: #b91c1c; }
 
-/* ---------- Divider ---------- */
+
 .divider {
   display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s-3);
   color: var(--ink-3); font-size: var(--fs-14);
@@ -253,35 +251,32 @@ label {
 }
 
 
-/* --- Layout de auth unificado --- */
+
 .auth-layout,
 .center-screen {
   display: grid;
-  place-items: center;      /* centra vertical y horizontal */
-  min-height: 100svh;       /* altura real del viewport (iOS/Android) */
+  place-items: center;
+  min-height: 100svh;
   padding-inline: var(--s-4);
-  /* padding vertical que NO provoca scroll en pantallas altas,
-     pero mantiene respiración en pantallas bajas */
+
   padding-block: clamp(24px, 4vh, 56px);
 }
 
-/* Preferir 100dvh cuando el navegador lo soporte (quita “barras” móviles) */
+
 @supports (min-height: 100dvh) {
   .auth-layout,
   .center-screen { min-height: 100dvh; }
 }
 
-/* Card (sin cambios funcionales, solo por claridad) */
+
 .auth-card { width: min(100%, 460px); }
 
-/* Inputs (nos aseguramos de que nunca se desborden) */
+
 .input { box-sizing: border-box; width: 100%; }
 
-/* =========================================================
-   UTILIDADES ADICIONALES PARA DASHBOARD
-   ========================================================= */
 
-/* Cards y contenedores glassy adicionales */
+
+
 .glass-card {
   background: var(--glass-fill);
   backdrop-filter: saturate(var(--sat)) blur(var(--blur));
@@ -300,7 +295,7 @@ label {
     0 4px 14px rgba(15, 23, 42, 0.08);
 }
 
-/* Layout grid responsivo */
+
 .responsive-grid {
   display: grid;
   gap: var(--s-4);
@@ -314,7 +309,7 @@ label {
   }
 }
 
-/* Badges y etiquetas mejoradas */
+
 .glass-badge {
   font-size: var(--fs-12);
   font-weight: 600;
@@ -326,7 +321,7 @@ label {
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
 }
 
-/* Botones secundarios glassy */
+
 .btn-glass {
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid var(--glass-border);
@@ -349,7 +344,7 @@ label {
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
 }
 
-/* Headers de sección */
+
 .section-header {
   display: flex;
   align-items: center;

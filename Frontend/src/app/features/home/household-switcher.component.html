@@ -1,16 +1,23 @@
 <ng-container *ngIf="(households$ | async) as households">
+  <!-- Varios hogares: select glassy -->
   <ng-container *ngIf="households.length > 1; else singleHousehold">
-    <select
-      class="household-select"
-      [value]="(householdId$ | async) ?? ''"
-      (change)="onSelect($any($event.target).value)"
-      aria-label="Seleccionar hogar"
-    >
-      <option *ngFor="let h of households" [value]="h.id">{{ h.name }}</option>
-    </select>
+    <label class="sr-only" for="household-select">Seleccionar hogar</label>
+    <div class="household">
+      <select
+        id="household-select"
+        class="household-select"
+        [value]="(householdId$ | async) ?? ''"
+        (change)="onSelect($any($event.target).value)"
+        aria-label="Seleccionar hogar"
+      >
+        <option *ngFor="let h of households" [value]="h.id">{{ h.name }}</option>
+      </select>
+    </div>
   </ng-container>
+
+  <!-- Un solo hogar: pill estática -->
   <ng-template #singleHousehold>
-    <span *ngIf="households.length" class="household-name">
+    <span *ngIf="households.length" class="household-name" [title]="households[0].name">
       {{ households[0].name }}
     </span>
   </ng-template>

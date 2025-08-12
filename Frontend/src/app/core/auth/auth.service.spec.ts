@@ -90,12 +90,10 @@ describe("AuthService", () => {
   });
 
   it("does not refresh token on activity when unauthenticated", () => {
-    // No hay token cargado, no debe intentar refrescar automáticamente
     httpMock.expectNone("/auth/refresh");
   });
 
   it("programa un refresh antes de la expiración y refresca el token", fakeAsync(() => {
-    // exp dentro de 10 segundos -> con threshold 120s se agenda inmediato (delay 0)
     const exp = Math.floor(Date.now() / 1000) + 10;
     const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
     const payload = btoa(JSON.stringify({ exp }));
@@ -103,7 +101,6 @@ describe("AuthService", () => {
 
     (service as any).onAccessTokenUpdated(token);
 
-    // Avanzar timers para ejecutar el setTimeout(0)
     tick(0);
 
     const refresh = httpMock.expectOne("/auth/refresh");

@@ -1,212 +1,192 @@
-/* =========================================================
-   App shell glassy
-   ========================================================= */
 
-   :root {
-    --rail-w: 88px; /* ancho de la barra lateral en desktop */
-  }
-  
-  .app-shell {
+
+   :host { --rail-w: 88px; }
+
+   .app-shell {
     display: grid;
     grid-template-rows: auto 1fr auto;
     min-height: 100dvh;
     color: var(--base-20);
     overflow-x: hidden;
   }
-  
-  /* ---------- utilidad glass (coincide con el theme global) ---------- */
-  .glass {
+   
+
+   .glass {
     background: rgba(255, 255, 255, 0.55);
     backdrop-filter: saturate(160%) blur(16px);
     -webkit-backdrop-filter: saturate(160%) blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.38);
     box-shadow: 0 16px 48px rgba(15, 23, 42, 0.12), 0 2px 10px rgba(15, 23, 42, 0.06);
   }
-  
-  /* ===================== TOPBAR ===================== */
-  .topbar {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 56px;
-    padding: 0 var(--space-4);
-    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 0 0 14px 14px;
-  }
-  
-  .topbar__title {
-    font-weight: 700;
-    letter-spacing: 0.2px;
-    color: var(--base-00);
-  }
-  
-  .topbar__actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-  }
-  
-  .topbar__action {
-    appearance: none;
-    border: 0;
-    background: transparent;
-    color: var(--base-40);
-    border-radius: var(--radius-md);
-    padding: 8px 10px;
-    cursor: pointer;
-  }
-  .topbar__action:hover { background: rgba(255,255,255,.6); }
-  
-  /* ===================== CONTENT ===================== */
-.content {
-  /* deja aire respecto a la nav inferior en móvil */
-  padding: var(--s-4) var(--s-4) calc(72px + env(safe-area-inset-bottom));
-  width: 100%;
-  max-width: 1200px;
-  margin-inline: auto;
-  
-  /* Mejora el espaciado y la respiración visual */
-  min-height: calc(100vh - 56px - 72px);
-  
-  /* Añade un fondo sutil para distinguir el área de contenido */
-  position: relative;
-}
+   
 
-.content::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(600px 400px at 50% 0%, rgba(20,184,166,.04), transparent);
-  pointer-events: none;
-  z-index: -1;
-}
-  
-  /* ===================== NAV / TABBAR ===================== */
-  /* — Móvil: “píldora” flotante inferior — */
-  .tabbar {
-    position: fixed;
-    left: 12px;
-    right: 12px;
-    bottom: 12px;
-    z-index: 30;
-    pointer-events: none; /* la interacción solo en .rail */
-  }
-  
-  .tabbar .rail {
-    pointer-events: auto;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    padding: 0 10px;
-    border-top: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 16px;
-    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18), 0 2px 6px rgba(15, 23, 42, 0.08);
-    padding-bottom: max(0px, env(safe-area-inset-bottom));
-  }
-  
-  .tabbar a {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-width: 56px;
-    gap: 2px;
-    padding: 6px 10px;
-    text-decoration: none;
-    border-radius: 10px;
-    color: var(--base-40);
-    transition: background .16s ease, color .16s ease, transform .12s ease;
-  }
-  .tabbar a:active { transform: translateY(1px); }
-  
-  .tabbar a.active {
-    color: var(--accent-primary);
-    background: color-mix(in srgb, var(--accent-primary) 14%, white);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.5);
-  }
-  
-  .tabbar .icon  { font-size: 18px; line-height: 1; }
-  .tabbar .label { font-size: 10px; }
-  
-  /* ===================== DESKTOP ===================== */
-  @media (min-width: 768px) {
-    .app-shell {
+   .topbar {
+     position: sticky; top: 0; z-index: 20;
+     border-bottom: 1px solid rgba(15,23,42,.08);
+     border-radius: 0 0 14px 14px;
+
+     box-shadow: 0 8px 24px rgba(15,23,42,.06);
+   }
+   .topbar::before{
+     content:""; position:absolute; inset:0;
+     background: radial-gradient(700px 300px at 10% -50%, rgba(99,102,241,.06), transparent),
+                 radial-gradient(700px 300px at 90% -50%, rgba(20,184,166,.06), transparent);
+     pointer-events:none; border-radius: inherit;
+   }
+   
+   .topbar__inner{
+     height: 56px; display:flex; align-items:center; justify-content: space-between;
+     width: min(100%, 1280px);
+     margin-inline: auto;
+     padding: 0 var(--space-4);
+   }
+   
+   .brand{ display:flex; align-items:center; gap:12px; color: var(--base-00); }
+   .brand-badge{
+     width: 34px; height: 34px; border-radius: 10px;
+     background:
+       radial-gradient(60% 80% at 30% 20%, rgba(255,255,255,.45), rgba(255,255,255,0)),
+       linear-gradient(135deg, var(--accent-primary), color-mix(in srgb, var(--accent-info) 36%, var(--accent-primary)));
+     box-shadow: 0 6px 18px rgba(20,184,166,.28);
+   }
+   .brand-name{ font-weight: 700; letter-spacing: .2px; }
+   
+   .topbar__actions{ display:flex; align-items:center; gap: var(--space-3); }
+   
+
+   .topbar__action{
+     appearance:none; border:1px solid rgba(255,255,255,.42);
+     background: rgba(255,255,255,.7);
+     color: var(--base-40);
+     border-radius: 12px;
+     padding: 8px 12px;
+     box-shadow: 0 2px 6px rgba(15,23,42,.08);
+     cursor:pointer;
+     transition: transform .12s ease, filter .16s ease, box-shadow .16s ease, background .16s ease;
+   }
+   .topbar__action:hover{ filter: brightness(1.02); box-shadow: 0 4px 12px rgba(15,23,42,.12); }
+   .topbar__action:active{ transform: translateY(1px); }
+   
+
+   .content{
+     padding: var(--s-4) var(--s-4) calc(72px + env(safe-area-inset-bottom));
+     width: 100%; max-width: 1200px; margin-inline: auto;
+     min-height: calc(100vh - 56px - 72px);
+     position: relative;
+   }
+   .content::before{
+     content:""; position:absolute; inset:0;
+     background: radial-gradient(600px 400px at 50% 0%, rgba(20,184,166,.04), transparent);
+     pointer-events:none; z-index:-1;
+   }
+   
+
+   .tabbar{
+     position: fixed; left: 12px; right: 12px; bottom: 12px;
+     z-index: 30; pointer-events: none;
+   }
+   .tabbar .rail{
+     pointer-events: auto;
+     height: 60px; display: flex; align-items: center; justify-content: space-around;
+     padding: 0 10px;
+     border-top: 1px solid rgba(15,23,42,.08);
+     border-radius: 16px;
+     box-shadow: 0 12px 32px rgba(15,23,42,.18), 0 2px 6px rgba(15,23,42,.08);
+     padding-bottom: max(0px, env(safe-area-inset-bottom));
+   }
+   
+
+   .tabbar a{
+     display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+     min-width: 56px; gap: 6px; padding: 6px 10px; text-decoration: none;
+     color: var(--base-40);
+     transition: background .16s ease, color .16s ease, transform .12s ease, box-shadow .16s ease;
+   }
+   .tabbar a:active { transform: translateY(1px); }
+   
+   .tabbar a .icon{
+     width: 40px; height: 40px; border-radius: 12px;
+     display:grid; place-items:center;
+     background: rgba(255,255,255,.75);
+     border: 1px solid rgba(255,255,255,.5);
+     box-shadow: 0 2px 8px rgba(15,23,42,.08);
+   }
+   .icon-glyph{ font-size: 18px; line-height: 1; }
+   
+   .tabbar a .label{ font-size: 11px; }
+   
+   .tabbar a.active{
+     color: var(--accent-primary);
+     box-shadow: none;
+   }
+   .tabbar a.active .icon{
+     background: color-mix(in srgb, var(--accent-primary) 16%, white);
+     border-color: color-mix(in srgb, var(--accent-primary) 30%, white);
+     box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 6px 16px rgba(20,184,166,.18);
+   }
+   
+
+   @media (min-width: 768px){
+    .app-shell{
       grid-template-columns: var(--rail-w) 1fr;
       grid-template-rows: 56px 1fr;
       grid-template-areas:
         "topbar topbar"
         "nav content";
+      grid-row-gap: var(--space-4);
+      grid-column-gap: 0;
     }
   
-    .topbar {
-      grid-area: topbar;
-      border-radius: 0 0 14px 14px;
-    }
+    .topbar{ grid-area: topbar; }
   
-    /* La nav pasa a rail vertical estrecha.
-       OJO: el ancho REAL lo da .rail, no el nav */
-    .tabbar {
+
+    .tabbar{
       grid-area: nav;
-      position: sticky;
-      top: 56px;
-      bottom: auto;
-      left: auto;
-      right: auto;
-      height: calc(100dvh - 56px);
-      width: var(--rail-w); /* fija el ancho de la celda */
-      margin: 0;            /* evita ocupar más ancho */
-      padding: var(--space-3);
-      pointer-events: none; /* solo interactúa .rail */
-    }
-  
-    .tabbar .rail {
       position: relative;
-      width: 100%;
       height: 100%;
-      display: grid;
-      grid-auto-rows: 64px;
-      justify-items: stretch;
-      align-content: start;
-      padding: var(--space-3) var(--space-2);
-      border-right: 1px solid rgba(15, 23, 42, 0.08);
-      border-top: none;
-      border-radius: 14px;
-      margin: 0;           /* sin márgenes que “ensanchan” */
+      width: var(--rail-w);
+      margin: 0; padding: 0;
+      pointer-events: none;
+    }
+  
+
+    .tabbar .rail{
       pointer-events: auto;
-    }
-  
-    .tabbar a {
       width: 100%;
-      border-radius: var(--radius-md);
+      height: auto;
+      max-height: calc(100% - var(--s-5));
+      display: grid; grid-auto-rows: 72px;
+      justify-items: stretch; align-content: start;
+      padding: var(--s-5) var(--space-3);
+      border-right: 1px solid rgba(15,23,42,.08);
+      border-radius: 14px;
+      margin-bottom: var(--s-5);
+      box-shadow: 0 16px 48px rgba(15,23,42,0.12), 0 2px 10px rgba(15,23,42,0.06);
+      align-self: start;
     }
   
-    .tabbar .label { font-size: 11px; }
+    .tabbar a{
+      width: 100%; justify-self: stretch;
+      border-radius: var(--radius-md);
+      padding: 8px 6px;
+    }
   
-    .content {
+    .content{
       grid-area: content;
       padding: var(--s-5);
       padding-bottom: var(--s-5);
-      max-width: 1280px;
-      margin-inline: auto;
-      
-      /* Mejora la experiencia en desktop */
-      min-height: calc(100vh - 56px);
+      max-width: 1280px; margin-inline: auto;
+      min-height: calc(100vh - 56px - var(--space-4));
       overflow-y: auto;
     }
-    
-    .content::before {
+  
+    .content::before{
       background: radial-gradient(800px 600px at 70% 0%, rgba(20,184,166,.05), transparent);
     }
   }
-  
-  /* ===================== utilidades extra ===================== */
-  .grid { display: grid; gap: 12px; }
-  .grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
-  .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+   
+
+   .grid{ display:grid; gap:12px; }
+   .grid.cols-2{ grid-template-columns:repeat(2,1fr); }
+   .grid.cols-3{ grid-template-columns:repeat(3,1fr); }
+   

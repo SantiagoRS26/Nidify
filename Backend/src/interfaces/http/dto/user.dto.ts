@@ -13,7 +13,7 @@ export function toPublicUser(user: User): PublicUserDto {
     id: user.id,
     fullName: user.fullName,
     email: user.email,
-    // Roles no forman parte del dominio de usuario todavía; exponer como lista vacía por defecto
+
     roles: [],
   };
   if (user.preferredCurrency) {

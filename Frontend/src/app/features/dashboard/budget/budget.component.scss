@@ -10,7 +10,7 @@
 .subheader { display:flex; align-items:center; justify-content:space-between; margin-bottom: var(--space-3); }
 .subheader h2 { margin:0; font-size: 18px; color: var(--base-00); }
 
-/* Modal base */
+
 .modal { position: fixed; inset: 0; display: none; }
 .modal.open { display: block; }
 .backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(2px); }
