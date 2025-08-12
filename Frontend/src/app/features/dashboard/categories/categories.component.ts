@@ -8,6 +8,8 @@ import { CommonModule } from "@angular/common";
 import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
 import { CategoryService } from "../../../core/categories/category.service";
 import { Category } from "../../../shared/models/category.model";
+import { ItemsService } from "../../../core/items/items.service";
+import { Item } from "../../../shared/models/item.model";
 
 @Component({
   selector: "app-categories",
@@ -20,6 +22,7 @@ import { Category } from "../../../shared/models/category.model";
 export class CategoriesComponent {
   private readonly fb = inject(FormBuilder);
   private readonly categoryService = inject(CategoryService);
+  private readonly itemsService = inject(ItemsService);
 
   readonly categories = signal<Category[]>([]);
 
@@ -29,6 +32,9 @@ export class CategoriesComponent {
   });
 
   readonly editingId = signal<string | null>(null);
+  readonly showDeleteModal = signal(false);
+  readonly itemsToDelete = signal<Item[]>([]);
+  readonly deletingCategory = signal<Category | null>(null);
 
   constructor() {
     this.load();
@@ -43,6 +49,31 @@ export class CategoriesComponent {
     this.categoryForm.patchValue({
       name: cat.name,
       description: cat.description ?? "",
+    });
+  }
+
+  confirmDelete(cat: Category): void {
+    this.deletingCategory.set(cat);
+    this.itemsService
+      .listByCategory(cat.id)
+      .subscribe((items) => {
+        this.itemsToDelete.set(items);
+        this.showDeleteModal.set(true);
+      });
+  }
+
+  cancelDelete(): void {
+    this.showDeleteModal.set(false);
+    this.deletingCategory.set(null);
+    this.itemsToDelete.set([]);
+  }
+
+  deleteConfirmed(): void {
+    const cat = this.deletingCategory();
+    if (!cat) return;
+    this.categoryService.delete(cat.id).subscribe(() => {
+      this.categories.update((list) => list.filter((c) => c.id !== cat.id));
+      this.cancelDelete();
     });
   }
 

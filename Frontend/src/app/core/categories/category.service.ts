@@ -40,4 +40,13 @@ export class CategoryService {
       )
       .pipe(map(({ category }) => category));
   }
+
+  delete(categoryId: string): Observable<Category> {
+    const householdId = this.household.getHouseholdId();
+    return this.http
+      .delete<{ category: Category }>(
+        `/households/${householdId}/categories/${categoryId}`,
+      )
+      .pipe(map(({ category }) => category));
+  }
 }

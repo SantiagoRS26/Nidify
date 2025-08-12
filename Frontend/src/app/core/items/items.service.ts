@@ -34,6 +34,12 @@ export class ItemsService {
       .pipe(map(({ items }) => items));
   }
 
+  listByCategory(categoryId: string): Observable<Item[]> {
+    return this.list().pipe(
+      map((items) => items.filter((i) => i.categoryId === categoryId)),
+    );
+  }
+
   create(payload: CreateItemPayload): Observable<Item> {
     const householdId = this.household.getHouseholdId();
     return this.http

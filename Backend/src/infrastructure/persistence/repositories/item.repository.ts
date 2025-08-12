@@ -26,7 +26,7 @@ export class ItemRepository {
     await ItemModel.findByIdAndDelete(id);
   }
 
-  async clearCategory(categoryId: string): Promise<void> {
-    await ItemModel.updateMany({ categoryId }, { $unset: { categoryId: '' } });
+  async deleteByCategory(categoryId: string): Promise<void> {
+    await ItemModel.deleteMany({ categoryId });
   }
 }
