@@ -11,6 +11,7 @@ import { NotFoundError } from '../../../domain/errors/not-found.error';
 
 interface AuthRequest extends Request {
   userId: string;
+  userName: string;
 }
 
 export class BudgetController {
@@ -33,7 +34,7 @@ export class BudgetController {
       householdId: string;
       type: BudgetGoalType;
     };
-    const userId = (req as AuthRequest).userId;
+    const { userId, userName } = req as AuthRequest;
     const payload = req.body as UpdateBudgetRequestDto;
     const updatePayload: UpdateBudgetGoalPayload = { amount: payload.amount };
     if (payload.targetDate) {
@@ -47,6 +48,7 @@ export class BudgetController {
       householdId,
       type,
       updatePayload,
+      userName,
     );
     if (!result) {
       throw new NotFoundError('Household not found');

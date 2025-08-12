@@ -20,7 +20,7 @@ domainEventBus.subscribe<ItemCreatedEvent>('ItemCreated', async (event) => {
     description: `Item ${event.item.name} created`,
     diff: { after: event.item },
     userId: event.userId,
-    userName: event.userName ?? '',
+    userName: event.userName || 'Unknown',
     timestamp: event.occurredOn,
   });
 });
@@ -34,7 +34,7 @@ domainEventBus.subscribe<ItemUpdatedEvent>('ItemUpdated', async (event) => {
     description: `Item ${event.after.name} updated`,
     diff: { before: event.before, after: event.after },
     userId: event.userId,
-    userName: event.userName ?? '',
+    userName: event.userName || 'Unknown',
     timestamp: event.occurredOn,
   });
 });
@@ -48,7 +48,7 @@ domainEventBus.subscribe<ItemDeletedEvent>('ItemDeleted', async (event) => {
     description: `Item ${event.item.name} deleted`,
     diff: { before: event.item },
     userId: event.userId,
-    userName: event.userName ?? '',
+    userName: event.userName || 'Unknown',
     timestamp: event.occurredOn,
   });
 });
@@ -68,7 +68,7 @@ domainEventBus.subscribe<BudgetGoalUpdatedEvent>(
         type: event.goalType,
       },
       userId: event.userId,
-      userName: event.userName ?? '',
+      userName: event.userName || 'Unknown',
       timestamp: event.occurredOn,
     });
   },

@@ -18,13 +18,14 @@ export class RefreshTokenService {
 
   async issue(
     userId: string,
+    userName: string,
     familyId?: string,
     expiresIn = '7d',
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const jti = uuidv4();
     const family = familyId ?? uuidv4();
     const refreshToken = this.jwtService.signRefresh(
-      { userId, jti, familyId: family },
+      { userId, userName, jti, familyId: family },
       expiresIn,
     );
     const { exp, iat } = this.jwtService.decodeRefresh(refreshToken);
@@ -38,14 +39,19 @@ export class RefreshTokenService {
       status: RefreshTokenStatus.ACTIVE,
     };
     await this.repository.create(token);
-    const accessToken = this.jwtService.signAccess(userId);
+    const accessToken = this.jwtService.signAccess(userId, userName);
     return { accessToken, refreshToken };
   }
 
   async rotate(
     oldToken: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    let payload: { userId: string; jti: string; familyId: string };
+    let payload: {
+      userId: string;
+      userName: string;
+      jti: string;
+      familyId: string;
+    };
     try {
       payload = this.jwtService.verifyRefresh(oldToken);
     } catch {
@@ -65,7 +71,7 @@ export class RefreshTokenService {
       status: RefreshTokenStatus.ROTATED,
       lastUsedAt: new Date(),
     });
-    return this.issue(payload.userId, payload.familyId);
+    return this.issue(payload.userId, payload.userName, payload.familyId);
   }
 
   async revoke(token: string): Promise<void> {

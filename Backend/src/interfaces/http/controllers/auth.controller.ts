@@ -55,6 +55,7 @@ export class AuthController {
     );
     const { accessToken, refreshToken } = await this.refreshTokenService.issue(
       user.id,
+      user.fullName,
     );
     res.cookie('refreshToken', refreshToken, this.cookieOptions);
     res.json({ user: toPublicUser(user), accessToken });
@@ -65,6 +66,7 @@ export class AuthController {
     const { user } = await this.loginUser.execute(email, password);
     const { accessToken, refreshToken } = await this.refreshTokenService.issue(
       user.id,
+      user.fullName,
     );
     res.cookie('refreshToken', refreshToken, this.cookieOptions);
     res.json({ user: toPublicUser(user), accessToken });
@@ -75,6 +77,7 @@ export class AuthController {
     const { user } = await this.googleAuth.execute(idToken);
     const { accessToken, refreshToken } = await this.refreshTokenService.issue(
       user.id,
+      user.fullName,
     );
     res.cookie('refreshToken', refreshToken, this.cookieOptions);
     res.json({ user: toPublicUser(user), accessToken });
@@ -97,7 +100,7 @@ export class AuthController {
     try {
       const { user } = await this.oauthLogin.execute(code);
       const { accessToken, refreshToken } =
-        await this.refreshTokenService.issue(user.id);
+        await this.refreshTokenService.issue(user.id, user.fullName);
       res.cookie('refreshToken', refreshToken, this.cookieOptions);
       redirectUrl.searchParams.set('token', accessToken);
       redirectUrl.searchParams.set('user', JSON.stringify(toPublicUser(user)));

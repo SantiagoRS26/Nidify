@@ -32,7 +32,7 @@ beforeEach(async () => {
 
 describe('RefreshTokenService rotation', () => {
   it('marks family as compromised on reuse', async () => {
-    const { refreshToken } = await service.issue('user1');
+    const { refreshToken } = await service.issue('user1', 'User One');
     const first = await service.rotate(refreshToken);
     await expect(service.rotate(refreshToken)).rejects.toBeInstanceOf(
       UnauthorizedError,
@@ -46,8 +46,8 @@ describe('RefreshTokenService rotation', () => {
   });
 
   it('selective revocation does not affect other devices', async () => {
-    const { refreshToken: tokenA } = await service.issue('user1');
-    const { refreshToken: tokenB } = await service.issue('user1');
+    const { refreshToken: tokenA } = await service.issue('user1', 'User One');
+    const { refreshToken: tokenB } = await service.issue('user1', 'User One');
     await service.revoke(tokenA);
     await expect(service.rotate(tokenB)).resolves.toBeDefined();
     const jtiA = jwtService.verifyRefresh(tokenA).jti;
@@ -56,7 +56,7 @@ describe('RefreshTokenService rotation', () => {
   });
 
   it('global revocation revokes familyId', async () => {
-    const { refreshToken: token1 } = await service.issue('user1');
+    const { refreshToken: token1 } = await service.issue('user1', 'User One');
     const { refreshToken: token2 } = await service.rotate(token1);
     await service.revokeFamily(token2);
     const jti1 = jwtService.verifyRefresh(token1).jti;
@@ -68,7 +68,7 @@ describe('RefreshTokenService rotation', () => {
   });
 
   it('happy rotation issues new token and invalidates old', async () => {
-    const { refreshToken: token1 } = await service.issue('user1');
+    const { refreshToken: token1 } = await service.issue('user1', 'User One');
     const { refreshToken: token2 } = await service.rotate(token1);
     await expect(service.rotate(token2)).resolves.toBeDefined();
     await expect(service.rotate(token1)).rejects.toBeInstanceOf(
@@ -77,7 +77,12 @@ describe('RefreshTokenService rotation', () => {
   });
 
   it('expired refresh token returns 401 without state change', async () => {
-    const { refreshToken } = await service.issue('user1', undefined, '1ms');
+    const { refreshToken } = await service.issue(
+      'user1',
+      'User One',
+      undefined,
+      '1ms',
+    );
     const { jti } = jwt.decode(refreshToken) as { jti: string };
     await new Promise((r) => setTimeout(r, 10));
     await expect(service.rotate(refreshToken)).rejects.toBeInstanceOf(

@@ -21,7 +21,10 @@ export const authMiddleware =
     }
     try {
       const payload = jwtService.verifyAccess(token);
-      (req as Request & { userId: string }).userId = payload.userId;
+      (req as Request & { userId: string; userName: string }).userId =
+        payload.userId;
+      (req as Request & { userId: string; userName: string }).userName =
+        payload.userName;
       next();
     } catch {
       res.status(401).json({ error: 'No autorizado' });

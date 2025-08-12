@@ -23,6 +23,7 @@ export class UpdateBudgetGoalUseCase {
     householdId: string,
     type: BudgetGoalType,
     payload: UpdateBudgetGoalPayload,
+    userName?: string,
   ): Promise<Household | null> {
     const household = await this.householdRepo.findById(householdId);
     if (!household) return null;
@@ -62,6 +63,7 @@ export class UpdateBudgetGoalUseCase {
       occurredOn: timestamp,
       householdId,
       userId,
+      ...(userName ? { userName } : {}),
       goalType: type,
       previousAmount,
       newAmount: payload.amount,
