@@ -1,44 +1,44 @@
-<div class="subheader">
+<div class="section-header">
     <h2>Resumen</h2>
     <div class="actions">
-        <a routerLink="/home/historial" class="btn linkish">Ver historial</a>
+        <a routerLink="/home/historial" class="btn btn-glass">Ver historial</a>
     </div>
 </div>
 
-<section class="grid">
-    <div class="card metric-card">
+<section class="responsive-grid">
+    <div class="card metric-card glass-card card-pad">
         <div class="metric-content">
             <div class="metric-label">Presupuesto inicial</div>
             <div class="metric-value">{{ 0 | currencyFormat }}</div>
         </div>
-        <div class="badge">0% usado</div>
+        <div class="glass-badge">0% usado</div>
     </div>
 
-    <div class="card metric-card">
+    <div class="card metric-card glass-card card-pad">
         <div class="metric-content">
             <div class="metric-label">Mensual estimado</div>
             <div class="metric-value">{{ 0 | currencyFormat }} / mes</div>
         </div>
-        <div class="badge">0 ítems</div>
+        <div class="glass-badge">0 ítems</div>
     </div>
 
-    <div class="card info-card">
+    <div class="card info-card glass-card card-pad">
         <div class="card-header">
             <h3 class="card-title">Alertas</h3>
-            <span class="badge">0</span>
+            <span class="glass-badge">0</span>
         </div>
         <div class="card-content">
-            <p class="empty-state">Sin alertas por ahora.</p>
+            <p class="empty-state text-muted">Sin alertas por ahora.</p>
         </div>
     </div>
 
-    <div class="card info-card">
+    <div class="card info-card glass-card card-pad">
         <div class="card-header">
             <h3 class="card-title">Actividad reciente</h3>
         </div>
         <div class="card-content">
             <ul class="activity-list">
-                <li class="empty-state">Aún no hay cambios.</li>
+                <li class="empty-state text-muted">Aún no hay cambios.</li>
             </ul>
         </div>
     </div>
