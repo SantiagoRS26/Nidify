@@ -6,7 +6,10 @@
     <ul class="list" role="list">
       <li class="item glass-card" role="listitem" *ngFor="let cat of categories()">
         <div class="item__title">{{ cat.name }}</div>
-        <button class="btn btn-ghost" type="button" (click)="edit(cat)">Editar</button>
+        <div class="item__actions">
+          <button class="btn btn-ghost" type="button" (click)="edit(cat)">Editar</button>
+          <button class="btn btn-ghost" type="button" (click)="confirmDelete(cat)">Eliminar</button>
+        </div>
       </li>
     </ul>
   
@@ -26,4 +29,24 @@
       </button>
     </form>
   </section>
+
+  <div class="modal" [class.open]="showDeleteModal()">
+    <div class="backdrop" (click)="cancelDelete()"></div>
+    <div class="dialog glass card-pad" role="dialog" aria-modal="true" aria-label="Eliminar categoría">
+      <div class="dialog__header">
+        <h3>Eliminar categoría</h3>
+        <button class="icon" type="button" (click)="cancelDelete()" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="dialog__body">
+        <p>Se eliminarán los siguientes ítems:</p>
+        <ul>
+          <li *ngFor="let item of itemsToDelete()">{{ item.name }}</li>
+        </ul>
+      </div>
+      <div class="dialog__actions">
+        <button class="btn btn-ghost" type="button" (click)="cancelDelete()">Cancelar</button>
+        <button class="btn btn-primary" type="button" (click)="deleteConfirmed()">Eliminar</button>
+      </div>
+    </div>
+  </div>
   

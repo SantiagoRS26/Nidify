@@ -12,7 +12,7 @@ export class DeleteCategoryUseCase {
     const category = await this.categoryRepo.findById(categoryId);
     if (!category) return null;
     await this.categoryRepo.delete(categoryId);
-    await this.itemRepo.clearCategory(categoryId);
+    await this.itemRepo.deleteByCategory(categoryId);
     return category;
   }
 }
