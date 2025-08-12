@@ -1,20 +1,29 @@
-<div class="subheader">
+<header class="section-header glass subheader" role="region" aria-label="Categorías">
     <h2>Categorías</h2>
-</div>
-
-<section class="categories">
-    <ul class="list">
-        <li class="item" *ngFor="let cat of categories()">
-            <div class="item__title">{{ cat.name }}</div>
-            <button class="btn" (click)="edit(cat)">Editar</button>
-        </li>
+  </header>
+  
+  <section class="categories">
+    <ul class="list" role="list">
+      <li class="item glass-card" role="listitem" *ngFor="let cat of categories()">
+        <div class="item__title">{{ cat.name }}</div>
+        <button class="btn btn-ghost" type="button" (click)="edit(cat)">Editar</button>
+      </li>
     </ul>
-
-    <form class="form-grid" [formGroup]="categoryForm" (ngSubmit)="save()">
-        <label>Nombre<input type="text" formControlName="name" /></label>
-        <label>Descripción<input type="text" formControlName="description" /></label>
-        <button class="btn primary" type="submit">
-            {{ editingId() ? 'Actualizar' : 'Crear' }}
-        </button>
+  
+    <form class="form-grid glass-card card-pad" [formGroup]="categoryForm" (ngSubmit)="save()">
+      <label>
+        Nombre
+        <input class="input" type="text" formControlName="name" placeholder="Ej. Muebles" />
+      </label>
+  
+      <label>
+        Descripción
+        <input class="input" type="text" formControlName="description" placeholder="Opcional" />
+      </label>
+  
+      <button class="btn btn-primary" type="submit">
+        {{ editingId() ? 'Actualizar' : 'Crear' }}
+      </button>
     </form>
-</section>
+  </section>
+  

@@ -1,61 +1,45 @@
-.modal {
-  position: fixed;
-  inset: 0;
-}
-
+.modal { position: fixed; inset: 0; z-index: 70; }
 .backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(2px);
+  position: absolute; inset: 0;
+  background: rgba(15,23,42,.40);
+  backdrop-filter: saturate(var(--sat)) blur(2px);
+  -webkit-backdrop-filter: saturate(var(--sat)) blur(2px);
 }
 
 .dialog {
-  position: absolute;
-  left: 50%;
-  top: 50%;
+  position: absolute; left: 50%; top: 50%;
   transform: translate(-50%, -50%);
-  width: min(92%, 560px);
-  background: var(--white);
-  border: 1px solid var(--base-80);
-  border-radius: var(--radius-lg);
-  padding: var(--space-3);
-  box-shadow: var(--shadow-md);
+  width: min(92%, 640px);
+  max-height: 86dvh;
+  overflow: auto;
+  border-radius: var(--r-card);
 }
 
 .dialog__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: var(--s-3);
 }
+.dialog__header h3 { margin: 0; font-size: var(--fs-18); color: var(--ink-1); }
+.dialog__body { display: grid; gap: var(--s-4); }
+.dialog__actions { display: flex; justify-content: flex-end; gap: var(--s-3); margin-top: var(--s-4); }
+.icon { background: transparent; border: 0; color: var(--ink-3); cursor: pointer; }
 
-.dialog__header h3 {
-  margin: 0;
-  font-size: 18px;
-  color: var(--base-00);
-}
-
-.dialog__body {
-  display: grid;
-  gap: var(--space-3);
-}
-
-.dialog__actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-3);
-  margin-top: var(--space-3);
-}
-
-.icon {
-  background: transparent;
-  border: 0;
-  color: var(--base-40);
-}
+.form-grid { display: grid; grid-template-columns: 1fr; gap: var(--s-4); }
 
 .split-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
+  grid-template-columns: 1fr;
+  gap: var(--s-4);
+}
+
+.assignment {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-3);
+}
+
+.field__label { display: inline-block; margin-bottom: 6px; font-size: var(--fs-14); color: var(--ink-3); }
+
+@media (min-width: 640px) {
+  .assignment { grid-template-columns: 1fr 1fr; }
 }

@@ -1,24 +1,85 @@
-.grid { display: grid; gap: var(--space-3); }
-.card { background: var(--white); border: 1px solid var(--base-80); border-radius: var(--radius-lg); padding: var(--space-4); box-shadow: var(--shadow-md); }
-.row { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
-.tile { background: var(--white); border: 1px solid var(--base-80); border-radius: var(--radius-md); padding: var(--space-3); }
-.label { font-size: 12px; color: var(--base-60); }
-.value { font-weight: 700; font-size: 18px; color: var(--base-00); }
-.btn { border: 0; border-radius: var(--radius-md); padding: 10px 12px; color: var(--base-20); background: var(--base-80); }
-.btn.primary { background: linear-gradient(180deg, color-mix(in srgb, var(--accent-primary) 92%, white), var(--accent-primary)); color: white; box-shadow: 0 8px 16px rgba(20, 184, 166, 0.25); }
+.subheader { margin-bottom: var(--s-5); }
 
-.subheader { display:flex; align-items:center; justify-content:space-between; margin-bottom: var(--space-3); }
-.subheader h2 { margin:0; font-size: 18px; color: var(--base-00); }
+.budget {
+  display: grid;
+  gap: var(--s-5);
+}
+@media (min-width: 960px) {
+  .budget {
+    grid-template-columns: repeat(3, 1fr);
+    align-items: start;
+  }
+}
 
+.panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--s-3);
+}
+.card-title {
+  margin: 0;
+  font-size: var(--fs-16);
+  font-weight: 700;
+  color: var(--ink-1);
+  letter-spacing: -0.01em;
+}
 
-.modal { position: fixed; inset: 0; display: none; }
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--s-3);
+}
+@media (max-width: 420px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+}
+.kpi {
+  padding: var(--s-4);
+  border-radius: var(--r-ctrl);
+  background: rgba(255,255,255,.9);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 2px 8px rgba(15,23,42,.06);
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+.kpi:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(15,23,42,.12); }
+.kpi__label { font-size: var(--fs-12); color: var(--base-60); }
+.kpi__value { font-weight: 800; font-size: 20px; color: var(--ink-1); margin-top: 2px; }
+
+.empty-state {
+  display: grid;
+  align-items: center;
+  grid-auto-flow: column;
+  justify-content: start;
+  gap: var(--s-3);
+  color: var(--ink-3);
+  padding-block: 2px;
+}
+
+.btn-sm {
+  height: 36px;
+  padding: 0 var(--s-4);
+  font-size: var(--fs-14);
+}
+
+.modal { position: fixed; inset: 0; display: none; z-index: 70; }
 .modal.open { display: block; }
-.backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(2px); }
-.dialog { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(92%, 520px); }
-.dialog__header { display:flex; align-items:center; justify-content:space-between; margin-bottom: 8px; }
-.dialog__header h3 { margin: 0; font-size: 18px; color: var(--base-00); }
-.dialog__body { display: grid; gap: var(--space-3); }
-.dialog__actions { display: flex; justify-content: flex-end; gap: var(--space-3); margin-top: var(--space-3); }
-.icon { background: transparent; border: 0; color: var(--base-40); }
-.form-grid { display:grid; grid-template-columns: 1fr; gap: var(--space-3); }
-
+.backdrop {
+  position: absolute; inset: 0;
+  background: rgba(15,23,42,.40);
+  backdrop-filter: saturate(var(--sat)) blur(2px);
+  -webkit-backdrop-filter: saturate(var(--sat)) blur(2px);
+}
+.dialog {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92%, 560px);
+  max-height: 86dvh;
+  overflow: auto;
+  border-radius: var(--r-card);
+}
+.dialog__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--s-3); }
+.dialog__header h3 { margin: 0; font-size: var(--fs-18); color: var(--ink-1); }
+.dialog__body { display: grid; gap: var(--s-4); }
+.dialog__actions { display: flex; justify-content: flex-end; gap: var(--s-3); margin-top: var(--s-4); }
+.icon { background: transparent; border: 0; color: var(--ink-3); cursor: pointer; }
+.form-grid { display: grid; gap: var(--s-4); }

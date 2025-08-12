@@ -1,81 +1,152 @@
-<div class="subheader">
+<!-- Subheader -->
+<header class="section-header glass subheader" role="region" aria-label="Ítems">
     <h2>Ítems</h2>
+  
     <div class="actions desktop-only">
-        <button class="btn primary" (click)="openNew()">Nuevo ítem</button>
+      <button class="btn btn-primary" type="button" (click)="openNew()">
+        <!-- ícono + -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+        Nuevo ítem
+      </button>
     </div>
-    <button class="fab mobile-only" aria-label="Nuevo ítem" (click)="openNew()">＋</button>
-    <div class="sr-only">Botón de acción flotante para crear un nuevo ítem</div>
-</div>
-
-<section class="items">
-    <div class="toolbar card">
-        <input class="search" type="search" placeholder="Buscar ítems" />
+  
+    <!-- FAB móvil -->
+    <button class="fab mobile-only" aria-label="Nuevo ítem" type="button" (click)="openNew()">＋</button>
+    <span class="sr-only">Botón de acción flotante para crear un nuevo ítem</span>
+  </header>
+  
+  <section class="items stack">
+    <!-- Toolbar / búsqueda -->
+    <div class="toolbar glass-card card-pad">
+      <div class="input-group" style="width: 100%;">
+        <span class="input-leading" aria-hidden="true">
+          <!-- ícono buscar -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
+            <path d="m20 20-3.2-3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <input class="input input--with-leading" type="search" placeholder="Buscar ítems" />
+      </div>
     </div>
-
-    <div class="filters grid">
-        <button class="chip active">Todos</button>
-        <button class="chip">Únicos</button>
-        <button class="chip">Recurrentes</button>
-        <button class="chip">Necesario</button>
-        <button class="chip">Opcional</button>
-        <button class="chip">Capricho</button>
+  
+    <!-- Filtros -->
+    <div class="filters row">
+      <button class="chip chip--glass active" type="button">Todos</button>
+      <button class="chip chip--glass" type="button">Únicos</button>
+      <button class="chip chip--glass" type="button">Recurrentes</button>
+      <button class="chip chip--glass" type="button">Necesario</button>
+      <button class="chip chip--glass" type="button">Opcional</button>
+      <button class="chip chip--glass" type="button">Capricho</button>
     </div>
-
-    <div class="list grid">
-        <div class="item card" *ngFor="let item of items()">
-            <div class="item__head">
-                <div>
-                    <div class="item__title">{{ item.name }}</div>
-                    <div class="item__meta">{{ getCategoryName(item.categoryId) }} • {{ getStatusLabel(item.status) }}
-                    </div>
-                </div>
-                <div class="item__price">{{ item.price | currencyFormat }} {{ item.currency }}</div>
+  
+    <!-- Lista -->
+    <div class="list responsive-grid">
+      <article class="item glass-card" *ngFor="let item of items()">
+        <header class="item__head">
+          <div>
+            <h3 class="item__title">{{ item.name }}</h3>
+            <div class="item__meta">
+              {{ getCategoryName(item.categoryId) }} • {{ getStatusLabel(item.status) }}
             </div>
-            <div class="item__footer">
-                <div class="split">50% tú • 50% pareja</div>
-                <div class="tags">
-                    <span class="tag">Prioridad: {{ getPriorityLabel(item.priority) }}</span>
-                    <button class="btn" (click)="edit(item)">Editar</button>
-                </div>
-            </div>
-        </div>
+          </div>
+          <div class="item__price">
+            {{ item.price | currencyFormat }} {{ item.currency }}
+          </div>
+        </header>
+  
+        <footer class="item__footer">
+          <div class="split">50% tú • 50% pareja</div>
+          <div class="tags">
+            <span class="tag">{{ 'Prioridad: ' + getPriorityLabel(item.priority) }}</span>
+            <button class="btn btn-ghost" type="button" (click)="edit(item)">Editar</button>
+          </div>
+        </footer>
+      </article>
     </div>
-</section>
-
-<div class="modal" [class.open]="showNewItemModal()">
+  </section>
+  
+  <!-- Modal -->
+  <div class="modal" [class.open]="showNewItemModal()">
     <div class="backdrop" (click)="showNewItemModal.set(false)"></div>
-    <div class="dialog card">
-        <div class="dialog__header">
-            <h3>{{ editingId() ? 'Editar ítem' : 'Nuevo ítem' }}</h3>
-            <button class="icon" (click)="showNewItemModal.set(false)">✕</button>
-        </div>
-        <form class="dialog__body form-grid" [formGroup]="itemForm">
-            <label>Nombre<input type="text" placeholder="Sillón" formControlName="name" /></label>
-            <label>Categoría<select formControlName="categoryId">
-                    <option value="">Sin categoría</option>
-                    <option *ngFor="let cat of categories()" [value]="cat.id">{{ cat.name }}</option>
-                </select></label>
-            <label>Tipo<select formControlName="type">
-                    <option *ngFor="let t of itemTypeOptions" [value]="t.value">{{ t.label }}</option>
-                </select></label>
-            <label>Precio<input type="text" placeholder="0" formControlName="price" currencyInput /></label>
-            <label>Moneda<select formControlName="currency">
-                    <option *ngFor="let c of currencies$ | async" [value]="c">{{ c }}</option>
-                </select></label>
-            <label>Prioridad<select formControlName="priority">
-                    <option *ngFor="let p of itemPriorityOptions" [value]="p.value">{{ p.label }}</option>
-                </select></label>
-            <label>Estado<select formControlName="status">
-                    <option *ngFor="let s of itemStatusOptions" [value]="s.value">{{ s.label }}</option>
-                </select></label>
-            <label>Link de compra<input type="text" placeholder="https://..." formControlName="purchaseLink" /></label>
-            <button class="btn" type="button" (click)="openSplit()">Dividir pago</button>
-        </form>
-        <div class="dialog__actions">
-            <button class="btn" (click)="showNewItemModal.set(false)">Cancelar</button>
-            <button class="btn primary" (click)="save()">Guardar</button>
-        </div>
+  
+    <div class="dialog glass card-pad" role="dialog" aria-modal="true"
+         [attr.aria-label]="editingId() ? 'Editar ítem' : 'Nuevo ítem'">
+      <div class="dialog__header">
+        <h3>{{ editingId() ? 'Editar ítem' : 'Nuevo ítem' }}</h3>
+        <button class="icon" type="button" (click)="showNewItemModal.set(false)" aria-label="Cerrar">✕</button>
+      </div>
+  
+      <form class="dialog__body form-grid" [formGroup]="itemForm">
+        <label>
+          Nombre
+          <input class="input" type="text" placeholder="Sillón" formControlName="name" />
+        </label>
+  
+        <label>
+          Categoría
+          <select class="input" formControlName="categoryId">
+            <option value="">Sin categoría</option>
+            <option *ngFor="let cat of categories()" [value]="cat.id">{{ cat.name }}</option>
+          </select>
+        </label>
+  
+        <label>
+          Tipo
+          <select class="input" formControlName="type">
+            <option *ngFor="let t of itemTypeOptions" [value]="t.value">{{ t.label }}</option>
+          </select>
+        </label>
+  
+        <label>
+          Precio
+          <input class="input" type="text" placeholder="0" formControlName="price" currencyInput />
+        </label>
+  
+        <label>
+          Moneda
+          <select class="input" formControlName="currency">
+            <option *ngFor="let c of currencies$ | async" [value]="c">{{ c }}</option>
+          </select>
+        </label>
+  
+        <label>
+          Prioridad
+          <select class="input" formControlName="priority">
+            <option *ngFor="let p of itemPriorityOptions" [value]="p.value">{{ p.label }}</option>
+          </select>
+        </label>
+  
+        <label>
+          Estado
+          <select class="input" formControlName="status">
+            <option *ngFor="let s of itemStatusOptions" [value]="s.value">{{ s.label }}</option>
+          </select>
+        </label>
+  
+        <label>
+          Link de compra
+          <input class="input" type="text" placeholder="https://..." formControlName="purchaseLink" />
+        </label>
+  
+        <button class="btn btn-ghost" type="button" (click)="openSplit()">Dividir pago</button>
+      </form>
+  
+      <div class="dialog__actions">
+        <button class="btn btn-ghost" type="button" (click)="showNewItemModal.set(false)">Cancelar</button>
+        <button class="btn btn-primary" type="button" (click)="save()">Guardar</button>
+      </div>
     </div>
-</div>
-<app-split-modal *ngIf="showSplitModal()" [members]="members" [total]="itemForm.get('price')?.value || 0"
-    [initialSplit]="paymentSplit()" (cancel)="showSplitModal.set(false)" (save)="onSplitSave($event)"></app-split-modal>
+  </div>
+  
+  <app-split-modal
+    *ngIf="showSplitModal()"
+    [members]="members"
+    [total]="itemForm.get('price')?.value || 0"
+    [initialSplit]="paymentSplit()"
+    (cancel)="showSplitModal.set(false)"
+    (save)="onSplitSave($event)">
+  </app-split-modal>
+  
