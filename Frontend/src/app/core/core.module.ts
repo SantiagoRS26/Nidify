@@ -11,8 +11,8 @@ import { authInitializerFactory } from "./auth/auth-initializer";
     provideHttpClient(
       withInterceptors([
         apiUrlInterceptor,
-        authHttpInterceptor,
         problemHttpInterceptor,
+        authHttpInterceptor,
       ])
     ),
     {
