@@ -55,6 +55,15 @@ export class HouseholdService {
       .pipe(map(({ memberships }) => memberships));
   }
 
+  getMembers(): Observable<HouseholdMembership[]> {
+    const householdId = this.getHouseholdId();
+    return this.http
+      .get<{ members: HouseholdMembership[] }>(
+        `/households/${householdId}/members`
+      )
+      .pipe(map(({ members }) => members));
+  }
+
   getUserHouseholds(): Observable<Household[]> {
     return this.getUserMemberships().pipe(
       switchMap((memberships) => {

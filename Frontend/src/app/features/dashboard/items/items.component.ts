@@ -22,9 +22,10 @@ import {
 } from "../../../shared/models/item-labels";
 import { CurrencyService } from "../../../core/currency/currency.service";
 import { AuthService } from "../../../core/auth/auth.service";
-import { take } from "rxjs";
+import { combineLatest, take } from "rxjs";
 import { SplitModalComponent } from "./split-modal.component";
 import { PaymentSplit } from "../../../shared/models/payment-split.model";
+import { HouseholdService } from "../../../core/household/household.service";
 
 @Component({
   selector: "app-items",
@@ -46,6 +47,7 @@ export class ItemsComponent {
   private readonly categoryService = inject(CategoryService);
   private readonly currencyService = inject(CurrencyService);
   private readonly authService = inject(AuthService);
+  private readonly householdService = inject(HouseholdService);
 
   readonly items = signal<Item[]>([]);
   readonly categories = signal<Category[]>([]);
@@ -53,10 +55,7 @@ export class ItemsComponent {
 
   private defaultCurrency = "USD";
 
-  readonly members = [
-    { userId: "me", label: "Tú" },
-    { userId: "partner", label: "Pareja" },
-  ];
+  readonly members = signal<{ userId: string; label: string }[]>([]);
 
   readonly paymentSplit = signal<PaymentSplit | null>(null);
 
@@ -92,11 +91,21 @@ export class ItemsComponent {
 
   constructor() {
     this.load();
-    this.authService.user$.pipe(take(1)).subscribe((user) => {
+    combineLatest([
+      this.authService.user$.pipe(take(1)),
+      this.householdService.getMembers(),
+    ]).subscribe(([user, members]) => {
       if (user?.preferredCurrency) {
         this.defaultCurrency = user.preferredCurrency;
         this.itemForm.get("currency")?.setValue(this.defaultCurrency);
       }
+      const currentId = user?.id;
+      this.members.set(
+        members.map((m, idx) => ({
+          userId: m.userId,
+          label: m.userId === currentId ? "Tú" : `Miembro ${idx + 1}`,
+        })),
+      );
     });
   }
 
@@ -192,7 +201,14 @@ export class ItemsComponent {
       if (!this.isSplitValid(split, data.price)) {
         return;
       }
-      payload = { ...data, paymentSplit: split };
+      const backendSplit: PaymentSplit = {
+        assignments: split.assignments.map((a) => ({
+          userId: a.userId,
+          label: a.label,
+          percentage: a.percentage,
+        })),
+      };
+      payload = { ...data, paymentSplit: backendSplit };
     }
     if (id) {
       this.itemsService.update(id, payload).subscribe((updated) => {

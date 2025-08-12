@@ -11,6 +11,7 @@ import { InviteToHouseholdUseCase } from '../../../application/use-cases/househo
 import { RevokeMembershipUseCase } from '../../../application/use-cases/household/revoke-membership.usecase';
 import { CancelInvitationUseCase } from '../../../application/use-cases/household/cancel-invitation.usecase';
 import { GetHouseholdUseCase } from '../../../application/use-cases/household/get-household.usecase';
+import { ListHouseholdMembersUseCase } from '../../../application/use-cases/household/list-members.usecase';
 import { EmailService } from '../../../infrastructure/notifications/email.service';
 import { validate } from '../../middleware/validation.middleware';
 import { createHouseholdSchema, inviteSchema } from '../dto/household.dto';
@@ -41,6 +42,7 @@ const cancelInvitation = new CancelInvitationUseCase(
   userRepo,
 );
 const getHousehold = new GetHouseholdUseCase(householdRepo);
+const listMembers = new ListHouseholdMembersUseCase(membershipRepo);
 
 const controller = new HouseholdController(
   createHousehold,
@@ -48,6 +50,7 @@ const controller = new HouseholdController(
   revokeMembership,
   cancelInvitation,
   getHousehold,
+  listMembers,
 );
 
 router.post(
@@ -57,6 +60,11 @@ router.post(
   controller.create,
 );
 router.get('/:householdId', authMiddleware(jwtService), controller.get);
+router.get(
+  '/:householdId/members',
+  authMiddleware(jwtService),
+  controller.listMembers,
+);
 router.post(
   '/:householdId/invitations',
   authMiddleware(jwtService),

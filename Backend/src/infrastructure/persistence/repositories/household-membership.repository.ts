@@ -42,6 +42,16 @@ export class HouseholdMembershipRepository {
     return docs.map((doc) => this.toDomain(doc));
   }
 
+  async findActiveByHousehold(
+    householdId: string,
+  ): Promise<HouseholdMembership[]> {
+    const docs = await HouseholdMembershipModel.find({
+      householdId,
+      status: MembershipStatus.ACTIVE,
+    }).lean<MembershipRecord[]>();
+    return docs.map((doc) => this.toDomain(doc));
+  }
+
   async updateStatus(
     id: string,
     status: MembershipStatus,
