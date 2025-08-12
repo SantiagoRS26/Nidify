@@ -15,6 +15,7 @@ import { NotFoundError } from '../../../domain/errors/not-found.error';
 
 interface AuthRequest extends Request {
   userId: string;
+  userName: string;
 }
 
 export class ItemController {
@@ -33,26 +34,24 @@ export class ItemController {
 
   create = async (req: Request, res: Response) => {
     const { householdId } = req.params as { householdId: string };
-    const userId = (req as AuthRequest).userId;
+    const { userId, userName } = req as AuthRequest;
     const payload = req.body as CreateItemRequestDto;
-    const item = await this.createItem.execute(
-      userId,
-      householdId,
-      payload as CreateItemPayload,
-    );
+    const item = await this.createItem.execute(userId, householdId, {
+      ...payload,
+      lastModifiedByName: userName,
+    } as CreateItemPayload);
     notifyHousehold(householdId, 'item:created', item);
     res.status(201).json({ item });
   };
 
   update = async (req: Request, res: Response) => {
     const { itemId } = req.params as { itemId: string };
-    const userId = (req as AuthRequest).userId;
+    const { userId, userName } = req as AuthRequest;
     const payload = req.body as UpdateItemRequestDto;
-    const item = await this.updateItem.execute(
-      userId,
-      itemId,
-      payload as UpdateItemPayload,
-    );
+    const item = await this.updateItem.execute(userId, itemId, {
+      ...payload,
+      lastModifiedByName: userName,
+    } as UpdateItemPayload);
     if (!item) {
       throw new NotFoundError('Item not found');
     }
@@ -62,8 +61,8 @@ export class ItemController {
 
   delete = async (req: Request, res: Response) => {
     const { itemId } = req.params as { itemId: string };
-    const userId = (req as AuthRequest).userId;
-    const item = await this.deleteItem.execute(userId, itemId);
+    const { userId, userName } = req as AuthRequest;
+    const item = await this.deleteItem.execute(userId, itemId, userName);
     if (!item) {
       throw new NotFoundError('Item not found');
     }

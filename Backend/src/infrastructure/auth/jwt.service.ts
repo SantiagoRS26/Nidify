@@ -2,41 +2,54 @@ import jwt from 'jsonwebtoken';
 import { config } from '../../config/env';
 
 export class JwtService {
-  signAccess(userId: string): string {
-    return jwt.sign({ sub: userId }, config.jwtSecret, { expiresIn: '15m' });
+  signAccess(userId: string, userName: string): string {
+    return jwt.sign({ sub: userId, name: userName }, config.jwtSecret, {
+      expiresIn: '15m',
+    });
   }
 
   signRefresh(
-    payload: { userId: string; jti: string; familyId: string },
+    payload: {
+      userId: string;
+      userName: string;
+      jti: string;
+      familyId: string;
+    },
     expiresIn: string | number = '7d',
   ): string {
-    const { userId, jti, familyId } = payload;
+    const { userId, userName, jti, familyId } = payload;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (jwt.sign as any)(
-      { sub: userId, jti, familyId },
+      { sub: userId, name: userName, jti, familyId },
       config.jwtRefreshSecret,
       { expiresIn },
     );
   }
 
-  verifyAccess(token: string): { userId: string } {
-    const decoded = jwt.verify(token, config.jwtSecret) as { sub: string };
-    return { userId: decoded.sub };
+  verifyAccess(token: string): { userId: string; userName: string } {
+    const decoded = jwt.verify(token, config.jwtSecret) as {
+      sub: string;
+      name: string;
+    };
+    return { userId: decoded.sub, userName: decoded.name };
   }
 
   verifyRefresh(token: string): {
     userId: string;
+    userName: string;
     jti: string;
     familyId: string;
   } {
     const decoded = jwt.verify(token, config.jwtRefreshSecret) as {
       sub: string;
+      name: string;
       jti: string;
       familyId: string;
     };
     return {
       userId: decoded.sub,
+      userName: decoded.name,
       jti: decoded.jti,
       familyId: decoded.familyId,
     };
