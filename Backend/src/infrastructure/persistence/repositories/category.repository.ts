@@ -3,11 +3,22 @@ import { CategoryModel } from '../models/category.schema';
 
 export class CategoryRepository {
   async findById(id: string): Promise<Category | null> {
-    return (await CategoryModel.findById(id).lean()) as Category | null;
+    const doc = await CategoryModel.findById(id).lean();
+    if (!doc) return null;
+    const { _id, ...data } = doc as {
+      _id: unknown;
+    } & Record<string, unknown>;
+    return { id: String(_id), ...data } as Category;
   }
 
   async findByHousehold(householdId: string): Promise<Category[]> {
-    return (await CategoryModel.find({ householdId }).lean()) as Category[];
+    const docs = await CategoryModel.find({ householdId }).lean();
+    return docs.map((doc) => {
+      const { _id, ...data } = doc as {
+        _id: unknown;
+      } & Record<string, unknown>;
+      return { id: String(_id), ...data } as Category;
+    });
   }
 
   async create(category: Omit<Category, 'id'>): Promise<Category> {
