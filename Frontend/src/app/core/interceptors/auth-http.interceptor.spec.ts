@@ -53,6 +53,7 @@ describe('authHttpInterceptor', () => {
     http.get<string>('/data2').subscribe((r) => {
       responses.push(r);
       expect(responses).toEqual(['ok1', 'ok2']);
+      expect(routerSpy.navigate).not.toHaveBeenCalled();
       done();
     });
 
@@ -73,6 +74,25 @@ describe('authHttpInterceptor', () => {
     const retry2 = controller.expectOne('/data2');
     expect(retry2.request.headers.get('Authorization')).toBe('Bearer newAccess');
     retry2.flush('ok2');
+  });
+
+  it('redirects to login when token refresh fails', (done) => {
+    const expired = Math.floor(Date.now() / 1000) - 10;
+    (auth as any).accessToken = createToken(expired);
+
+    http.get('/data').subscribe({
+      error: (err) => {
+        expect(err.status).toBe(401);
+        expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
+        done();
+      },
+    });
+
+    const req = controller.expectOne('/data');
+    req.flush(null, { status: 401, statusText: 'Unauthorized' });
+
+    const refresh = controller.expectOne('/auth/refresh');
+    refresh.flush(null, { status: 401, statusText: 'Unauthorized' });
   });
 
   it('does not attempt to refresh when no token is present', (done) => {
