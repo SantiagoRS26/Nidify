@@ -58,7 +58,12 @@
         </header>
   
         <footer class="item__footer">
-          <div class="split">50% tú • 50% pareja</div>
+          <div class="split" *ngIf="item.paymentSplit">
+            <ng-container *ngFor="let a of item.paymentSplit.assignments; let last = last">
+              {{ a.percentage | number: '1.0-2' }}% {{ a.label || a.userId }}
+              ({{ a.calculatedAmount | currencyFormat }} {{ item.currency }})<span *ngIf="!last"> • </span>
+            </ng-container>
+          </div>
           <div class="tags">
             <span class="tag">{{ 'Prioridad: ' + getPriorityLabel(item.priority) }}</span>
             <button class="btn btn-ghost" type="button" (click)="edit(item)">Editar</button>
@@ -143,7 +148,7 @@
   
   <app-split-modal
     *ngIf="showSplitModal()"
-    [members]="members"
+    [members]="members()"
     [total]="itemForm.get('price')?.value || 0"
     [initialSplit]="paymentSplit()"
     (cancel)="showSplitModal.set(false)"
