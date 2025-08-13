@@ -2,13 +2,16 @@
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { HouseholdMembershipRepository } from '../../infrastructure/persistence/repositories/household-membership.repository';
+import { UserRepository } from '../../infrastructure/persistence/repositories/user.repository';
 import { ListHouseholdMembersUseCase } from '../use-cases/household/list-members.usecase';
 import { MembershipRole } from '../../domain/models/enums/membership-role.enum';
 import { MembershipStatus } from '../../domain/models/enums/membership-status.enum';
+import { UserStatus } from '../../domain/models/enums/user-status.enum';
 
 describe('ListHouseholdMembersUseCase', () => {
   let mongo: MongoMemoryServer;
   let repo: HouseholdMembershipRepository;
+  let userRepo: UserRepository;
   let listMembers: ListHouseholdMembersUseCase;
 
   beforeAll(async () => {
@@ -24,20 +27,43 @@ describe('ListHouseholdMembersUseCase', () => {
   beforeEach(async () => {
     await mongoose.connection.db.dropDatabase();
     repo = new HouseholdMembershipRepository();
-    listMembers = new ListHouseholdMembersUseCase(repo);
+    userRepo = new UserRepository();
+    listMembers = new ListHouseholdMembersUseCase(repo, userRepo);
   });
 
   it('returns active members for a household', async () => {
     const householdId = 'h1';
+    const user1 = await userRepo.create({
+      fullName: 'User 1',
+      email: 'u1@test.com',
+      passwordHash: 'h',
+      oauthProviders: [],
+      preferredCurrency: 'USD',
+      locale: 'es',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      status: UserStatus.ACTIVE,
+    });
+    const user2 = await userRepo.create({
+      fullName: 'User 2',
+      email: 'u2@test.com',
+      passwordHash: 'h',
+      oauthProviders: [],
+      preferredCurrency: 'USD',
+      locale: 'es',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      status: UserStatus.ACTIVE,
+    });
     await repo.create({
-      userId: 'u1',
+      userId: user1.id,
       householdId,
       role: MembershipRole.ADMIN,
       status: MembershipStatus.ACTIVE,
       joinedAt: new Date(),
     });
     await repo.create({
-      userId: 'u2',
+      userId: user2.id,
       householdId,
       role: MembershipRole.MEMBER,
       status: MembershipStatus.ACTIVE,
@@ -61,7 +87,10 @@ describe('ListHouseholdMembersUseCase', () => {
     const members = await listMembers.execute(householdId);
     expect(members).toHaveLength(2);
     expect(members.map((m) => m.userId)).toEqual(
-      expect.arrayContaining(['u1', 'u2']),
+      expect.arrayContaining([user1.id, user2.id]),
+    );
+    expect(members.map((m) => m.fullName)).toEqual(
+      expect.arrayContaining(['User 1', 'User 2']),
     );
   });
 });

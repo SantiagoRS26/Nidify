@@ -121,14 +121,21 @@ export class ItemsComponent {
       this.members.set(
         members.map((m, idx) => ({
           userId: m.userId,
-          label: m.userId === currentId ? "Tú" : `Miembro ${idx + 1}`,
+          label:
+            m.userId === currentId
+              ? "Tú"
+              : m.fullName ?? `Miembro ${idx + 1}`,
         })),
       );
+      this.applyMemberLabels();
     });
   }
 
   load(): void {
-    this.itemsService.list().subscribe((items) => this.items.set(items));
+    this.itemsService.list().subscribe((items) => {
+      this.items.set(items);
+      this.applyMemberLabels();
+    });
     this.categoryService.list().subscribe();
   }
 
@@ -249,6 +256,34 @@ export class ItemsComponent {
       this.itemsService.create(payload).subscribe((created) => {
         this.items.update((list) => [...list, created]);
         this.showNewItemModal.set(false);
+      });
+    }
+  }
+
+  private applyMemberLabels(): void {
+    const memberMap = new Map(this.members().map((m) => [m.userId, m.label]));
+    this.items.update((items) =>
+      items.map((item) =>
+        item.paymentSplit
+          ? {
+              ...item,
+              paymentSplit: {
+                assignments: item.paymentSplit.assignments.map((a) => ({
+                  ...a,
+                  label: memberMap.get(a.userId) ?? a.label ?? a.userId,
+                })),
+              },
+            }
+          : item,
+      ),
+    );
+    const split = this.paymentSplit();
+    if (split) {
+      this.paymentSplit.set({
+        assignments: split.assignments.map((a) => ({
+          ...a,
+          label: memberMap.get(a.userId) ?? a.label ?? a.userId,
+        })),
       });
     }
   }
