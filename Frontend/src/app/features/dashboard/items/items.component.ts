@@ -3,6 +3,7 @@ import {
   Component,
   inject,
   signal,
+  computed,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
@@ -26,6 +27,8 @@ import { combineLatest, take } from "rxjs";
 import { SplitModalComponent } from "./split-modal.component";
 import { PaymentSplit } from "../../../shared/models/payment-split.model";
 import { HouseholdService } from "../../../core/household/household.service";
+
+type ItemFilter = 'all' | ItemType | ItemPriority;
 
 @Component({
   selector: "app-items",
@@ -59,6 +62,19 @@ export class ItemsComponent {
 
   readonly paymentSplit = signal<PaymentSplit | null>(null);
 
+  readonly activeFilter = signal<ItemFilter>('all');
+
+  readonly filteredItems = computed(() => {
+    const filter = this.activeFilter();
+    if (filter === 'all') {
+      return this.items();
+    }
+    if (filter === ItemType.ONE_TIME || filter === ItemType.RECURRING) {
+      return this.items().filter((i) => i.type === filter);
+    }
+    return this.items().filter((i) => i.priority === filter);
+  });
+
   readonly itemTypeOptions = Object.values(ItemType).map((value) => ({
     value,
     label: ITEM_TYPE_LABELS[value],
@@ -73,6 +89,9 @@ export class ItemsComponent {
     value,
     label: ITEM_STATUS_LABELS[value],
   }));
+
+  readonly ItemType = ItemType;
+  readonly ItemPriority = ItemPriority;
 
   readonly itemForm = this.fb.nonNullable.group({
     name: ["", Validators.required],
@@ -112,6 +131,10 @@ export class ItemsComponent {
   load(): void {
     this.itemsService.list().subscribe((items) => this.items.set(items));
     this.categoryService.list().subscribe((cats) => this.categories.set(cats));
+  }
+
+  setFilter(filter: ItemFilter): void {
+    this.activeFilter.set(filter);
   }
 
   openNew(): void {
