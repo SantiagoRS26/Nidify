@@ -53,6 +53,14 @@ export class ItemsComponent {
 
   readonly items = signal<Item[]>([]);
   readonly categories = this.categoryService.categories;
+  readonly categoryNameMap = computed(
+    () =>
+      new Map(
+        this.categoryService
+          .categories()
+          .map((c) => [c.id, c.name] as const),
+      ),
+  );
   readonly currencies$ = this.currencyService.getSupported();
 
   private defaultCurrency = "USD";
@@ -179,11 +187,6 @@ export class ItemsComponent {
     this.itemsService.delete(item.id).subscribe(() => {
       this.items.update((list) => list.filter((i) => i.id !== item.id));
     });
-  }
-
-  getCategoryName(id?: string): string {
-    const cat = this.categories().find((c) => c.id === id);
-    return cat ? cat.name : "";
   }
 
   getStatusLabel(status: ItemStatus): string {

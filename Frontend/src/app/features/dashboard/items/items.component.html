@@ -91,7 +91,9 @@
           <div>
             <h3 class="item__title">{{ item.name }}</h3>
             <div class="item__meta">
-              {{ getCategoryName(item.categoryId) }} • {{ getStatusLabel(item.status) }}
+              {{ categoryNameMap().get(item.categoryId || '') ?? '' }} • {{
+                getStatusLabel(item.status)
+              }}
             </div>
           </div>
           <div class="item__price">
