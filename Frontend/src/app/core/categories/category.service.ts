@@ -55,8 +55,10 @@ export class CategoryService {
       .pipe(
         map(({ category }) => category),
         tap((updated) =>
-          this.categoriesSignal.update((list) =>
-            list.map((c) => (c.id === updated.id ? updated : c)),
+          this.categoriesSignal.set(
+            this.categoriesSignal().map((c) =>
+              c.id === updated.id ? updated : c,
+            ),
           ),
         ),
       );
@@ -71,8 +73,8 @@ export class CategoryService {
       .pipe(
         map(({ category }) => category),
         tap((removed) =>
-          this.categoriesSignal.update((list) =>
-            list.filter((c) => c.id !== removed.id),
+          this.categoriesSignal.set(
+            this.categoriesSignal().filter((c) => c.id !== removed.id),
           ),
         ),
       );
