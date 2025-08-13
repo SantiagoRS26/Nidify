@@ -4,6 +4,7 @@ import {
   inject,
   signal,
   computed,
+  effect,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
@@ -53,14 +54,17 @@ export class ItemsComponent {
 
   readonly items = signal<Item[]>([]);
   readonly categories = this.categoryService.categories;
-  readonly categoryNameMap = computed(
-    () =>
+  readonly categoryNameMap = signal(new Map<string, string>());
+
+  private readonly updateCategoryNameMap = effect(() => {
+    this.categoryNameMap.set(
       new Map(
         this.categoryService
           .categories()
           .map((c) => [c.id, c.name] as const),
       ),
-  );
+    );
+  });
   readonly currencies$ = this.currencyService.getSupported();
 
   private defaultCurrency = "USD";
