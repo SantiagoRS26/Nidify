@@ -31,6 +31,7 @@ export interface HouseholdMembership {
   status: "pending" | "active" | "revoked";
   joinedAt: string;
   invitedBy?: string;
+  fullName?: string;
 }
 
 @Injectable({ providedIn: "root" })

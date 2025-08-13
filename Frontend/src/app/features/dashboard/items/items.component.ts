@@ -121,7 +121,10 @@ export class ItemsComponent {
       this.members.set(
         members.map((m, idx) => ({
           userId: m.userId,
-          label: m.userId === currentId ? "Tú" : `Miembro ${idx + 1}`,
+          label:
+            m.userId === currentId
+              ? "Tú"
+              : m.fullName ?? `Miembro ${idx + 1}`,
         })),
       );
     });
