@@ -25,8 +25,7 @@ export const authHttpInterceptor: HttpInterceptorFn = (req, next) => {
       if (
         error.status === 401 &&
         token &&
-        !req.url.includes('/auth/refresh') &&
-        auth.isTokenExpired(token)
+        !req.url.includes('/auth/refresh')
       ) {
         return handle401(req, next, auth);
       }
