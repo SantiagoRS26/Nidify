@@ -24,7 +24,7 @@ export class CategoriesComponent {
   private readonly categoryService = inject(CategoryService);
   private readonly itemsService = inject(ItemsService);
 
-  readonly categories = signal<Category[]>([]);
+  readonly categories = this.categoryService.categories;
 
   readonly categoryForm = this.fb.nonNullable.group({
     name: ["", Validators.required],
@@ -41,7 +41,7 @@ export class CategoriesComponent {
   }
 
   load(): void {
-    this.categoryService.list().subscribe((cats) => this.categories.set(cats));
+    this.categoryService.list().subscribe();
   }
 
   edit(cat: Category): void {
@@ -72,7 +72,6 @@ export class CategoriesComponent {
     const cat = this.deletingCategory();
     if (!cat) return;
     this.categoryService.delete(cat.id).subscribe(() => {
-      this.categories.update((list) => list.filter((c) => c.id !== cat.id));
       this.cancelDelete();
     });
   }
@@ -84,16 +83,12 @@ export class CategoriesComponent {
     const data = this.categoryForm.getRawValue();
     const id = this.editingId();
     if (id) {
-      this.categoryService.update(id, data).subscribe((updated) => {
-        this.categories.update((list) =>
-          list.map((c) => (c.id === updated.id ? updated : c))
-        );
+      this.categoryService.update(id, data).subscribe(() => {
         this.categoryForm.reset();
         this.editingId.set(null);
       });
     } else {
-      this.categoryService.create(data).subscribe((created) => {
-        this.categories.update((list) => [...list, created]);
+      this.categoryService.create(data).subscribe(() => {
         this.categoryForm.reset();
       });
     }

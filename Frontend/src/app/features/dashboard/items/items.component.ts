@@ -12,7 +12,6 @@ import { CurrencyFormatPipe } from "../../../shared/pipes/currency-format.pipe";
 import { ItemsService } from "../../../core/items/items.service";
 import { CategoryService } from "../../../core/categories/category.service";
 import { Item } from "../../../shared/models/item.model";
-import { Category } from "../../../shared/models/category.model";
 import { ItemType } from "../../../shared/models/item-type.enum";
 import { ItemPriority } from "../../../shared/models/item-priority.enum";
 import { ItemStatus } from "../../../shared/models/item-status.enum";
@@ -53,7 +52,7 @@ export class ItemsComponent {
   private readonly householdService = inject(HouseholdService);
 
   readonly items = signal<Item[]>([]);
-  readonly categories = signal<Category[]>([]);
+  readonly categories = this.categoryService.categories;
   readonly currencies$ = this.currencyService.getSupported();
 
   private defaultCurrency = "USD";
@@ -130,7 +129,7 @@ export class ItemsComponent {
 
   load(): void {
     this.itemsService.list().subscribe((items) => this.items.set(items));
-    this.categoryService.list().subscribe((cats) => this.categories.set(cats));
+    this.categoryService.list().subscribe();
   }
 
   setFilter(filter: ItemFilter): void {
