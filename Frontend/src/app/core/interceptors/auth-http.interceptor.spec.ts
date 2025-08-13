@@ -44,9 +44,9 @@ describe('authHttpInterceptor', () => {
     localStorage.clear();
   });
 
-  it('refreshes the token once and retries queued requests', (done) => {
-    const expired = Math.floor(Date.now() / 1000) - 10;
-    (auth as any).accessToken = createToken(expired);
+  it('refreshes the token once and retries queued requests when the token is not expired', (done) => {
+    const valid = Math.floor(Date.now() / 1000) + 3600;
+    (auth as any).accessToken = createToken(valid);
 
     const responses: string[] = [];
     http.get<string>('/data').subscribe((r) => responses.push(r));
@@ -76,9 +76,9 @@ describe('authHttpInterceptor', () => {
     retry2.flush('ok2');
   });
 
-  it('redirects to login when token refresh fails', (done) => {
-    const expired = Math.floor(Date.now() / 1000) - 10;
-    (auth as any).accessToken = createToken(expired);
+  it('redirects to login when token refresh fails even if the token is not expired', (done) => {
+    const valid = Math.floor(Date.now() / 1000) + 3600;
+    (auth as any).accessToken = createToken(valid);
 
     http.get('/data').subscribe({
       error: (err) => {
