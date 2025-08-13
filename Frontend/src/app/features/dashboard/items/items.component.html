@@ -34,17 +34,59 @@
   
     <!-- Filtros -->
     <div class="filters row">
-      <button class="chip chip--glass active" type="button">Todos</button>
-      <button class="chip chip--glass" type="button">Únicos</button>
-      <button class="chip chip--glass" type="button">Recurrentes</button>
-      <button class="chip chip--glass" type="button">Necesario</button>
-      <button class="chip chip--glass" type="button">Opcional</button>
-      <button class="chip chip--glass" type="button">Capricho</button>
+      <button
+        class="chip chip--glass"
+        type="button"
+        [class.active]="activeFilter() === 'all'"
+        (click)="setFilter('all')"
+      >
+        Todos
+      </button>
+      <button
+        class="chip chip--glass"
+        type="button"
+        [class.active]="activeFilter() === ItemType.ONE_TIME"
+        (click)="setFilter(ItemType.ONE_TIME)"
+      >
+        Únicos
+      </button>
+      <button
+        class="chip chip--glass"
+        type="button"
+        [class.active]="activeFilter() === ItemType.RECURRING"
+        (click)="setFilter(ItemType.RECURRING)"
+      >
+        Recurrentes
+      </button>
+      <button
+        class="chip chip--glass"
+        type="button"
+        [class.active]="activeFilter() === ItemPriority.NECESSARY"
+        (click)="setFilter(ItemPriority.NECESSARY)"
+      >
+        Necesario
+      </button>
+      <button
+        class="chip chip--glass"
+        type="button"
+        [class.active]="activeFilter() === ItemPriority.OPTIONAL"
+        (click)="setFilter(ItemPriority.OPTIONAL)"
+      >
+        Opcional
+      </button>
+      <button
+        class="chip chip--glass"
+        type="button"
+        [class.active]="activeFilter() === ItemPriority.WHIM"
+        (click)="setFilter(ItemPriority.WHIM)"
+      >
+        Capricho
+      </button>
     </div>
   
     <!-- Lista -->
     <div class="list responsive-grid">
-      <article class="item glass-card" *ngFor="let item of items()">
+      <article class="item glass-card" *ngFor="let item of filteredItems()">
         <header class="item__head">
           <div>
             <h3 class="item__title">{{ item.name }}</h3>
