@@ -42,7 +42,7 @@ const cancelInvitation = new CancelInvitationUseCase(
   userRepo,
 );
 const getHousehold = new GetHouseholdUseCase(householdRepo);
-const listMembers = new ListHouseholdMembersUseCase(membershipRepo);
+const listMembers = new ListHouseholdMembersUseCase(membershipRepo, userRepo);
 
 const controller = new HouseholdController(
   createHousehold,
