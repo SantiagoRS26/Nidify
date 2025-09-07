@@ -64,17 +64,14 @@ export class CategoryService {
       );
   }
 
-  delete(categoryId: string): Observable<Category> {
+  delete(categoryId: string): Observable<void> {
     const householdId = this.household.getHouseholdId();
     return this.http
-      .delete<{ category: Category }>(
-        `/households/${householdId}/categories/${categoryId}`,
-      )
+      .delete<void>(`/households/${householdId}/categories/${categoryId}`)
       .pipe(
-        map(({ category }) => category),
-        tap((removed) =>
+        tap(() =>
           this.categoriesSignal.set(
-            this.categoriesSignal().filter((c) => c.id !== removed.id),
+            this.categoriesSignal().filter((c) => c.id !== categoryId),
           ),
         ),
       );
